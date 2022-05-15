@@ -26,8 +26,7 @@ void spdm_responder_conformance_test (void *spdm_context, const common_test_suit
 {
     spdm_test_context_t  spdm_test_context;
 
-    zero_mem(&spdm_test_context, sizeof(spdm_test_context_t));
-    spdm_test_context.signature = SPDM_TEST_CONTEXT_SIGNATURE;
+    libspdm_zero_mem(&spdm_test_context, sizeof(spdm_test_context_t));
     spdm_test_context.spdm_context = spdm_context;
     common_test_run_test_suite (&spdm_test_context, &m_spdm_test_suite, test_config);
 }

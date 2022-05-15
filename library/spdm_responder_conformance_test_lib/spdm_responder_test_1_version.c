@@ -10,14 +10,14 @@ void spdm_test_case_version_success (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
-    return_status status;
+    libspdm_return_t status;
     spdm_get_version_request_t spdm_request;
     spdm_version_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     spdm_version_number_t *version_number_entry;
-    uintn spdm_response_size;
+    size_t spdm_response_size;
     common_test_result_t test_result;
-    uintn index;
+    size_t index;
     spdm_version_number_t version;
 
     spdm_test_context = test_context;
@@ -28,26 +28,19 @@ void spdm_test_case_version_success (void *test_context)
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
 
-    status = libspdm_send_request(spdm_context, NULL, false,
-                    sizeof(spdm_request), &spdm_request);
-    if (RETURN_ERROR(status)) {
+    spdm_response = (void *)message;
+    spdm_response_size = sizeof(message);
+    libspdm_zero_mem(message, sizeof(message));
+    status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                       &spdm_request, sizeof(spdm_request),
+                                       spdm_response, &spdm_response_size);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, COMMON_TEST_ID_END, 
-            COMMON_TEST_RESULT_NOT_TESTED, "send request failure");
+            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return ;
     }
 
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    zero_mem(message, sizeof(message));
-    status = libspdm_receive_response(
-        spdm_context, NULL, false, &spdm_response_size, spdm_response);
-    if (RETURN_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "receive response failure");
-        return ;
-    }
     if (spdm_response_size > sizeof(spdm_version_response_t)) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
@@ -78,7 +71,8 @@ void spdm_test_case_version_success (void *test_context)
         test_result = COMMON_TEST_RESULT_FAIL;
     }
     common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, 3, test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
+        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, 3,
+        test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return ;
     }
@@ -115,11 +109,11 @@ void spdm_test_case_version_invalid_request (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
-    return_status status;
+    libspdm_return_t status;
     spdm_get_version_request_t spdm_request;
     spdm_error_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
-    uintn spdm_response_size;
+    size_t spdm_response_size;
     common_test_result_t test_result;
 
     spdm_test_context = test_context;
@@ -130,26 +124,19 @@ void spdm_test_case_version_invalid_request (void *test_context)
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
 
-    status = libspdm_send_request(spdm_context, NULL, false,
-                    sizeof(spdm_request), &spdm_request);
-    if (RETURN_ERROR(status)) {
+    spdm_response = (void *)message;
+    spdm_response_size = sizeof(message);
+    libspdm_zero_mem(message, sizeof(message));
+    status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                       &spdm_request, sizeof(spdm_request),
+                                       spdm_response, &spdm_response_size);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "send request failure");
+            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return ;
     }
 
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    zero_mem(message, sizeof(message));
-    status = libspdm_receive_response(
-        spdm_context, NULL, false, &spdm_response_size, spdm_response);
-    if (RETURN_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "receive response failure");
-        return ;
-    }
     if (spdm_response_size >= sizeof(spdm_error_response_t)) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {

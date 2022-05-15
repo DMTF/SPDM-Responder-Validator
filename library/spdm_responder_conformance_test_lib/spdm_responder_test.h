@@ -10,20 +10,17 @@
 #include "library/spdm_requester_lib.h"
 
 /* TBD */
-return_status spdm_get_version(void *spdm_context,
-                               uint8_t *version_number_entry_count,
-                               spdm_version_number_t *version_number_entry);
-return_status spdm_get_capabilities(void *spdm_context);
+libspdm_return_t libspdm_get_version(void *spdm_context,
+                                     uint8_t *version_number_entry_count,
+                                     spdm_version_number_t *version_number_entry);
+libspdm_return_t libspdm_get_capabilities(void *spdm_context);
 
 #include "library/spdm_responder_conformance_test_lib.h"
 #include "library/common_test_utility_lib.h"
 
-#define SPDM_TEST_CONTEXT_SIGNATURE SIGNATURE_32('S', 'C', 'T', 'S')
-
 #define SPDM_TEST_SCRATCH_BUFFER_SIZE 0x100
 
 typedef struct {
-    uint32_t signature;
     void *spdm_context;
     /* test case specific scratch buffer between setup and case, avoid writable global variable */
     uint8_t test_scratch_buffer[SPDM_TEST_SCRATCH_BUFFER_SIZE];

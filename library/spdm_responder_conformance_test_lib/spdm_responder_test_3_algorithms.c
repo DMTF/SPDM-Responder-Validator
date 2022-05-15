@@ -28,24 +28,24 @@ bool spdm_test_case_algorithms_setup_version_capabilities (void *test_context,
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
-    return_status status;
+    libspdm_return_t status;
     libspdm_data_parameter_t parameter;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
 
-    zero_mem(&parameter, sizeof(parameter));
+    libspdm_zero_mem(&parameter, sizeof(parameter));
     parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter,
-                  &spdm_version, sizeof(spdm_version));
+                     &spdm_version, sizeof(spdm_version));
 
-    status = spdm_get_version (spdm_context, NULL, NULL);
-    if (RETURN_ERROR(status)) {
+    status = libspdm_get_version (spdm_context, NULL, NULL);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
 
-    status = spdm_get_capabilities (spdm_context);
-    if (RETURN_ERROR(status)) {
+    status = libspdm_get_capabilities (spdm_context);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
 
@@ -74,21 +74,21 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
-    return_status status;
+    libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
-    uintn spdm_response_size;
+    size_t spdm_response_size;
     uint32_t algo;
     common_test_result_t test_result;
     libspdm_data_parameter_t parameter;
     uint32_t rsp_cap_flags;
-    uintn data_size;
+    size_t data_size;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
 
-    zero_mem(&spdm_request, sizeof(spdm_request));
+    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = SPDM_MESSAGE_VERSION_10;
     spdm_request.length = sizeof(spdm_request) - sizeof(spdm_request.struct_table);
     spdm_request.header.param1 = 0;
@@ -113,22 +113,16 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
     spdm_request.ext_asym_count = 0;
     spdm_request.ext_hash_count = 0;
 
-    status = libspdm_send_request(spdm_context, NULL, false, spdm_request.length, &spdm_request);
-    if (RETURN_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_10, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "send request failure");
-        return ;
-    }
-
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
-    zero_mem(message, sizeof(message));
-    status = libspdm_receive_response(spdm_context, NULL, false, &spdm_response_size, spdm_response);
-    if (RETURN_ERROR(status)) {
+    libspdm_zero_mem(message, sizeof(message));
+    status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                       &spdm_request, spdm_request.length,
+                                       spdm_response, &spdm_response_size);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_10, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "receive response failure");
+            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return ;
     }
 
@@ -209,7 +203,7 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
 
     rsp_cap_flags = 0;
     data_size = sizeof(rsp_cap_flags);
-    zero_mem(&parameter, sizeof(parameter));
+    libspdm_zero_mem(&parameter, sizeof(parameter));
     parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
     libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter, &rsp_cap_flags, &data_size);
 
@@ -297,36 +291,36 @@ void spdm_test_case_algorithms_version_mismatch (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
-    return_status status;
+    libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
-    uintn spdm_response_size;
+    size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_version_number_t version;
     libspdm_data_parameter_t parameter;
-    uintn data_size;
+    size_t data_size;
     uint8_t mismatched_version[] = {
         SPDM_MESSAGE_VERSION_10 - 1,
         SPDM_MESSAGE_VERSION_12 + 1,
     };
-    uintn index;
+    size_t index;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
 
     version = 0;
     data_size = sizeof(version);
-    zero_mem(&parameter, sizeof(parameter));
+    libspdm_zero_mem(&parameter, sizeof(parameter));
     parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
     libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &version, &data_size);
     version = (version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
     mismatched_version[0] = (uint8_t)(version - 1);
     mismatched_version[1] = (uint8_t)(version + 1);
 
-    for (index = 0; index < ARRAY_SIZE(mismatched_version); index++) {
+    for (index = 0; index < LIBSPDM_ARRAY_SIZE(mismatched_version); index++) {
         common_test_record_test_message ("test mismatched_version - 0x%02x\n", mismatched_version[index]);
-        zero_mem(&spdm_request, sizeof(spdm_request));
+        libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
         spdm_request.header.spdm_version = mismatched_version[index];
         spdm_request.length = sizeof(spdm_request) - sizeof(spdm_request.struct_table);
         spdm_request.header.param1 = 0;
@@ -351,24 +345,19 @@ void spdm_test_case_algorithms_version_mismatch (void *test_context)
         spdm_request.ext_asym_count = 0;
         spdm_request.ext_hash_count = 0;
 
-        status = libspdm_send_request(spdm_context, NULL, false, spdm_request.length, &spdm_request);
-        if (RETURN_ERROR(status)) {
+        spdm_response = (void *)message;
+        spdm_response_size = sizeof(message);
+        libspdm_zero_mem(message, sizeof(message));
+        status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                           &spdm_request, spdm_request.length,
+                                           spdm_response, &spdm_response_size);
+        if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_VERSION_MISMATCH, COMMON_TEST_ID_END,
-                COMMON_TEST_RESULT_NOT_TESTED, "send request failure");
+                COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue ;
         }
 
-        spdm_response = (void *)message;
-        spdm_response_size = sizeof(message);
-        zero_mem(message, sizeof(message));
-        status = libspdm_receive_response(spdm_context, NULL, false, &spdm_response_size, spdm_response);
-        if (RETURN_ERROR(status)) {
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_VERSION_MISMATCH, COMMON_TEST_ID_END,
-                COMMON_TEST_RESULT_NOT_TESTED, "receive response failure");
-            continue ;
-        }
         if (spdm_response_size >= sizeof(spdm_error_response_t)) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
