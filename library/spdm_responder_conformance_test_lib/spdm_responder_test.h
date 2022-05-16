@@ -7,6 +7,9 @@
 #ifndef _SPDM_RESPONDER_TEST_H_
 #define _SPDM_RESPONDER_TEST_H_
 
+/* TBD - SPDM */
+#define SPDM_MIN_DATA_TRRANSFER_SIZE_VERSION_12  42
+
 #include "library/spdm_requester_lib.h"
 
 /* TBD */
@@ -17,6 +20,10 @@ libspdm_return_t libspdm_get_capabilities(void *spdm_context);
 
 #include "library/spdm_responder_conformance_test_lib.h"
 #include "library/common_test_utility_lib.h"
+
+#define SPDM_TEST_VERSION_MASK_V10 0x00000001
+#define SPDM_TEST_VERSION_MASK_V11 0x00000002
+#define SPDM_TEST_VERSION_MASK_V12 0x00000004
 
 #define SPDM_TEST_SCRATCH_BUFFER_SIZE 0x100
 
