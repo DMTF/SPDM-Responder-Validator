@@ -593,6 +593,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
     void *spdm_context;
     libspdm_return_t status;
     spdm_get_capabilities_request_t spdm_request;
+    spdm_get_capabilities_request_t spdm_request_new;
     size_t spdm_request_size;
     spdm_error_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
@@ -664,195 +665,123 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
         }
     }
 
-    if ((support_version_bitmask & (SPDM_TEST_VERSION_MASK_V11 | SPDM_TEST_VERSION_MASK_V12)) != 0) {
-        for (index = 0; index < LIBSPDM_ARRAY_SIZE(invalid_flags_v11); index++) {
-            common_test_record_test_message ("test v11 flags - 0x%08x\n", invalid_flags_v11[index]);
+    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
+    spdm_request.header.spdm_version = version;
+    spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
+    spdm_request.header.param1 = 0;
+    spdm_request.header.param2 = 0;
+    spdm_request.reserved = 0;
+    spdm_request.ct_exponent = 0;
+    spdm_request.reserved2 = 0;
+    spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+    spdm_request.data_transfer_size = LIBSPDM_DATA_TRANSFER_SIZE;
+    spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
 
+    for (index = 0; index < LIBSPDM_ARRAY_SIZE(invalid_flags_v11) + LIBSPDM_ARRAY_SIZE(invalid_transport_size_v12); index++) {
+        libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request, sizeof(spdm_request));
+
+        if (index < LIBSPDM_ARRAY_SIZE(invalid_flags_v11)) {
+            if ((support_version_bitmask & (SPDM_TEST_VERSION_MASK_V11 | SPDM_TEST_VERSION_MASK_V12)) != 0) {
+                common_test_record_test_message ("test v11 flags - 0x%08x\n", invalid_flags_v11[index]);
+                if ((support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
+                    version = SPDM_MESSAGE_VERSION_12;
+                    spdm_request_size = sizeof(spdm_request);
+                } else {
+                    version = SPDM_MESSAGE_VERSION_11;
+                    spdm_request_size = offsetof(spdm_get_capabilities_request_t, data_transfer_size);
+                }
+                spdm_request_new.header.spdm_version = version;
+                spdm_request_new.flags = invalid_flags_v11[index];
+            } else {
+                continue;
+            }
+        } else {
             if ((support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
+                common_test_record_test_message ("test v12 transfer_size - 0x%08x\n", invalid_transport_size_v12[index]);
                 version = SPDM_MESSAGE_VERSION_12;
                 spdm_request_size = sizeof(spdm_request);
+                spdm_request_new.header.spdm_version = version;
+                spdm_request_new.data_transfer_size = invalid_transport_size_v12[index];
             } else {
-                version = SPDM_MESSAGE_VERSION_11;
-                spdm_request_size = offsetof(spdm_get_capabilities_request_t, data_transfer_size);
+                continue;
             }
-
-            libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-            spdm_request.header.spdm_version = version;
-            spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
-            spdm_request.header.param1 = 0;
-            spdm_request.header.param2 = 0;
-            spdm_request.reserved = 0;
-            spdm_request.ct_exponent = 0;
-            spdm_request.reserved2 = 0;
-            spdm_request.flags = invalid_flags_v11[index];
-            spdm_request.data_transfer_size = LIBSPDM_DATA_TRANSFER_SIZE;
-            spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
-
-            spdm_response = (void *)message;
-            spdm_response_size = sizeof(message);
-            libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                            &spdm_request, spdm_request_size,
-                                            spdm_response, &spdm_response_size);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, COMMON_TEST_ID_END,
-                    COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-                continue ;
-            }
-
-            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 1,
-                test_result, "response size - %d", spdm_response_size);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.request_response_code == SPDM_ERROR) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 2,
-                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.spdm_version == version) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 3,
-                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 4,
-                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-            if (spdm_response->header.param2 == 0) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 5,
-                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
         }
-    }
 
-    if ((support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
-        for (index = 0; index < LIBSPDM_ARRAY_SIZE(invalid_transport_size_v12); index++) {
-            common_test_record_test_message ("test v12 transfer_size - 0x%08x\n", invalid_transport_size_v12[index]);
-
-            version = SPDM_MESSAGE_VERSION_12;
-
-            libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-            spdm_request.header.spdm_version = version;
-            spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
-            spdm_request.header.param1 = 0;
-            spdm_request.header.param2 = 0;
-            spdm_request.reserved = 0;
-            spdm_request.ct_exponent = 0;
-            spdm_request.reserved2 = 0;
-            spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
-                                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
-            spdm_request.data_transfer_size = invalid_transport_size_v12[index];
-            spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
-
-            spdm_request_size = sizeof(spdm_request);
-
-            spdm_response = (void *)message;
-            spdm_response_size = sizeof(message);
-            libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                            &spdm_request, spdm_request_size,
+        spdm_response = (void *)message;
+        spdm_response_size = sizeof(message);
+        libspdm_zero_mem(message, sizeof(message));
+        status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                            &spdm_request_new, spdm_request_size,
                                             spdm_response, &spdm_response_size);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, COMMON_TEST_ID_END,
-                    COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-                continue ;
-            }
-
-            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
+        if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 1,
-                test_result, "response size - %d", spdm_response_size);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.request_response_code == SPDM_ERROR) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 2,
-                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.spdm_version == version) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 3,
-                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 4,
-                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-            if (spdm_response->header.param2 == 0) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 5,
-                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
+                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, COMMON_TEST_ID_END,
+                COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
+            continue ;
         }
+
+        if (spdm_response_size >= sizeof(spdm_error_response_t)) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 1,
+            test_result, "response size - %d", spdm_response_size);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.request_response_code == SPDM_ERROR) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 2,
+            test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.spdm_version == version) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 3,
+            test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 4,
+            test_result, "response param1 - 0x%02x", spdm_response->header.param1);
+
+        if (spdm_response->header.param2 == 0) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 5,
+            test_result, "response param2 - 0x%02x", spdm_response->header.param2);
     }
 }
 
@@ -1156,228 +1085,101 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
         return ;
     }
 
-    if ((support_version_bitmask & (SPDM_TEST_VERSION_MASK_V10 | SPDM_TEST_VERSION_MASK_V11 | SPDM_TEST_VERSION_MASK_V12)) != 0) {
-        for (index = 0; index < 1; index++) {
-            libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request, sizeof(spdm_request));
+    for (index = 0; index < 3; index++) {
+        libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request, sizeof(spdm_request));
+
+        switch (index) {
+        case 0:
             spdm_request_new.header.param2 = 1;
-
-            spdm_response = (void *)message;
-            spdm_response_size = sizeof(message);
-            libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                            &spdm_request, spdm_request_size,
-                                            spdm_response, &spdm_response_size);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ID_END,
-                    COMMON_TEST_RESULT_NOT_TESTED, "Second send/receive failure");
-                return ;
+            common_test_record_test_message ("test param2 - 1\n");
+            break;
+        case 1:
+            if (version < SPDM_MESSAGE_VERSION_11) {
+                continue;
             }
-
-            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 1,
-                test_result, "response size - %d", spdm_response_size);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.request_response_code == SPDM_ERROR) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 2,
-                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.spdm_version == version) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 3,
-                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.param1 == SPDM_ERROR_CODE_UNEXPECTED_REQUEST) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 4,
-                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-            if (spdm_response->header.param2 == 0) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 5,
-                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
-        }
-    }
-
-    if ((support_version_bitmask & (SPDM_TEST_VERSION_MASK_V11 | SPDM_TEST_VERSION_MASK_V12)) != 0) {
-        for (index = 0; index < 1; index++) {
-            libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request, sizeof(spdm_request));
             spdm_request_new.ct_exponent += 1;
             spdm_request_new.flags &= ~SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP;
-
-            spdm_response = (void *)message;
-            spdm_response_size = sizeof(message);
-            libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                            &spdm_request, spdm_request_size,
-                                            spdm_response, &spdm_response_size);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ID_END,
-                    COMMON_TEST_RESULT_NOT_TESTED, "Second send/receive failure");
-                return ;
+            common_test_record_test_message ("test ct_exponent - 1, flags - 0x%08x\n", spdm_request_new.flags);
+            break;
+        case 2:
+            if (version < SPDM_MESSAGE_VERSION_12) {
+                continue;
             }
-
-            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 1,
-                test_result, "response size - %d", spdm_response_size);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.request_response_code == SPDM_ERROR) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 2,
-                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.spdm_version == version) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 3,
-                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.param1 == SPDM_ERROR_CODE_UNEXPECTED_REQUEST) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 4,
-                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-            if (spdm_response->header.param2 == 0) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 5,
-                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
-        }
-    }
-    
-    if ((support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
-        for (index = 0; index < 1; index++) {
-            libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request, sizeof(spdm_request));
             spdm_request_new.data_transfer_size += 1;
             spdm_request_new.max_spdm_msg_size += 1;
+            common_test_record_test_message ("test data_transfer_size - 0x%08x, max_spdm_msg_size - 0x%08x\n",
+                                             spdm_request_new.data_transfer_size, spdm_request_new.max_spdm_msg_size);
+            break;
+        default:
+            break;
+        }
 
-            spdm_response = (void *)message;
-            spdm_response_size = sizeof(message);
-            libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
+        spdm_response = (void *)message;
+        spdm_response_size = sizeof(message);
+        libspdm_zero_mem(message, sizeof(message));
+        status = libspdm_send_receive_data(spdm_context, NULL, false,
                                             &spdm_request, spdm_request_size,
                                             spdm_response, &spdm_response_size);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ID_END,
-                    COMMON_TEST_RESULT_NOT_TESTED, "Second send/receive failure");
-                return ;
-            }
-
-            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
+        if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 1,
-                test_result, "response size - %d", spdm_response_size);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.request_response_code == SPDM_ERROR) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 2,
-                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.spdm_version == version) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 3,
-                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-            if (test_result == COMMON_TEST_RESULT_FAIL) {
-                continue ;
-            }
-
-            if (spdm_response->header.param1 == SPDM_ERROR_CODE_UNEXPECTED_REQUEST) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 4,
-                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-            if (spdm_response->header.param2 == 0) {
-                test_result = COMMON_TEST_RESULT_PASS;
-            } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
-            }
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 5,
-                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
+                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ID_END,
+                COMMON_TEST_RESULT_NOT_TESTED, "Second send/receive failure");
+            return ;
         }
+
+        if (spdm_response_size >= sizeof(spdm_error_response_t)) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 1,
+            test_result, "response size - %d", spdm_response_size);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.request_response_code == SPDM_ERROR) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 2,
+            test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.spdm_version == version) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 3,
+            test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            continue ;
+        }
+
+        if (spdm_response->header.param1 == SPDM_ERROR_CODE_UNEXPECTED_REQUEST) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 4,
+            test_result, "response param1 - 0x%02x", spdm_response->header.param1);
+
+        if (spdm_response->header.param2 == 0) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 5,
+            test_result, "response param2 - 0x%02x", spdm_response->header.param2);
     }
 }
 
