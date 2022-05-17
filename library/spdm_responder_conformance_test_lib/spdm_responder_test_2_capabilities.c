@@ -1186,7 +1186,6 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
 common_test_case_t m_spdm_test_group_capabilities[] = {
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_10, "spdm_test_case_capabilities_success_10", spdm_test_case_capabilities_success_10, spdm_test_case_capabilities_setup_version_10},
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_VERSION_MISMATCH, "spdm_test_case_capabilities_version_mismatch", spdm_test_case_capabilities_version_mismatch, spdm_test_case_capabilities_setup_version_all},
-    /* {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNSUPPORTED_REQUEST, "spdm_test_case_capabilities_unsupported_request", spdm_test_case_capabilities_unsupported_request, spdm_test_case_capabilities_setup_version_all}, */
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_11, "spdm_test_case_capabilities_success_11", spdm_test_case_capabilities_success_11, spdm_test_case_capabilities_setup_version_11},
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, "spdm_test_case_capabilities_invalid_request", spdm_test_case_capabilities_invalid_request, spdm_test_case_capabilities_setup_version_all},
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_12, "spdm_test_case_capabilities_success_12", spdm_test_case_capabilities_success_12, spdm_test_case_capabilities_setup_version_12},
