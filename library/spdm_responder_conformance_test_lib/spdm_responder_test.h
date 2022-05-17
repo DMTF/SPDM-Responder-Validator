@@ -46,5 +46,6 @@ uint32_t spdm_test_get_one_bit (uint32_t data, uint32_t mask);
 extern common_test_case_t m_spdm_test_group_version[];
 extern common_test_case_t m_spdm_test_group_capabilities[];
 extern common_test_case_t m_spdm_test_group_algorithms[];
+extern common_test_case_t m_spdm_test_group_digests[];
 
 #endif

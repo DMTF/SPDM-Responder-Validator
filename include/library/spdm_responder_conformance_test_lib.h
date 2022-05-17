@@ -39,8 +39,6 @@ void spdm_responder_conformance_test (void *spdm_context, const common_test_suit
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10                            1
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH                      2
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_UNEXPECTED_REQUEST                    3
-#define   SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_12_IN_DHE_SESSION             4
-#define   SPDM_RESPONDER_TEST_CASE_DIGESTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS  5
 
 #define SPDM_RESPONDER_TEST_GROUP_CERTIFICATE    5
 #define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10                             1

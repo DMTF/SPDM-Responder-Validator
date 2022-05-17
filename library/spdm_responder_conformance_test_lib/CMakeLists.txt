@@ -11,6 +11,7 @@ SET(src_spdm_responder_conformance_test_lib
     spdm_responder_test_1_version.c
     spdm_responder_test_2_capabilities.c
     spdm_responder_test_3_algorithms.c
+    spdm_responder_test_4_digests.c
     spdm_responder_test_support.c
 )
 
