@@ -8,7 +8,7 @@
 #define _SPDM_RESPONDER_TEST_H_
 
 /* TBD - SPDM */
-#define SPDM_MIN_DATA_TRRANSFER_SIZE_VERSION_12  42
+#define SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12  42
 
 #include "library/spdm_requester_lib.h"
 

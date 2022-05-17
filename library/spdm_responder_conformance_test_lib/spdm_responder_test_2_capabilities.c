@@ -637,7 +637,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP,
     };
     uint32_t invalid_transport_size_v12[] = {
-        SPDM_MIN_DATA_TRRANSFER_SIZE_VERSION_12 - 1,
+        SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12 - 1,
         LIBSPDM_MAX_SPDM_MSG_SIZE + 1,
     };
 
@@ -972,7 +972,7 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
             test_result, "response flags - 0x%08x", spdm_response->flags);
     }
 
-    if (spdm_response->data_transfer_size >= SPDM_MIN_DATA_TRRANSFER_SIZE_VERSION_12) {
+    if (spdm_response->data_transfer_size >= SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;
