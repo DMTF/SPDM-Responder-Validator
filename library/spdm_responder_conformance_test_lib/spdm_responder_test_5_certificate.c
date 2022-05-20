@@ -14,7 +14,7 @@ typedef struct {
     uint8_t slot_mask;
     uint8_t slot_count;
     uint8_t total_digest_buffer[SPDM_MAX_SLOT_COUNT * LIBSPDM_MAX_HASH_SIZE];
-} spdm_certificate_test_buffer;
+} spdm_certificate_test_buffer_t;
 #pragma pack()
 
 bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
@@ -29,7 +29,7 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
     uint32_t data32;
     uint16_t data16;
     uint8_t data8;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
     size_t index;
 
     spdm_test_context = test_context;
@@ -124,7 +124,9 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
     }
 
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
-    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_certificate_test_buffer);
+    LIBSPDM_ASSERT(sizeof(spdm_test_context->test_scratch_buffer) >= sizeof(spdm_certificate_test_buffer_t));
+    libspdm_zero_mem(test_buffer, sizeof(spdm_certificate_test_buffer_t));
+    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_certificate_test_buffer_t);
 
     spdm_version = 0;
     data_size = sizeof(spdm_version);
@@ -158,7 +160,7 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
         }
     }
 
-    spdm_test_context->test_scratch_buffer_size = offsetof(spdm_certificate_test_buffer, total_digest_buffer) +
+    spdm_test_context->test_scratch_buffer_size = offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                                                   test_buffer->hash_size + test_buffer->slot_count;
 
     return true;
@@ -178,7 +180,7 @@ bool spdm_test_case_certificate_setup_version_capabilities (void *test_context)
     uint32_t rsp_cap_flags;
     size_t data_size;
     spdm_version_number_t spdm_version;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -203,7 +205,9 @@ bool spdm_test_case_certificate_setup_version_capabilities (void *test_context)
     }
 
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
-    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_certificate_test_buffer);
+    LIBSPDM_ASSERT(sizeof(spdm_test_context->test_scratch_buffer) >= sizeof(spdm_certificate_test_buffer_t));
+    libspdm_zero_mem(test_buffer, sizeof(spdm_certificate_test_buffer_t));
+    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_certificate_test_buffer_t);
 
     spdm_version = 0;
     data_size = sizeof(spdm_version);
@@ -231,13 +235,16 @@ void spdm_test_case_certificate_success_10 (void *test_context)
     spdm_cert_chain_t *spdm_cert_chain;
     uint8_t cert_chain_hash[LIBSPDM_MAX_HASH_SIZE];
     common_test_result_t test_result;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
+                   test_buffer->hash_size + test_buffer->slot_count);
 
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
@@ -371,7 +378,7 @@ void spdm_test_case_certificate_version_mismatch (void *test_context)
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
     uint8_t mismatched_version[] = {
         SPDM_MESSAGE_VERSION_10 - 1,
         SPDM_MESSAGE_VERSION_12 + 1,
@@ -381,6 +388,9 @@ void spdm_test_case_certificate_version_mismatch (void *test_context)
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
+                   test_buffer->hash_size + test_buffer->slot_count);
 
     mismatched_version[0] = (uint8_t)(test_buffer->version - 1);
     mismatched_version[1] = (uint8_t)(test_buffer->version + 1);
@@ -474,11 +484,13 @@ void spdm_test_case_certificate_unexpected_request (void *test_context)
     size_t spdm_response_size;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     common_test_result_t test_result;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   sizeof(test_buffer->version));
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
@@ -570,13 +582,16 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
-    spdm_certificate_test_buffer *test_buffer;
+    spdm_certificate_test_buffer_t *test_buffer;
     size_t index;
     uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
+                   test_buffer->hash_size + test_buffer->slot_count);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;

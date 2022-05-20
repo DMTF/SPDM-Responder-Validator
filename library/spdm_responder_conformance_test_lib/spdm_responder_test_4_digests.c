@@ -6,6 +6,14 @@
 
 #include "spdm_responder_test.h"
 
+#pragma pack(1)
+typedef struct {
+    uint8_t  version;
+    uint32_t hash_algo;
+    uint32_t hash_size;
+} spdm_digests_test_buffer_t;
+#pragma pack()
+
 bool spdm_test_case_digests_setup_vca (void *test_context,
     spdm_version_number_t spdm_version)
 {
@@ -18,6 +26,7 @@ bool spdm_test_case_digests_setup_vca (void *test_context,
     uint32_t data32;
     uint16_t data16;
     uint8_t data8;
+    spdm_digests_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -110,6 +119,18 @@ bool spdm_test_case_digests_setup_vca (void *test_context,
         return false;
     }
 
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(sizeof(spdm_test_context->test_scratch_buffer) >= sizeof(spdm_digests_test_buffer_t));
+    libspdm_zero_mem(test_buffer, sizeof(spdm_digests_test_buffer_t));
+    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_digests_test_buffer_t);
+
+    spdm_version = 0;
+    data_size = sizeof(spdm_version);
+    libspdm_zero_mem(&parameter, sizeof(parameter));
+    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &spdm_version, &data_size);
+    test_buffer->version = (spdm_version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
+
     rsp_cap_flags = 0;
     data_size = sizeof(rsp_cap_flags);
     libspdm_zero_mem(&parameter, sizeof(parameter));
@@ -118,6 +139,10 @@ bool spdm_test_case_digests_setup_vca (void *test_context,
     if ((rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CERT_CAP) == 0) {
         return false;
     }
+
+    data_size = sizeof(test_buffer->hash_algo);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_HASH_ALGO, &parameter, &test_buffer->hash_algo, &data_size);
+    test_buffer->hash_size = libspdm_get_hash_size(test_buffer->hash_algo);
 
     return true;
 }
@@ -135,6 +160,8 @@ bool spdm_test_case_digests_setup_version_capabilities (void *test_context)
     libspdm_data_parameter_t parameter;
     uint32_t rsp_cap_flags;
     size_t data_size;
+    spdm_version_number_t spdm_version;
+    spdm_digests_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -158,6 +185,20 @@ bool spdm_test_case_digests_setup_version_capabilities (void *test_context)
         return false;
     }
 
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(sizeof(spdm_test_context->test_scratch_buffer) >= sizeof(spdm_digests_test_buffer_t));
+    libspdm_zero_mem(test_buffer, sizeof(spdm_digests_test_buffer_t));
+    spdm_test_context->test_scratch_buffer_size = sizeof(spdm_digests_test_buffer_t);
+
+    spdm_version = 0;
+    data_size = sizeof(spdm_version);
+    libspdm_zero_mem(&parameter, sizeof(parameter));
+    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &spdm_version, &data_size);
+    test_buffer->version = (spdm_version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
+
+    spdm_test_context->test_scratch_buffer_size = sizeof(test_buffer->version);
+
     return true;
 }
 
@@ -171,27 +212,18 @@ void spdm_test_case_digests_success_10 (void *test_context)
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
-    libspdm_data_parameter_t parameter;
-    size_t data_size;
-    spdm_version_number_t spdm_version;
-    uint8_t version;
-    uint32_t base_hash_algo;
+    spdm_digests_test_buffer_t *test_buffer;
     uint8_t slot_count;
     size_t index;
-    size_t hash_size;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
-
-    spdm_version = 0;
-    data_size = sizeof(spdm_version);
-    libspdm_zero_mem(&parameter, sizeof(parameter));
-    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
-    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &spdm_version, &data_size);
-    version = (spdm_version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   sizeof(spdm_digests_test_buffer_t));
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = version;
+    spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_GET_DIGESTS;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
@@ -233,7 +265,7 @@ void spdm_test_case_digests_success_10 (void *test_context)
         return ;
     }
 
-    if (spdm_response->header.spdm_version == version) {
+    if (spdm_response->header.spdm_version == test_buffer->version) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;
@@ -264,15 +296,7 @@ void spdm_test_case_digests_success_10 (void *test_context)
         }
     }
 
-    base_hash_algo = 0;
-    data_size = sizeof(base_hash_algo);
-    libspdm_zero_mem(&parameter, sizeof(parameter));
-    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
-    libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_HASH_ALGO, &parameter, &base_hash_algo, &data_size);
-
-    hash_size = libspdm_get_hash_size(base_hash_algo);
-
-    if (spdm_response_size >= sizeof(spdm_digest_response_t) + slot_count * hash_size) {
+    if (spdm_response_size >= sizeof(spdm_digest_response_t) + slot_count * test_buffer->hash_size) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;
@@ -292,9 +316,7 @@ void spdm_test_case_digests_version_mismatch (void *test_context)
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
-    spdm_version_number_t version;
-    libspdm_data_parameter_t parameter;
-    size_t data_size;
+    spdm_digests_test_buffer_t *test_buffer;
     uint8_t mismatched_version[] = {
         SPDM_MESSAGE_VERSION_10 - 1,
         SPDM_MESSAGE_VERSION_12 + 1,
@@ -303,15 +325,12 @@ void spdm_test_case_digests_version_mismatch (void *test_context)
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   sizeof(spdm_digests_test_buffer_t));
 
-    version = 0;
-    data_size = sizeof(version);
-    libspdm_zero_mem(&parameter, sizeof(parameter));
-    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
-    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &version, &data_size);
-    version = (version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
-    mismatched_version[0] = (uint8_t)(version - 1);
-    mismatched_version[1] = (uint8_t)(version + 1);
+    mismatched_version[0] = (uint8_t)(test_buffer->version - 1);
+    mismatched_version[1] = (uint8_t)(test_buffer->version + 1);
 
     for (index = 0; index < LIBSPDM_ARRAY_SIZE(mismatched_version); index++) {
         common_test_record_test_message ("test mismatched_version - 0x%02x\n", mismatched_version[index]);
@@ -358,7 +377,7 @@ void spdm_test_case_digests_version_mismatch (void *test_context)
             continue ;
         }
 
-        if (spdm_response->header.spdm_version == version) {
+        if (spdm_response->header.spdm_version == test_buffer->version) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
             test_result = COMMON_TEST_RESULT_FAIL;
@@ -400,23 +419,16 @@ void spdm_test_case_digests_unexpected_request (void *test_context)
     size_t spdm_response_size;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     common_test_result_t test_result;
-    spdm_version_number_t spdm_version;
-    libspdm_data_parameter_t parameter;
-    size_t data_size;
-    uint8_t version;
+    spdm_digests_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
-
-    spdm_version = 0;
-    data_size = sizeof(spdm_version);
-    libspdm_zero_mem(&parameter, sizeof(parameter));
-    parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
-    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &spdm_version, &data_size);
-    version = (spdm_version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
+                   sizeof(test_buffer->version));
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = version;
+    spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_GET_DIGESTS;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
@@ -458,7 +470,7 @@ void spdm_test_case_digests_unexpected_request (void *test_context)
         return ;
     }
 
-    if (spdm_response->header.spdm_version == version) {
+    if (spdm_response->header.spdm_version == test_buffer->version) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;

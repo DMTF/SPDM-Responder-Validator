@@ -25,7 +25,7 @@ libspdm_return_t libspdm_get_capabilities(void *spdm_context);
 #define SPDM_TEST_VERSION_MASK_V11 0x00000002
 #define SPDM_TEST_VERSION_MASK_V12 0x00000004
 
-#define SPDM_TEST_SCRATCH_BUFFER_SIZE 0x100
+#define SPDM_TEST_SCRATCH_BUFFER_SIZE 0x1000
 
 typedef struct {
     void *spdm_context;
