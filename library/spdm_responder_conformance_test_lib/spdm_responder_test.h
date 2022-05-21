@@ -11,12 +11,7 @@
 #define SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12  42
 
 #include "library/spdm_requester_lib.h"
-
-/* TBD */
-libspdm_return_t libspdm_get_version(void *spdm_context,
-                                     uint8_t *version_number_entry_count,
-                                     spdm_version_number_t *version_number_entry);
-libspdm_return_t libspdm_get_capabilities(void *spdm_context);
+#include "internal/libspdm_requester_lib.h"
 
 #include "library/spdm_responder_conformance_test_lib.h"
 #include "library/common_test_utility_lib.h"
@@ -48,5 +43,6 @@ extern common_test_case_t m_spdm_test_group_capabilities[];
 extern common_test_case_t m_spdm_test_group_algorithms[];
 extern common_test_case_t m_spdm_test_group_digests[];
 extern common_test_case_t m_spdm_test_group_certificate[];
+extern common_test_case_t m_spdm_test_group_challenge_auth[];
 
 #endif

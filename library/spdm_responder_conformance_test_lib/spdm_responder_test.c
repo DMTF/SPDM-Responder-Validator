@@ -11,13 +11,15 @@ extern common_test_case_t m_spdm_test_group_capabilities[];
 extern common_test_case_t m_spdm_test_group_algorithms[];
 extern common_test_case_t m_spdm_test_group_digests[];
 extern common_test_case_t m_spdm_test_group_certificate[];
+extern common_test_case_t m_spdm_test_group_challenge_auth[];
 
 common_test_group_t m_spdm_test_groups[] = {
-    {SPDM_RESPONDER_TEST_GROUP_VERSION,      "spdm_test_group_version",      m_spdm_test_group_version},
-    {SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, "spdm_test_group_capabilities", m_spdm_test_group_capabilities},
-    {SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,   "spdm_test_group_algorithms",   m_spdm_test_group_algorithms},
-    {SPDM_RESPONDER_TEST_GROUP_DIGESTS,      "spdm_test_group_digests",      m_spdm_test_group_digests},
-    {SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,  "spdm_test_group_certificate",  m_spdm_test_group_certificate},
+    {SPDM_RESPONDER_TEST_GROUP_VERSION,        "spdm_test_group_version",        m_spdm_test_group_version},
+    {SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,   "spdm_test_group_capabilities",   m_spdm_test_group_capabilities},
+    {SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,     "spdm_test_group_algorithms",     m_spdm_test_group_algorithms},
+    {SPDM_RESPONDER_TEST_GROUP_DIGESTS,        "spdm_test_group_digests",        m_spdm_test_group_digests},
+    {SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,    "spdm_test_group_certificate",    m_spdm_test_group_certificate},
+    {SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, "spdm_test_group_challenge_auth", m_spdm_test_group_challenge_auth},
     {COMMON_TEST_ID_END, NULL, NULL},
 };
 
