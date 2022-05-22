@@ -32,27 +32,27 @@ Reference:
 
 [9. Test for FINISH_RSP](doc/9.FinishRsp.md)
 
-[10. Test for PSK_EXCHANGE_RSP](doc/10.PskExchangeRsp.md)
+10. Test for PSK_EXCHANGE_RSP
 
-[11. Test for PSK_FINISH_RSP](doc/11.PskFinishRsp.md)
+11. Test for PSK_FINISH_RSP
 
 [12. Test for HEARTBEAT_ACK](doc/12.HeartbeatAck.md)
 
 [13. Test for KEY_UPDATE_ACK](doc/13.KeyUpdateAck.md)
 
-[14. Test for ENCAPSULATED_REQUEST](doc/14.EncapsulatedRequest.md)
+14. Test for ENCAPSULATED_REQUEST
 
-[15. Test for ENCAPSULATED_RESPONSE_ACK](doc/15.EncapsulatedResponseAck.md)
+15. Test for ENCAPSULATED_RESPONSE_ACK
 
 [16. Test for END_SESSION_ACK](doc/16.EndSessionAck.md)
 
-[17. Test for CSR](doc/17.Csr.md)
+17. Test for CSR
 
-[18. Test for SET_CERTIFICATE_RSP](doc/18.SetCertificateRsp.md)
+18. Test for SET_CERTIFICATE_RSP
 
-[19. Test for CHUNK_SEND_ACK](doc/19.ChunkSendAck.md)
+19. Test for CHUNK_SEND_ACK
 
-[20. Test for CHUNK_RESPONSE](doc/20.ChunkResponse.md)
+20. Test for CHUNK_RESPONSE
 
 ### Test Assumption
 
