@@ -14,6 +14,7 @@ SET(src_spdm_responder_conformance_test_lib
     spdm_responder_test_4_digests.c
     spdm_responder_test_5_certificate.c
     spdm_responder_test_6_challenge_auth.c
+    spdm_responder_test_7_measurements.c
     spdm_responder_test_support.c
 )
 

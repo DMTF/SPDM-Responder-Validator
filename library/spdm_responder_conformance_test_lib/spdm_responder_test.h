@@ -44,5 +44,6 @@ extern common_test_case_t m_spdm_test_group_algorithms[];
 extern common_test_case_t m_spdm_test_group_digests[];
 extern common_test_case_t m_spdm_test_group_certificate[];
 extern common_test_case_t m_spdm_test_group_challenge_auth[];
+extern common_test_case_t m_spdm_test_group_measurements[];
 
 #endif

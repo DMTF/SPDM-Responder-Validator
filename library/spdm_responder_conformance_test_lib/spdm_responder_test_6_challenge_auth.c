@@ -170,7 +170,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     }
 
     spdm_test_context->test_scratch_buffer_size = offsetof(spdm_challenge_auth_test_buffer_t, total_digest_buffer) +
-                                                  test_buffer->hash_size + test_buffer->slot_count;
+                                                  test_buffer->hash_size * test_buffer->slot_count;
 
     return true;
 }
@@ -281,7 +281,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    offsetof(spdm_challenge_auth_test_buffer_t, total_digest_buffer) +
-                   test_buffer->hash_size + test_buffer->slot_count);
+                   test_buffer->hash_size * test_buffer->slot_count);
 
     switch (version) {
     case SPDM_MESSAGE_VERSION_10:
@@ -648,7 +648,7 @@ void spdm_test_case_challenge_auth_version_mismatch (void *test_context)
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    offsetof(spdm_challenge_auth_test_buffer_t, total_digest_buffer) +
-                   test_buffer->hash_size + test_buffer->slot_count);
+                   test_buffer->hash_size * test_buffer->slot_count);
 
     mismatched_version[0] = (uint8_t)(test_buffer->version - 1);
     mismatched_version[1] = (uint8_t)(test_buffer->version + 1);
@@ -845,7 +845,7 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    offsetof(spdm_challenge_auth_test_buffer_t, total_digest_buffer) +
-                   test_buffer->hash_size + test_buffer->slot_count);
+                   test_buffer->hash_size * test_buffer->slot_count);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
