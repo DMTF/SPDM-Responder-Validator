@@ -14,6 +14,7 @@ common_test_group_t m_spdm_test_groups[] = {
     {SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,    "spdm_test_group_certificate",    m_spdm_test_group_certificate},
     {SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, "spdm_test_group_challenge_auth", m_spdm_test_group_challenge_auth},
     {SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,   "spdm_test_group_measurements",   m_spdm_test_group_measurements},
+    {SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,  "spdm_test_group_heartbeat_ack",  m_spdm_test_group_heartbeat_ack},
     {COMMON_TEST_ID_END, NULL, NULL},
 };
 
