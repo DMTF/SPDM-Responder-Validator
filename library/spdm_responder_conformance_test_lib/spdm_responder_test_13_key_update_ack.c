@@ -46,8 +46,7 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                 SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
-                SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-                SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HANDSHAKE_IN_THE_CLEAR_CAP;
+                SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
@@ -978,7 +977,7 @@ void spdm_test_case_key_update_ack_session_required (void *test_context)
         test_result = COMMON_TEST_RESULT_FAIL;
     }
     common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SESSION_REQUIRED, 4,
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK, SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SESSION_REQUIRED, 4,
         test_result, "response param1 - 0x%02x", spdm_response->header.param1);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return ;

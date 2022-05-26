@@ -327,7 +327,6 @@ void spdm_test_case_capabilities_success_11 (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
@@ -506,7 +505,6 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
             /* SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP | */
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-            SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP,
@@ -516,7 +514,6 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
             /* SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP | */
-            /* SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER | */
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP,
@@ -526,7 +523,6 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-            SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
             /* SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP | */
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP,
@@ -565,7 +561,6 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
@@ -703,7 +698,6 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
@@ -927,7 +921,6 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
-                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_PSK_CAP_REQUESTER |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
