@@ -16,6 +16,7 @@ SET(src_spdm_responder_conformance_test_lib
     spdm_responder_test_6_challenge_auth.c
     spdm_responder_test_7_measurements.c
     spdm_responder_test_12_heartbeat_ack.c
+    spdm_responder_test_13_key_update_ack.c
     spdm_responder_test_16_end_session_ack.c
     spdm_responder_test_support.c
 )

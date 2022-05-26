@@ -46,6 +46,7 @@ extern common_test_case_t m_spdm_test_group_certificate[];
 extern common_test_case_t m_spdm_test_group_challenge_auth[];
 extern common_test_case_t m_spdm_test_group_measurements[];
 extern common_test_case_t m_spdm_test_group_heartbeat_ack[];
+extern common_test_case_t m_spdm_test_group_key_update_ack[];
 extern common_test_case_t m_spdm_test_group_end_session_ack[];
 
 #endif

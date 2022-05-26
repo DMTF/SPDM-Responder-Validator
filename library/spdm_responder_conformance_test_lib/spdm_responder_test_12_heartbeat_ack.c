@@ -256,105 +256,6 @@ void spdm_test_case_heartbeat_ack_success_11_dhe (void *test_context)
     }
 }
 
-void spdm_test_case_heartbeat_ack_close_in_dhe_session (void *test_context)
-{
-    spdm_test_context_t *spdm_test_context;
-    void *spdm_context;
-    libspdm_return_t status;
-    spdm_heartbeat_request_t spdm_request;
-    spdm_heartbeat_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
-    size_t spdm_response_size;
-    common_test_result_t test_result;
-    spdm_heartbeat_ack_test_buffer_t *test_buffer;
-
-    spdm_test_context = test_context;
-    spdm_context = spdm_test_context->spdm_context;
-    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
-    LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
-                   sizeof(spdm_heartbeat_ack_test_buffer_t));
-
-    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = test_buffer->version;
-    spdm_request.header.request_response_code = SPDM_END_SESSION;
-    spdm_request.header.param1 = 0;
-    spdm_request.header.param2 = 0;
-
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
-    if (LIBSPDM_STATUS_IS_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "send/receive end_session failure");
-        return ;
-    }
-    if (spdm_response->header.request_response_code != SPDM_END_SESSION_ACK) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "end_session response failure");
-        return ;
-    }
-
-    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = test_buffer->version;
-    spdm_request.header.request_response_code = SPDM_HEARTBEAT;
-    spdm_request.header.param1 = 0;
-    spdm_request.header.param2 = 0;
-
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
-    if (LIBSPDM_STATUS_IS_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, 1,
-            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-        return ;
-    }
-
-    if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, 1,
-        test_result, "response size - %d", spdm_response_size);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return ;
-    }
-
-    if (spdm_response->header.request_response_code == SPDM_ERROR) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, 2,
-        test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return ;
-    }
-
-    if (spdm_response->header.spdm_version == test_buffer->version) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK, SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, 3,
-        test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return ;
-    }
-}
-
 void spdm_test_case_heartbeat_ack_version_mismatch (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
@@ -658,7 +559,6 @@ void spdm_test_case_heartbeat_ack_session_required (void *test_context)
 
 common_test_case_t m_spdm_test_group_heartbeat_ack[] = {
     {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION, "spdm_test_case_heartbeat_ack_success_11_dhe", spdm_test_case_heartbeat_ack_success_11_dhe, spdm_test_case_heartbeat_ack_setup_version_any},
-//  {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_CLOSE_IN_DHE_SESSION, "spdm_test_case_heartbeat_ack_close_in_dhe_session", spdm_test_case_heartbeat_ack_close_in_dhe_session, spdm_test_case_heartbeat_ack_setup_version_any},
     {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_VERSION_MISMATCH_IN_DHE_SESSION, "spdm_test_case_heartbeat_ack_version_mismatch", spdm_test_case_heartbeat_ack_version_mismatch, spdm_test_case_heartbeat_ack_setup_version_any},
     {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, "spdm_test_case_heartbeat_ack_unexpected_request", spdm_test_case_heartbeat_ack_unexpected_request, spdm_test_case_heartbeat_ack_setup_version_any_session_cap},
     {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_REQUIRED, "spdm_test_case_heartbeat_ack_session_required", spdm_test_case_heartbeat_ack_session_required, spdm_test_case_heartbeat_ack_setup_version_12},
