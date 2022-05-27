@@ -15,6 +15,7 @@ common_test_group_t m_spdm_test_groups[] = {
     {SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH,    "spdm_test_group_challenge_auth",    m_spdm_test_group_challenge_auth},
     {SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,      "spdm_test_group_measurements",      m_spdm_test_group_measurements},
     {SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,  "spdm_test_group_key_exchange_rsp",  m_spdm_test_group_key_exchange_rsp},
+    {SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,        "spdm_test_group_finish_rsp",        m_spdm_test_group_finish_rsp},
     {SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,     "spdm_test_group_heartbeat_ack",     m_spdm_test_group_heartbeat_ack},
     {SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,    "spdm_test_group_key_update_ack",    m_spdm_test_group_key_update_ack},
     {SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,   "spdm_test_group_end_session_ack",   m_spdm_test_group_end_session_ack},

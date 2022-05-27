@@ -6,10 +6,6 @@
 
 #include "spdm_responder_test.h"
 
-#define SPDM_MESSAGE_A_MASK_VCA             0x1
-#define SPDM_MESSAGE_B_MASK_GET_DIGESTS     0x2
-#define SPDM_MESSAGE_B_MASK_GET_CERTIFICATE 0x4
-
 #pragma pack(1)
 typedef struct {
     uint8_t  version;
@@ -1160,7 +1156,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
                 test_buffer->dhe_named_group, true);
     if (dhe_context == NULL) {
         common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ID_END,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
         return ;
     }
@@ -1173,7 +1169,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
         libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
         common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ID_END,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
         return ;
     }
