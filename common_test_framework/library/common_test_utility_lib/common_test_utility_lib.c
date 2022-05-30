@@ -1,49 +1,49 @@
 /**
-    Copyright Notice:
-    Copyright 2021 DMTF. All rights reserved.
-    License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
-**/
+ *  Copyright Notice:
+ *  Copyright 2021 DMTF. All rights reserved.
+ *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
+ **/
 
 #include "library/common_test_utility_lib.h"
 #include "stdio.h"
 
 /**
-
-  +-------------------+
-  | test suite result |
-  +-------------------+
-        |            +-------------------+
-        +----------->| test group result |
-        |            +-------------------+
-        |                  |            +-------------------+
-        |                  +----------->| test case result  |
-        |                  |            +-------------------+
-        |                  |
-        |                  |            +-------------------+
-        |                  +----------->| test case result  |
-        |                               +-------------------+
-        |            +-------------------+
-        +----------->| test group result |
-                     +-------------------+
-
-**/
+ *
+ +-------------------+
+ | test suite result |
+ +-------------------+
+ |            +-------------------+
+ +----------->| test group result |
+ |            +-------------------+
+ |                  |            +-------------------+
+ |                  +----------->| test case result  |
+ |                  |            +-------------------+
+ |                  |
+ |                  |            +-------------------+
+ |                  +----------->| test case result  |
+ |                               +-------------------+
+ |            +-------------------+
+ +----------->| test group result |
+ +-------------------+
+ |
+ **/
 
 typedef struct {
-    uint32_t                    case_id;
-    uint32_t                    total_pass;
-    uint32_t                    total_fail;
+    uint32_t case_id;
+    uint32_t total_pass;
+    uint32_t total_fail;
 } common_test_case_result_t;
 
 typedef struct {
-    uint32_t                    group_id;
-    uint32_t                    total_pass;
-    uint32_t                    total_fail;
+    uint32_t group_id;
+    uint32_t total_pass;
+    uint32_t total_fail;
     common_test_case_result_t   *test_case_results;
 } common_test_group_result_t;
 
 typedef struct {
-    uint32_t                    total_pass;
-    uint32_t                    total_fail;
+    uint32_t total_pass;
+    uint32_t total_fail;
     common_test_group_result_t  *test_group_results;
 } common_test_suite_result_t;
 
@@ -69,7 +69,8 @@ char *common_test_result_to_string (common_test_result_t test_result)
     }
 }
 
-common_test_suite_result_t *common_test_allocate_test_suite_result (const common_test_suite_t *test_suite)
+common_test_suite_result_t *common_test_allocate_test_suite_result (
+    const common_test_suite_t *test_suite)
 {
     uint32_t group_index;
     uint32_t case_index;
@@ -86,13 +87,13 @@ common_test_suite_result_t *common_test_allocate_test_suite_result (const common
     group_count = 0;
     case_count = 0;
     for (group_index = 0; ; group_index++) {
-        group_count ++;
+        group_count++;
         test_group = &test_suite->test_groups[group_index];
         if (test_group->group_id == COMMON_TEST_ID_END) {
             break;
         }
         for (case_index = 0; ; case_index++) {
-            case_count ++;
+            case_count++;
             test_case = &test_group->test_cases[case_index];
             if (test_case->case_id == COMMON_TEST_ID_END) {
                 break;
@@ -130,7 +131,7 @@ common_test_suite_result_t *common_test_allocate_test_suite_result (const common
 
         case_count = 0;
         for (case_index = 0; ; case_index++) {
-            case_count ++;
+            case_count++;
             test_case = &test_group->test_cases[case_index];
             test_case_result = &test_group_result->test_case_results[case_index];
             test_case_result->case_id = test_case->case_id;
@@ -164,9 +165,9 @@ void common_test_print_test_suite_result (
     common_test_case_result_t *test_case_result;
 
     fprintf (m_log_file, "\ntest suite (%s) - pass: %d, fail: %d\n",
-        test_suite->name,
-        test_suite_result->total_pass,
-        test_suite_result->total_fail);
+             test_suite->name,
+             test_suite_result->total_pass,
+             test_suite_result->total_fail);
 
     for (group_index = 0; ; group_index++) {
         test_group = &test_suite->test_groups[group_index];
@@ -175,11 +176,11 @@ void common_test_print_test_suite_result (
             break;
         }
         fprintf (m_log_file,
-            "test group %d (%s) - pass: %d, fail: %d\n",
-            test_group_result->group_id,
-            test_group->group_name,
-            test_group_result->total_pass,
-            test_group_result->total_fail);
+                 "test group %d (%s) - pass: %d, fail: %d\n",
+                 test_group_result->group_id,
+                 test_group->group_name,
+                 test_group_result->total_pass,
+                 test_group_result->total_fail);
         for (case_index = 0; ; case_index++) {
             test_case = &test_group->test_cases[case_index];
             test_case_result = &test_group_result->test_case_results[case_index];
@@ -187,12 +188,12 @@ void common_test_print_test_suite_result (
                 break;
             }
             fprintf (m_log_file,
-                "  test case %d.%d (%s) - pass: %d, fail: %d\n",
-                test_group_result->group_id,
-                test_case_result->case_id,
-                test_case->case_name,
-                test_case_result->total_pass,
-                test_case_result->total_fail);
+                     "  test case %d.%d (%s) - pass: %d, fail: %d\n",
+                     test_group_result->group_id,
+                     test_case_result->case_id,
+                     test_case->case_name,
+                     test_case_result->total_pass,
+                     test_case_result->total_fail);
         }
     }
 
@@ -258,10 +259,10 @@ void common_test_record_test_assertion (
     va_list marker;
 
     fprintf(m_log_file,
-        "    test assertion %d.%d.%d - %s",
-        group_id, case_id, assertion_id,
-        common_test_result_to_string (test_result)
-        );
+            "    test assertion %d.%d.%d - %s",
+            group_id, case_id, assertion_id,
+            common_test_result_to_string (test_result)
+            );
 
     if (message_format != NULL) {
         va_start(marker, message_format);
@@ -294,7 +295,7 @@ void common_test_record_test_message(const char *message_format, ...)
 }
 
 common_test_action_t common_test_get_test_group_action (
-    uint32_t                         group_id,
+    uint32_t group_id,
     const common_test_suite_config_t *test_suite_config)
 {
     uint32_t group_index;
@@ -323,8 +324,8 @@ common_test_action_t common_test_get_test_group_action (
 }
 
 common_test_action_t common_test_get_test_case_action (
-    uint32_t                         group_id,
-    uint32_t                         case_id,
+    uint32_t group_id,
+    uint32_t case_id,
     const common_test_suite_config_t *test_suite_config)
 {
     uint32_t group_index;
@@ -383,7 +384,7 @@ void common_test_run_test_suite (
     m_log_file = fopen (COMMON_TEST_LOG_FILE_NAME, "w+");
     if (m_log_file == NULL) {
         printf("fail to create log file: %s", COMMON_TEST_LOG_FILE_NAME);
-        return ;
+        return;
     }
 
     m_test_suite_result = common_test_allocate_test_suite_result (test_suite);
@@ -405,18 +406,24 @@ void common_test_run_test_suite (
         }
         test_action = common_test_get_test_group_action (test_group->group_id, test_suite_config);
         if (test_action == COMMON_TEST_ACTION_SKIP) {
-            fprintf(m_log_file, "test group %d (%s) - skipped\n", test_group->group_id, test_group->group_name);
+            fprintf(m_log_file, "test group %d (%s) - skipped\n", test_group->group_id,
+                    test_group->group_name);
             continue;
         }
         assert (test_group->test_cases != NULL);
-        fprintf(m_log_file, "test group %d (%s) - start\n", test_group->group_id, test_group->group_name);
+        fprintf(m_log_file, "test group %d (%s) - start\n", test_group->group_id,
+                test_group->group_name);
         if (test_group->group_setup_func != NULL) {
-            fprintf(m_log_file, "test group %d (%s) - setup enter\n", test_group->group_id, test_group->group_name);
+            fprintf(m_log_file, "test group %d (%s) - setup enter\n", test_group->group_id,
+                    test_group->group_name);
             result = test_group->group_setup_func (test_context);
-            fprintf(m_log_file, "test group %d (%s) - setup exiit (%d)\n", test_group->group_id, test_group->group_name, result);
+            fprintf(m_log_file, "test group %d (%s) - setup exiit (%d)\n", test_group->group_id,
+                    test_group->group_name, result);
             if (!result) {
                 common_test_record_test_assertion (test_group->group_id, COMMON_TEST_ID_END,
-                    COMMON_TEST_ID_END, COMMON_TEST_RESULT_NOT_TESTED, "group_setup_func fail");
+                                                   COMMON_TEST_ID_END,
+                                                   COMMON_TEST_RESULT_NOT_TESTED,
+                                                   "group_setup_func fail");
                 continue;
             }
         }
@@ -428,58 +435,64 @@ void common_test_run_test_suite (
             if (test_case->case_id == COMMON_TEST_ID_SKIP) {
                 continue;
             }
-            test_action = common_test_get_test_case_action (test_group->group_id, test_case->case_id, test_suite_config);
+            test_action = common_test_get_test_case_action (test_group->group_id,
+                                                            test_case->case_id, test_suite_config);
             if (test_action == COMMON_TEST_ACTION_SKIP) {
                 fprintf(m_log_file, "  test case %d.%d (%s) - skipped\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
                 continue;
             }
             if (test_case->case_setup_func != NULL) {
                 fprintf(m_log_file, "  test case %d.%d (%s) - setup enter\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
                 result = test_case->case_setup_func (test_context);
                 fprintf(m_log_file, "  test case %d.%d (%s) - setup exit (%d)\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name,
-                    result);
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name,
+                        result);
                 if (!result) {
                     common_test_record_test_assertion (test_group->group_id, test_case->case_id,
-                        COMMON_TEST_ID_END, COMMON_TEST_RESULT_NOT_TESTED, "case_setup_func fail");
+                                                       COMMON_TEST_ID_END,
+                                                       COMMON_TEST_RESULT_NOT_TESTED,
+                                                       "case_setup_func fail");
                     continue;
                 }
             }
             fprintf(m_log_file, "  test case %d.%d (%s) - start\n",
-                test_group->group_id,
-                test_case->case_id,
-                test_case->case_name);
+                    test_group->group_id,
+                    test_case->case_id,
+                    test_case->case_name);
             test_case->case_func (test_context);
             fprintf(m_log_file, "  test case %d.%d (%s) - stop\n",
-                test_group->group_id,
-                test_case->case_id,
-                test_case->case_name);
+                    test_group->group_id,
+                    test_case->case_id,
+                    test_case->case_name);
             if (test_case->case_teardown_func != NULL) {
                 fprintf(m_log_file, "  test case %d.%d (%s) - teardown enter\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
                 test_case->case_teardown_func (test_context);
                 fprintf(m_log_file, "  test case %d.%d (%s) - teardown exit\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
             }
         }
         if (test_group->group_teardown_func != NULL) {
-            fprintf(m_log_file, "test group %d (%s) - teardown enter\n", test_group->group_id, test_group->group_name);
+            fprintf(m_log_file, "test group %d (%s) - teardown enter\n", test_group->group_id,
+                    test_group->group_name);
             test_group->group_teardown_func (test_context);
-            fprintf(m_log_file, "test group %d (%s) - teardown exit\n", test_group->group_id, test_group->group_name);
+            fprintf(m_log_file, "test group %d (%s) - teardown exit\n", test_group->group_id,
+                    test_group->group_name);
         }
-        fprintf(m_log_file, "test group %d (%s) - stop\n", test_group->group_id, test_group->group_name);
+        fprintf(m_log_file, "test group %d (%s) - stop\n", test_group->group_id,
+                test_group->group_name);
     }
 
     common_test_print_test_suite_result (test_suite, m_test_suite_result);

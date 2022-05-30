@@ -1,8 +1,8 @@
 /**
-    Copyright Notice:
-    Copyright 2021 DMTF. All rights reserved.
-    License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
-**/
+ *  Copyright Notice:
+ *  Copyright 2021 DMTF. All rights reserved.
+ *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
+ **/
 
 #ifndef _SPDM_RESPONDER_TEST_H_
 #define _SPDM_RESPONDER_TEST_H_
@@ -30,12 +30,12 @@ typedef struct {
 } spdm_test_context_t;
 
 /**
-  return one bit in the data according to the mask
-
-  @retval 0                if (data & mask) is 0.
-  @retval 0xFFFFFFFF       if (data & mask) includes more than one bit.
-  @return (data & mask)    if (data & mask) includes one bit.
-**/
+ * return one bit in the data according to the mask
+ *
+ * @retval 0                if (data & mask) is 0.
+ * @retval 0xFFFFFFFF       if (data & mask) includes more than one bit.
+ * @return (data & mask)    if (data & mask) includes one bit.
+ **/
 uint32_t spdm_test_get_one_bit (uint32_t data, uint32_t mask);
 
 extern common_test_case_t m_spdm_test_group_version[];

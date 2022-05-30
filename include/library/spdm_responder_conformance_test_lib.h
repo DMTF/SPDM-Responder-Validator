@@ -1,8 +1,8 @@
 /**
-    Copyright Notice:
-    Copyright 2021 DMTF, Componolit. All rights reserved.
-    License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/libspdm/blob/main/LICENSE.md
-**/
+ *  Copyright Notice:
+ *  Copyright 2021 DMTF, Componolit. All rights reserved.
+ *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/libspdm/blob/main/LICENSE.md
+ **/
 
 #ifndef __SPDM_RESPONDER_CONFORMANCE_TEST_LIB_H__
 #define __SPDM_RESPONDER_CONFORMANCE_TEST_LIB_H__
@@ -10,7 +10,8 @@
 #include "library/spdm_common_lib.h"
 #include "library/common_test_utility_lib.h"
 
-void spdm_responder_conformance_test (void *spdm_context, const common_test_suite_config_t *test_config);
+void spdm_responder_conformance_test (void *spdm_context,
+                                      const common_test_suite_config_t *test_config);
 
 /* below definition should be aligned with test case description in doc dir */
 
@@ -86,17 +87,28 @@ void spdm_responder_conformance_test (void *spdm_context, const common_test_suit
 #define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR           8
 
 #define SPDM_RESPONDER_TEST_GROUP_FINISH_RSP    9
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11                                            1
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11_HS_CLEAR                                   2
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_VERSION_MISMATCH                                      3
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST                                    4
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST_IN_SESSION                         5
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_INVALID_REQUEST                                       6
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA                     7
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA_HS_CLEAR            8
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12                                            9
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR                                   10
-#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED                                      11
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11                                            \
+    1
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11_HS_CLEAR                                   \
+    2
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_VERSION_MISMATCH                                      \
+    3
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST                                    \
+    4
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST_IN_SESSION                         \
+    5
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_INVALID_REQUEST                                       \
+    6
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA                     \
+    7
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA_HS_CLEAR            \
+    8
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12                                            \
+    9
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR                                   \
+    10
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED                                      \
+    11
 
 #define SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK    12
 #define   SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION             1
