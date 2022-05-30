@@ -271,11 +271,9 @@ bool spdm_test_case_measurements_setup_version_any_session_cap (void *test_conte
     };
     bool result;
     spdm_test_context_t *spdm_test_context;
-    void *spdm_context;
     spdm_measurements_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
-    spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
 
     result = spdm_test_case_measurements_setup_vca_challenge_session (test_context, false,
