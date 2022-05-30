@@ -60,25 +60,25 @@ SPDM specification defines vendor-defined algorithms as implementation choice. T
 
 SPDM specification defines vendor-defined raw public key provision as implementation choice. The conformance test only validates the SPDM defined X.509 style public certificate chain and it does not support the vendor-defined raw public key. If a device does not support SPDM defined X.509 style public certificate chain (CERT_CAP) and only supports the vendor-defined raw public key (PUB_KEY_ID_CAP in 1.1+), then there is no way to run the certificate related test.
 
-Some tests may require the responder to provision the environment. For example, mutual authentication may require the responder to provision the certificate from the requester. Pre-shared Key (PSK) exchange requires the requester and responder to provision the PSK. CSR retrival requires the requester to provide OEM-specific valid RequesterInfo. The prerequisites must be satisfied if the responder chooses to run these tests.
-
 The device is not in update mode during test.
 
-Some tests rely on the basic SPDM infrastructure. For example, RESPOND_IF_READY is used for ERROR(ResponseNotReady) if the crypto timeout happens, ENCAPSULATED message is used if mutual authentication is needed, CHUNKING is used if the message is too long. Fail to support those SPDM infrastructure may cause the related test abort.
+Some tests rely on the basic SPDM infrastructure. For example, RESPOND_IF_READY is used for ERROR(ResponseNotReady) if the crypto timeout happens, CHUNKING is used if the message is too long. Fail to support those SPDM infrastructure may cause the related test abort.
 
 ### Test Criteria
 
 The test checks what is mandated in the SPDM specification.
 If the test passes, there will be a PASS assertion. Otherwise, there will be a FAIL assertion.
 
-Some features in SPDM specification are recommended or optional, but not mandated. Those features may be tested as well.
+Some features in SPDM specification are recommended or optional, but not mandated. Those features may or might not be tested.
 If the test passes, there will be a PASS assertion. If the feature is not implemented, there will NOT be a FAIL assertion.
-
-Some SPDM flows (such as mutual authentication and responder initiated key update) are controlled and triggered by the responder. The flow may be tested. If the responder has such capabilities and triggers the flows, then the test will be performed. Otherwise the test will be ignored and will NOT be a FAIL assertion. Once the test is performed, a PASS assertion or FAIL assertion will be given.
 
 ### Test Not Covered
 
 The test for SPDM vendor defined message is not covered.
+
+Some tests may require the responder to provision the environment. For example, mutual authentication may require the responder to provision the certificate from the requester. Pre-shared Key (PSK) exchange requires the requester and responder to provision the PSK. CSR retrival requires the requester to provide OEM-specific valid RequesterInfo. These tests are not covered.
+
+Some SPDM flows (such as mutual authentication and responder initiated key update) are controlled and triggered by the responder. These tests are not covered.
 
 ## Test Configuration
 
@@ -90,19 +90,15 @@ The test cases implementation is based uon DMTF [libspdm](https://github.com/DMT
 
 The test case implemenmtation supports below transport binding by default:
 
-   The MCTP and secured MCTP :
+   MCTP and secured MCTP follow :
 
    [DSP0275](https://www.dmtf.org/dsp/DSP0275)  Security Protocol and Data Model (SPDM) over MCTP Binding Specification (version [1.0.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0275_1.0.0.pdf))
 
    [DSP0276](https://www.dmtf.org/dsp/DSP0276)  Secured MCTP Messages over MCTP Binding Specification (version [1.0.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0276_1.0.0.pdf))
 
-   The PCI DOE :
+   PCIE follows :
 
-   PCI  Data Object Exchange (DOE) [ECN](https://members.pcisig.com/wg/PCI-SIG/document/14143)
-
-   PCI  Component Measurement and Authentication (CMA) [ECN](https://members.pcisig.com/wg/PCI-SIG/document/14236)
-
-   PCI  Integrity and Data Encryption (IDE) [ECN](https://members.pcisig.com/wg/PCI-SIG/document/15149)
+   PCI Express Base Specification Revision 6.0 (version [1.0](https://members.pcisig.com/wg/PCI-SIG/document/16609))
 
 ### Add other Transport Layer Binding
 
