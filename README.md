@@ -14,6 +14,8 @@ Reference:
 
 ## Test Design
 
+The test case design is described below.
+
 [1. Test for VERSION](doc/1.Version.md)
 
 [2. Test for CAPABILITIES](doc/2.Capabilities.md)
@@ -80,10 +82,6 @@ Some tests may require the responder to provision the environment. For example, 
 
 Some SPDM flows (such as mutual authentication and responder initiated key update) are controlled and triggered by the responder. These tests are not covered.
 
-## Test Configuration
-
-TBD ...
-
 ## Test Implementation
 
 The test cases implementation is based uon DMTF [libspdm](https://github.com/DMTF/libspdm). The test cases checkpoint has no assumption on libspdm implementation.
@@ -100,15 +98,223 @@ The test case implemenmtation supports below transport binding by default:
 
    PCI Express Base Specification Revision 6.0 (version [1.0](https://members.pcisig.com/wg/PCI-SIG/document/16609))
 
-### Add other Transport Layer Binding
+### Test Integration
 
-TBD ...
+   The test suite header file is [spdm_responder_conformance_test_lib.h](https://github.com/DMTF/SPDM-Responder-Validator/blob/master/include/library/spdm_responder_conformance_test_lib.h).
+
+   The test integrator shall link the test suite - [spdm_responder_conformance_test_lib](https://github.com/DMTF/SPDM-Responder-Validator/tree/master/library/spdm_responder_conformance_test_lib) to the test application.
+
+   The entrypoint is `spdm_responder_conformance_test()`.
+   ```
+   void spdm_responder_conformance_test (void *spdm_context,
+                                         const common_test_suite_config_t *test_config);
+   ```
+   
+   The test integrator shall preprare a `spdm_context` and initialize it with required functions callbacks.
+   ```
+void *spdm_test_client_init(void)
+{
+    void *spdm_context;
+    size_t scratch_buffer_size;
+
+    m_spdm_context = (void *)malloc(libspdm_get_context_size());
+    if (m_spdm_context == NULL) {
+        return NULL;
+    }
+    spdm_context = m_spdm_context;
+    libspdm_init_context(spdm_context);
+    scratch_buffer_size = libspdm_get_sizeof_required_scratch_buffer(m_spdm_context);
+    m_scratch_buffer = (void *)malloc(scratch_buffer_size);
+    if (m_scratch_buffer == NULL) {
+        free(m_spdm_context);
+        m_spdm_context = NULL;
+        return NULL;
+    }
+
+    libspdm_register_device_io_func(spdm_context, spdm_device_send_message,
+                                    spdm_device_receive_message);
+    if (m_use_transport_layer == SOCKET_TRANSPORT_TYPE_MCTP) {
+        libspdm_register_transport_layer_func(
+            spdm_context, libspdm_transport_mctp_encode_message,
+            libspdm_transport_mctp_decode_message,
+            libspdm_transport_mctp_get_header_size);
+    } else if (m_use_transport_layer == SOCKET_TRANSPORT_TYPE_PCI_DOE) {
+        libspdm_register_transport_layer_func(
+            spdm_context, libspdm_transport_pci_doe_encode_message,
+            libspdm_transport_pci_doe_decode_message,
+            libspdm_transport_pci_doe_get_header_size);
+    } else {
+        return NULL;
+    }
+    libspdm_register_device_buffer_func(spdm_context,
+                                        spdm_device_acquire_sender_buffer,
+                                        spdm_device_release_sender_buffer,
+                                        spdm_device_acquire_receiver_buffer,
+                                        spdm_device_release_receiver_buffer);
+    libspdm_set_scratch_buffer (spdm_context, m_scratch_buffer, scratch_buffer_size);
+
+    return m_spdm_context;
+}
+   ```
+
+   The test integrator shall preprare a `test_config` and initialize it with required test cases.
+   ```
+common_test_case_config_t m_spdm_test_group_version_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_capabilities_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_11, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_12, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_algorithms_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_11, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_digests_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_certificate_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SPDM_X509_CERTIFICATE, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_challenge_auth_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B1C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B2C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B3C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B1C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B2C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B3C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B4C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B1C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B2C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B3C1, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B4C1, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_measurements_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_10, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_11, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_12, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_12_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_key_exchange_rsp_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_finish_rsp_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST_IN_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_heartbeat_ack_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_VERSION_MISMATCH_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_REQUIRED, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_key_update_ack_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_VERSION_MISMATCH_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_INVALID_REQUEST_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SESSION_REQUIRED, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_case_config_t m_spdm_test_group_end_session_ack_configs[] = {
+    {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_VERSION_MISMATCH_IN_DHE_SESSION, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_SESSION_REQUIRED, COMMON_TEST_ACTION_RUN},
+    {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
+};
+
+common_test_group_config_t m_spdm_test_group_configs[] = {
+    {SPDM_RESPONDER_TEST_GROUP_VERSION,           COMMON_TEST_ACTION_RUN, m_spdm_test_group_version_configs},
+    {SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,      COMMON_TEST_ACTION_RUN, m_spdm_test_group_capabilities_configs},
+    {SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,        COMMON_TEST_ACTION_RUN, m_spdm_test_group_algorithms_configs},
+    {SPDM_RESPONDER_TEST_GROUP_DIGESTS,           COMMON_TEST_ACTION_RUN, m_spdm_test_group_digests_configs},
+    {SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,       COMMON_TEST_ACTION_RUN, m_spdm_test_group_certificate_configs},
+    {SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH,    COMMON_TEST_ACTION_RUN, m_spdm_test_group_challenge_auth_configs},
+    {SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,      COMMON_TEST_ACTION_RUN, m_spdm_test_group_measurements_configs},
+    {SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,  COMMON_TEST_ACTION_RUN, m_spdm_test_group_key_exchange_rsp_configs},
+    {SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,        COMMON_TEST_ACTION_RUN, m_spdm_test_group_finish_rsp_configs},
+    {SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,     COMMON_TEST_ACTION_RUN, m_spdm_test_group_heartbeat_ack_configs},
+    {SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,    COMMON_TEST_ACTION_RUN, m_spdm_test_group_key_update_ack_configs},
+    {SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,   COMMON_TEST_ACTION_RUN, m_spdm_test_group_end_session_ack_configs},
+    {COMMON_TEST_ID_END,                          COMMON_TEST_ACTION_SKIP, NULL},
+};
+
+common_test_suite_config_t m_spdm_responder_validator_config = {
+    "spdm_responder_validator default config",
+    m_spdm_test_group_configs
+};
+   ```
 
 ## Run Test
 
-### Run Test with spdm-emu
+### Run Test with [spdm_emu](https://github.com/DMTF/spdm-emu/tree/conformance_test_emu)
 
-TBD ...
+   The spdm_emu provides an example [spdm_responder_validator_emu](https://github.com/DMTF/spdm-emu/tree/conformance_test_emu/spdm_emu/spdm_responder_validator_emu).
+
+   A user can follow normal spdm_emu build process. The output binaries are at spdm_dump/build/bin. The user should run `spdm_responder_emu` to launch the device, then run `spdm_responder_validator_emu` to launch the test.
 
 ## Sample Output
 
