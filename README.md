@@ -4,7 +4,7 @@ Copyright 2022 DMTF. All rights reserved.
 
 ## About
 
-The SPDM Responder Validator tests the SPDM protocol behavior of a SPDM responder device to validate that it conforms to the SPDM specification.
+The SPDM Responder Validator tests the protocol behavior of an SPDM Responder device to validate that it conforms to the SPDM specification.
 
 Reference:
 
@@ -56,15 +56,15 @@ The test case design is described below.
 
 20. Test for CHUNK_RESPONSE
 
-### Test Assumption
+### Test Assumptions
 
-SPDM specification defines vendor-defined algorithms as implementation choice. The conformance test only validates the SPDM defined algorithms and it does not support the algorithm extensions including ExtAsym (1.0+), ExtHash (1.0+), AlgExternal (1.1+), OpaqueDataFmt0 (1.2+). If a device does not support SPDM defined algorithms and only supports the vendor-defined algorithms, then there is no way to run the test.
+The SPDM specification allows vendor-defined algorithms as an implementation choice. The conformance test only validates the SPDM-defined algorithms and it does not support the algorithm extensions including ExtAsym (1.0+), ExtHash (1.0+), AlgExternal (1.1+), and OpaqueDataFmt0 (1.2+). If a device does not support SPDM-defined algorithms and only supports the vendor-defined algorithms then there is no way to run the test.
 
-SPDM specification defines vendor-defined raw public key provision as implementation choice. The conformance test only validates the SPDM defined X.509 style public certificate chain and it does not support the vendor-defined raw public key. If a device does not support SPDM defined X.509 style public certificate chain (CERT_CAP) and only supports the vendor-defined raw public key (PUB_KEY_ID_CAP in 1.1+), then there is no way to run the certificate related test.
+The SPDM specification allows vendor-defined raw public key provisioning as an implementation choice. The conformance test only validates the SPDM-defined X.509 style public certificate chain and it does not support the vendor-defined raw public key. If a device does not support SPDM-defined X.509 style public certificate chains (CERT_CAP) and only supports the vendor-defined raw public key (PUB_KEY_ID_CAP in 1.1+) then there is no way to run the certificate related test.
 
 The device is not in update mode during test.
 
-Some tests rely on the basic SPDM infrastructure. For example, RESPOND_IF_READY is used for ERROR(ResponseNotReady) if the crypto timeout happens, CHUNKING is used if the message is too long. Fail to support those SPDM infrastructure may cause the related test abort.
+Some tests rely on the basic SPDM infrastructure. For example, RESPOND_IF_READY is used for ERROR(ResponseNotReady) if the cryptography timeout occurs or chunking is used if the message is too long. Failure to support such SPDM infrastructure may cause the related test abort.
 
 ### Test Criteria
 
@@ -76,17 +76,17 @@ If the test passes, there will be a PASS assertion. If the feature is not implem
 
 ### Test Not Covered
 
-The test for SPDM vendor defined message is not covered.
+The test for SPDM vendor-defined messages is not covered.
 
-Some tests may require the responder to provision the environment. For example, mutual authentication may require the responder to provision the certificate from the requester. Pre-shared Key (PSK) exchange requires the requester and responder to provision the PSK. CSR retrival requires the requester to provide OEM-specific valid RequesterInfo. These tests are not covered.
+Some tests may require the Responder to provision the environment. For example, mutual authentication may require the Responder to provision the certificate from the Requester. Pre-shared Key (PSK) exchange requires the Requester and Responder to provision the PSK. CSR retrival requires the Requester to provide OEM-specific valid RequesterInfo. These tests are not covered.
 
-Some SPDM flows (such as mutual authentication and responder initiated key update) are controlled and triggered by the responder. These tests are not covered.
+Some SPDM flows (such as mutual authentication and Responder-initiated key update) are controlled and triggered by the Responder. These tests are not covered.
 
 ## Test Implementation
 
-The test cases implementation is based uon DMTF [libspdm](https://github.com/DMTF/libspdm). The test cases checkpoint has no assumption on libspdm implementation.
+The test cases implementation is based upon DMTF's [libspdm](https://github.com/DMTF/libspdm). The test cases checkpoint has no assumption on the libspdm implementation.
 
-The test case implemenmtation supports below transport binding by default:
+The test case implemenmtation supports the following transport binding by default:
 
    MCTP and secured MCTP follow :
 
