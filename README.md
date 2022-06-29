@@ -314,7 +314,9 @@ common_test_suite_config_t m_spdm_responder_validator_config = {
 
    The spdm_emu provides an example [spdm_device_validator_sample](https://github.com/DMTF/spdm-emu/tree/main/spdm_emu/spdm_device_validator_sample).
 
-   A user can follow normal spdm_emu build process. The output binaries are at spdm_dump/build/bin. The user should run `spdm_responder_emu` to launch the device, then run `spdm_device_validator_sample` to launch the test.
+   A user can follow normal spdm_emu build process. The output binaries are at spdm_emu/build/bin. The user should open one command prompt to run `spdm_responder_emu` to launch the device, then open another command prompt to run `spdm_device_validator_sample` to launch the test.
+
+   The test.log will generated at build/bin for successful case. And the successful test.log contents are in follow:
 
 ## Sample Output
 
