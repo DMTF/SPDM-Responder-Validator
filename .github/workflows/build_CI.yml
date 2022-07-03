@@ -34,7 +34,6 @@ jobs:
           mkdir build
           cd build
           cmake -DARCH=x64 -DTOOLCHAIN=GCC -DTARGET=Release -DCRYPTO=mbedtls ..
-          make copy_sample_key
           make -j2
 
 
@@ -50,7 +49,6 @@ jobs:
           mkdir build
           cd build
           cmake -DARCH=x64 -DTOOLCHAIN=GCC -DTARGET=Release -DCRYPTO=openssl ..
-          make copy_sample_key
           make -j2
 
 
@@ -72,7 +70,6 @@ jobs:
           mkdir build
           cd build
           cmake -G"NMake Makefiles" -DARCH=x64 -DTOOLCHAIN=VS2019 -DTARGET=Release -DCRYPTO=mbedtls ..
-          nmake  copy_sample_key
           nmake
 
 
@@ -94,5 +91,4 @@ jobs:
           mkdir build
           cd build
           cmake -G"NMake Makefiles" -DARCH=x64 -DTOOLCHAIN=VS2019 -DTARGET=Release -DCRYPTO=openssl ..
-          nmake  copy_sample_key
           nmake
