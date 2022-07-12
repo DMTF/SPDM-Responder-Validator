@@ -985,6 +985,11 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     size_t index;
     uint8_t ext_alg_count;
 
+    dhe_named_group = 0;
+    aead_cipher_suite = 0;
+    req_base_asym_alg = 0;
+    key_schedule = 0;
+
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
@@ -1421,6 +1426,11 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
     uint16_t key_schedule;
     size_t index;
     uint8_t ext_alg_count;
+
+    dhe_named_group = 0;
+    aead_cipher_suite = 0;
+    req_base_asym_alg = 0;
+    key_schedule = 0;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
