@@ -123,8 +123,6 @@ bool spdm_test_case_algorithms_setup_version_only (void *test_context)
     spdm_version_number_t spdm_version;
     size_t data_size;
     spdm_algorithms_test_buffer_t *test_buffer;
-    size_t index;
-    uint8_t version;
     uint8_t version_number_entry_count;
     spdm_version_number_t version_number_entry[LIBSPDM_MAX_VERSION_COUNT];
 
@@ -156,18 +154,6 @@ bool spdm_test_case_algorithms_setup_version_only (void *test_context)
     parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
     libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &test_buffer->rsp_cap_flags, &data_size);
-
-    test_buffer->support_version_bitmask = 0;
-    for (index = 0; index < version_number_entry_count; index++) {
-        version = version_number_entry[index] >> SPDM_VERSION_NUMBER_SHIFT_BIT;
-        if (version == SPDM_MESSAGE_VERSION_10) {
-            test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V10;
-        } else if (version == SPDM_MESSAGE_VERSION_11) {
-            test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V11;
-        } else if (version == SPDM_MESSAGE_VERSION_12) {
-            test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V12;
-        }
-    }
 
     return true;
 }
@@ -541,14 +527,12 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
     LIBSPDM_ASSERT (spdm_test_context->test_scratch_buffer_size ==
                     sizeof(spdm_algorithms_test_buffer_t));
 
-    if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
-        version = SPDM_MESSAGE_VERSION_12;
-        spdm_request_size = sizeof(spdm_request);
-    } else if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V11) != 0) {
-        version = SPDM_MESSAGE_VERSION_11;
+    /* libspdm_check_request_version_compability will set the connection_info version
+     * This case receives a NEGOTIATE_ALGORITHMS before GET_CAPABILITIES, the conection_info version is 0*/
+    version = 0;
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_11) {
         spdm_request_size = sizeof(spdm_request);
     } else {
-        version = SPDM_MESSAGE_VERSION_10;
         spdm_request_size = sizeof(spdm_request) - sizeof(spdm_request.struct_table);
     }
 
@@ -695,7 +679,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
         return;
     }
 
-    if (spdm_response->header.param1 == SPDM_ERROR_CODE_VERSION_MISMATCH) {
+    if (spdm_response->header.param1 == SPDM_ERROR_CODE_UNEXPECTED_REQUEST) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;
