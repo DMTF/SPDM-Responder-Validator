@@ -12,6 +12,8 @@ Reference:
 
    [DSP0277](https://www.dmtf.org/dsp/DSP0277)  Secured Messages using SPDM Specification (version [1.1.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.1.0.pdf))
 
+   [DSP-IS0023](https://www.dmtf.org/dsp/DSP-IS0023)  SPDM Conformance Test Suite Guidance (version [1.0.0WIP50](https://www.dmtf.org/sites/default/files/standards/documents/DSP-IS0023_1.0.0WIP50.pdf))
+
 ## Test Design
 
 The test case design is described below.
