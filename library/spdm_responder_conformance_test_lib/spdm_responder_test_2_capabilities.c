@@ -964,7 +964,6 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = version;
-    spdm_request_size = sizeof(spdm_request);
     spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
