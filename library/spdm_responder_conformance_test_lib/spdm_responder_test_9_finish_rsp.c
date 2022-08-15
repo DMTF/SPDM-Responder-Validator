@@ -519,7 +519,7 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
 
         result = libspdm_calculate_th2_hash(spdm_context, session_info, true,
                                             th2_hash_data);
-        if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        if (!result) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, COMMON_TEST_ID_END,
                 COMMON_TEST_RESULT_NOT_TESTED, "calculate_th2_hash failure");
