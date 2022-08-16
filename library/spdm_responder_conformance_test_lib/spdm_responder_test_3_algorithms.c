@@ -539,14 +539,14 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = version;
     spdm_request.length = (uint16_t)spdm_request_size;
-    if (version >= SPDM_MESSAGE_VERSION_11) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_11) {
         spdm_request.header.param1 = 4;
     } else {
         spdm_request.header.param1 = 0;
     }
     spdm_request.header.request_response_code = SPDM_NEGOTIATE_ALGORITHMS;
     spdm_request.header.param2 = 0;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     }
     spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
@@ -559,7 +559,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_4096 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P384 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P521;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.base_asym_algo |= SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_SM2_ECC_SM2_P256 |
                                        SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED25519 |
                                        SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED448;
@@ -570,7 +570,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_256 |
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_384 |
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_512;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.base_hash_algo |= SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SM3_256;
     }
     spdm_request.ext_asym_count = 0;
@@ -583,7 +583,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
                                                  SPDM_ALGORITHMS_DHE_NAMED_GROUP_SECP_256_R1 |
                                                  SPDM_ALGORITHMS_DHE_NAMED_GROUP_SECP_384_R1 |
                                                  SPDM_ALGORITHMS_DHE_NAMED_GROUP_SECP_521_R1;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.struct_table[0].alg_supported |= SPDM_ALGORITHMS_DHE_NAMED_GROUP_SM2_P256;
     }
     spdm_request.struct_table[1].alg_type = SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_AEAD;
@@ -591,7 +591,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
     spdm_request.struct_table[1].alg_supported = SPDM_ALGORITHMS_AEAD_CIPHER_SUITE_AES_128_GCM |
                                                  SPDM_ALGORITHMS_AEAD_CIPHER_SUITE_AES_256_GCM |
                                                  SPDM_ALGORITHMS_AEAD_CIPHER_SUITE_CHACHA20_POLY1305;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.struct_table[1].alg_supported |=
             SPDM_ALGORITHMS_AEAD_CIPHER_SUITE_AEAD_SM4_GCM;
     }
@@ -615,7 +615,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
         SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P384
         |
         SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P521;
-    if (version >= SPDM_MESSAGE_VERSION_12) {
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.struct_table[2].alg_supported |=
             SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_SM2_ECC_SM2_P256 |
             SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED25519 |
