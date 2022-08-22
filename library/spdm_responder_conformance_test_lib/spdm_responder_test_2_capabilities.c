@@ -624,11 +624,11 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
         } else {
             if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
                 common_test_record_test_message ("test v12 transfer_size - 0x%08x\n",
-                                                 invalid_transport_size_v12[index]);
+                                                 invalid_transport_size_v12[index - LIBSPDM_ARRAY_SIZE(invalid_flags_v11)]);
                 version = SPDM_MESSAGE_VERSION_12;
                 spdm_request_size = sizeof(spdm_request);
                 spdm_request_new.header.spdm_version = version;
-                spdm_request_new.data_transfer_size = invalid_transport_size_v12[index];
+                spdm_request_new.data_transfer_size = invalid_transport_size_v12[index - LIBSPDM_ARRAY_SIZE(invalid_flags_v11)];
             } else {
                 continue;
             }
