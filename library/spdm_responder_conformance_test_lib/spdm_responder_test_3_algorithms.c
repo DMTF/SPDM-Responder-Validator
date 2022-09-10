@@ -1178,12 +1178,15 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P384 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_ECDSA_ECC_NIST_P521);
     if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
-         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0)) &&
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0)) &&
         ((algo != 0xFFFFFFFF) && (algo != 0x0))) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) ==
                  0) &&
                 ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) ==
                  0)) &&
                (algo == 0x0)) {
         test_result = COMMON_TEST_RESULT_PASS;
@@ -1202,12 +1205,18 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_384 |
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_512);
     if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
-         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0)) &&
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PSK_CAP) != 0)) &&
         ((algo != 0xFFFFFFFF) && (algo != 0x0))) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) ==
                  0) &&
                 ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PSK_CAP) ==
                  0)) &&
                (algo == 0x0)) {
         test_result = COMMON_TEST_RESULT_PASS;
@@ -1637,12 +1646,15 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED25519 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED448);
     if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
-         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0)) &&
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0)) &&
         ((algo != 0xFFFFFFFF) && (algo != 0x0))) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) ==
                  0) &&
                 ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) ==
                  0)) &&
                (algo == 0x0)) {
         test_result = COMMON_TEST_RESULT_PASS;
@@ -1662,12 +1674,18 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SHA3_512 |
                                   SPDM_ALGORITHMS_BASE_HASH_ALGO_TPM_ALG_SM3_256);
     if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
-         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0)) &&
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0) ||
+         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PSK_CAP) != 0)) &&
         ((algo != 0xFFFFFFFF) && (algo != 0x0))) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else if ((((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) ==
                  0) &&
                 ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) ==
+                 0) &&
+                ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PSK_CAP) ==
                  0)) &&
                (algo == 0x0)) {
         test_result = COMMON_TEST_RESULT_PASS;
