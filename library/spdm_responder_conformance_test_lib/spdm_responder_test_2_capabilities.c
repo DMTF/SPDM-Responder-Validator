@@ -225,9 +225,9 @@ void spdm_test_case_capabilities_version_mismatch (void *test_context)
                     sizeof(spdm_version_number_t) * test_buffer->version_number_entry_count);
 
     mismatched_version[0] =
-        (uint8_t)(test_buffer->version_number_entry[test_buffer->version_number_entry_count - 1] -
+        (uint8_t)((test_buffer->version_number_entry[test_buffer->version_number_entry_count - 1] >> SPDM_VERSION_NUMBER_SHIFT_BIT) -
                   1);
-    mismatched_version[1] = (uint8_t)(test_buffer->version_number_entry[0] + 1);
+    mismatched_version[1] = (uint8_t)((test_buffer->version_number_entry[0] >> SPDM_VERSION_NUMBER_SHIFT_BIT) + 1);
 
     for (index = 0; index < LIBSPDM_ARRAY_SIZE(mismatched_version); index++) {
         common_test_record_test_message ("test mismatched_version - 0x%02x\n",
