@@ -842,7 +842,7 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
             if (test_buffer->version < SPDM_MESSAGE_VERSION_11) {
                 continue;
             }
-            spdm_request.struct_table[0].alg_count = 0x10;
+            spdm_request_new.struct_table[0].alg_count = 0x10;
             common_test_record_test_message ("test alg_count - 0x%02x\n",
                                              spdm_request_new.struct_table[0].alg_count);
             break;
@@ -850,7 +850,7 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
             if (test_buffer->version < SPDM_MESSAGE_VERSION_11) {
                 continue;
             }
-            spdm_request.struct_table[0].alg_count = 0x30;
+            spdm_request_new.struct_table[0].alg_count = 0x30;
             common_test_record_test_message ("test alg_count - 0x%02x\n",
                                              spdm_request_new.struct_table[0].alg_count);
             break;
@@ -858,10 +858,10 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
             if (test_buffer->version < SPDM_MESSAGE_VERSION_11) {
                 continue;
             }
-            spdm_request.struct_table[0].alg_count = 0x0F;
-            spdm_request.struct_table[1].alg_count = 0x0F;
-            spdm_request.struct_table[2].alg_count = 0x0F;
-            spdm_request.struct_table[3].alg_count = 0x0F;
+            spdm_request_new.struct_table[0].alg_count = 0x0F;
+            spdm_request_new.struct_table[1].alg_count = 0x0F;
+            spdm_request_new.struct_table[2].alg_count = 0x0F;
+            spdm_request_new.struct_table[3].alg_count = 0x0F;
             common_test_record_test_message ("test multiple alg_count - 0x%02x\n",
                                              spdm_request_new.struct_table[0].alg_count);
             break;
@@ -2066,9 +2066,9 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
             if (test_buffer->version < SPDM_MESSAGE_VERSION_11) {
                 continue;
             }
-            spdm_request.struct_table[0].alg_supported = dhe_named_group;
-            spdm_request.struct_table[1].alg_supported = aead_cipher_suite;
-            spdm_request.struct_table[2].alg_supported = req_base_asym_alg;
+            spdm_request_new.struct_table[0].alg_supported = dhe_named_group;
+            spdm_request_new.struct_table[1].alg_supported = aead_cipher_suite;
+            spdm_request_new.struct_table[2].alg_supported = req_base_asym_alg;
             common_test_record_test_message (
                 "test dhe_named_group - 0x%04x, aead_cipher_suite - 0x%04x, req_base_asym_alg - 0x%04x\n",
                 dhe_named_group, aead_cipher_suite, req_base_asym_alg);
@@ -2081,7 +2081,7 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
         status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request, spdm_request.length,
+                                           &spdm_request_new, spdm_request_new.length,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
