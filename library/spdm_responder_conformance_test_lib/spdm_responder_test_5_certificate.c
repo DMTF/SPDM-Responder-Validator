@@ -244,6 +244,7 @@ void spdm_test_case_certificate_success_10 (void *test_context)
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    bool result;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -363,8 +364,14 @@ void spdm_test_case_certificate_success_10 (void *test_context)
             return;
         }
 
-        libspdm_hash_all (test_buffer->hash_algo, cert_chain_buffer, cert_chain_buffer_size,
+        result = libspdm_hash_all (test_buffer->hash_algo, cert_chain_buffer, cert_chain_buffer_size,
                           cert_chain_hash);
+        if (!result) {
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, COMMON_TEST_ID_END,
+                COMMON_TEST_RESULT_NOT_TESTED, "calc_cert_hash failure");
+            return;
+        }
         if (libspdm_const_compare_mem (cert_chain_hash,
                                        &test_buffer->total_digest_buffer[hash_index *
                                                                          test_buffer->hash_size],
