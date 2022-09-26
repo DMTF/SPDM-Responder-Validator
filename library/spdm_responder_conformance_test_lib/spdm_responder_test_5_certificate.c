@@ -653,11 +653,9 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
         } else if (index == SPDM_MAX_SLOT_COUNT * 2) {
             common_test_record_test_message ("test invalid offset - 0x%04x\n", 0xFFFF);
             spdm_request_new.offset = 0xFFFF;
-        } else if (index == SPDM_MAX_SLOT_COUNT * 2 + 1) {
+        } else {
             common_test_record_test_message ("test invalid length - 0x%04x\n", 0);
             spdm_request_new.length = 0;
-        } else {
-            break;
         }
 
         spdm_response = (void *)message;

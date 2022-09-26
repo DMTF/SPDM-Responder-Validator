@@ -1266,12 +1266,10 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
                                              1);
             spdm_request_new.header.param1 =
                 SPDM_KEY_EXCHANGE_REQUEST_TCB_COMPONENT_MEASUREMENT_HASH + 1;
-        } else if (index == SPDM_MAX_SLOT_COUNT * 2 + 1) {
+        } else {
             common_test_record_test_message ("test invalid meas_hash_type - 0x%02x\n",
                                              SPDM_KEY_EXCHANGE_REQUEST_ALL_MEASUREMENTS_HASH - 1);
             spdm_request_new.header.param1 = SPDM_KEY_EXCHANGE_REQUEST_ALL_MEASUREMENTS_HASH - 1;
-        } else {
-            break;
         }
 
         spdm_response = (void *)message;

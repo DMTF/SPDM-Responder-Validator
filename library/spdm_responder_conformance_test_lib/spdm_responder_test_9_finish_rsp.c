@@ -1061,11 +1061,9 @@ void spdm_test_case_finish_rsp_invalid_request (void *test_context)
             }
             common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
             spdm_request_new.header.param2 = slot_id;
-        } else if (index == SPDM_MAX_SLOT_COUNT * 2) {
+        } else {
             common_test_record_test_message ("test invalid size - 0x%x\n", spdm_request_size);
             spdm_request_size = sizeof(spdm_finish_request_t);
-        } else {
-            break;
         }
 
         spdm_response = (void *)message;

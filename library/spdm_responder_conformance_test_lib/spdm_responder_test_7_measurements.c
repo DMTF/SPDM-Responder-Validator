@@ -1575,17 +1575,13 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
         libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
                           sizeof(spdm_request));
 
-        if (index < SPDM_MAX_SLOT_COUNT * 2) {
-            slot_id = (uint8_t)index;
-            if ((slot_id < SPDM_MAX_SLOT_COUNT) &&
-                ((test_buffer->slot_mask & (0x1 << slot_id)) != 0)) {
-                continue;
-            }
-            common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
-            spdm_request_new.slot_id_param = slot_id;
-        } else {
-            break;
+        slot_id = (uint8_t)index;
+        if ((slot_id < SPDM_MAX_SLOT_COUNT) &&
+            ((test_buffer->slot_mask & (0x1 << slot_id)) != 0)) {
+            continue;
         }
+        common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
+        spdm_request_new.slot_id_param = slot_id;
 
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
