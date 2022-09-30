@@ -510,6 +510,21 @@ void spdm_test_case_capabilities_success_11 (void *test_context)
             SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_11, 12,
             test_result, "response flags - 0x%08x", spdm_response->flags);
     }
+
+    if (((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
+        ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0) ||
+        ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP) == SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG)) {
+        if (((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CERT_CAP) != 0) ||
+            ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PUB_KEY_ID_CAP) != 0)) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+            SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_11, 13,
+            test_result, "response flags - 0x%08x", spdm_response->flags);
+    }
 }
 
 void spdm_test_case_capabilities_invalid_request (void *test_context)
@@ -926,6 +941,21 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
         14,
         test_result, "response max_spdm_msg_size - 0x%08x, data_transfer_size - 0x%08x",
         spdm_response->max_spdm_msg_size, spdm_response->data_transfer_size);
+
+    if (((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CHAL_CAP) != 0) ||
+        ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0) ||
+        ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP) == SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG)) {
+        if (((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_CERT_CAP) != 0) ||
+            ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PUB_KEY_ID_CAP) != 0)) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+            SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_12, 15,
+            test_result, "response flags - 0x%08x", spdm_response->flags);
+    }
 }
 
 void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
