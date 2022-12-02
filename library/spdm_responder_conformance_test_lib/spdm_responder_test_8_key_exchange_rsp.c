@@ -581,7 +581,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             }
 
             rsp_session_id = spdm_response->rsp_session_id;
-            session_id = (req_session_id << 16) | rsp_session_id;
+            session_id = libspdm_generate_session_id(req_session_id, rsp_session_id);
             common_test_record_test_message ("test session_id - 0x%08x\n", session_id);
             session_info = libspdm_assign_session_id(spdm_context, session_id, false);
             if (session_info == NULL) {
