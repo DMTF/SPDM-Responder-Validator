@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
 INCLUDE_DIRECTORIES(${LIBSPDM_DIR}/include
-                    ${LIBSPDM_DIR}/include/hal/${ARCH}
                     ${SPDM_RESPONDER_VALIDATOR_DIR}/include
                     ${COMMON_TEST_FRAMEWORK_DIR}/include
 )
