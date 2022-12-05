@@ -178,7 +178,8 @@ void spdm_test_case_version_invalid_request (void *test_context)
         return;
     }
 
-    if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
+    if ((spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) ||
+        (spdm_response->header.param1 == SPDM_ERROR_CODE_VERSION_MISMATCH)) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
         test_result = COMMON_TEST_RESULT_FAIL;
