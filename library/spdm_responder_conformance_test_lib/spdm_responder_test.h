@@ -7,7 +7,6 @@
 #ifndef _SPDM_RESPONDER_TEST_H_
 #define _SPDM_RESPONDER_TEST_H_
 
-#include "library/spdm_requester_lib.h"
 #include "internal/libspdm_requester_lib.h"
 
 #include "library/spdm_responder_conformance_test_lib.h"
