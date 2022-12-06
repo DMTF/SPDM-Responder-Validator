@@ -638,7 +638,7 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
     spdm_request.offset = 0;
     spdm_request.length = LIBSPDM_MAX_CERT_CHAIN_BLOCK_LEN;
 
-    for (index = 0; index < SPDM_MAX_SLOT_COUNT * 2 + 2; index++) {
+    for (index = 0; index <= SPDM_MAX_SLOT_COUNT * 2; index++) {
         libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
                           sizeof(spdm_request));
 
@@ -653,9 +653,6 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
         } else if (index == SPDM_MAX_SLOT_COUNT * 2) {
             common_test_record_test_message ("test invalid offset - 0x%04x\n", 0xFFFF);
             spdm_request_new.offset = 0xFFFF;
-        } else {
-            common_test_record_test_message ("test invalid length - 0x%04x\n", 0);
-            spdm_request_new.length = 0;
         }
 
         spdm_response = (void *)message;
