@@ -32,6 +32,7 @@ bool spdm_test_case_end_session_ack_setup_session (void *test_context,
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     if (spdm_version != 0) {
         libspdm_zero_mem(&parameter, sizeof(parameter));
@@ -594,18 +595,26 @@ common_test_case_t m_spdm_test_group_end_session_ack[] = {
     {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_SUCCESS_11_IN_DHE_SESSION,
      "spdm_test_case_end_session_ack_success_11_dhe",
      spdm_test_case_end_session_ack_success_11_dhe,
-     spdm_test_case_end_session_ack_setup_version_any},
+     spdm_test_case_end_session_ack_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_VERSION_MISMATCH_IN_DHE_SESSION,
      "spdm_test_case_end_session_ack_version_mismatch",
      spdm_test_case_end_session_ack_version_mismatch,
-     spdm_test_case_end_session_ack_setup_version_any},
+     spdm_test_case_end_session_ack_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
      "spdm_test_case_end_session_ack_unexpected_request",
      spdm_test_case_end_session_ack_unexpected_request,
-     spdm_test_case_end_session_ack_setup_version_any_session_cap},
+     spdm_test_case_end_session_ack_setup_version_any_session_cap,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_END_SESSION_ACK_SESSION_REQUIRED,
      "spdm_test_case_end_session_ack_session_required",
      spdm_test_case_end_session_ack_session_required,
-     spdm_test_case_end_session_ack_setup_version_12},
+     spdm_test_case_end_session_ack_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {COMMON_TEST_ID_END, NULL, NULL},
 };

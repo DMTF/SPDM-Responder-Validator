@@ -25,6 +25,7 @@ bool spdm_test_case_capabilities_setup_version (void *test_context,
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     libspdm_zero_mem(&parameter, sizeof(parameter));
     parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
@@ -56,6 +57,7 @@ bool spdm_test_case_capabilities_setup_version_all (void *test_context)
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(sizeof(spdm_test_context->test_scratch_buffer) >=
@@ -1146,21 +1148,32 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
 
 common_test_case_t m_spdm_test_group_capabilities[] = {
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_10, "spdm_test_case_capabilities_success_10",
-     spdm_test_case_capabilities_success_10, spdm_test_case_capabilities_setup_version_10},
+     spdm_test_case_capabilities_success_10, spdm_test_case_capabilities_setup_version_10,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_VERSION_MISMATCH,
      "spdm_test_case_capabilities_version_mismatch",
      spdm_test_case_capabilities_version_mismatch,
-     spdm_test_case_capabilities_setup_version_all},
+     spdm_test_case_capabilities_setup_version_all,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_11, "spdm_test_case_capabilities_success_11",
-     spdm_test_case_capabilities_success_11, spdm_test_case_capabilities_setup_version_11},
+     spdm_test_case_capabilities_success_11, spdm_test_case_capabilities_setup_version_11,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST,
      "spdm_test_case_capabilities_invalid_request", spdm_test_case_capabilities_invalid_request,
-     spdm_test_case_capabilities_setup_version_all},
+     spdm_test_case_capabilities_setup_version_all, libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_12, "spdm_test_case_capabilities_success_12",
-     spdm_test_case_capabilities_success_12, spdm_test_case_capabilities_setup_version_12},
+     spdm_test_case_capabilities_success_12, spdm_test_case_capabilities_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL,
      "spdm_test_case_capabilities_unexpected_non_identical",
      spdm_test_case_capabilities_unexpected_non_identical,
-     spdm_test_case_capabilities_setup_version_all},
+     spdm_test_case_capabilities_setup_version_all,
+     libspdm_deinit_context_for_responder_validator},
+
     {COMMON_TEST_ID_END, NULL, NULL},
 };

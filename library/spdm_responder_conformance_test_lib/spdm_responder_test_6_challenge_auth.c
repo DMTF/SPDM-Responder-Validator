@@ -42,6 +42,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     if (spdm_version_count != 0) {
         libspdm_zero_mem(&parameter, sizeof(parameter));
@@ -218,6 +219,7 @@ bool spdm_test_case_challenge_auth_setup_version_capabilities (void *test_contex
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     status = libspdm_get_version (spdm_context, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -999,58 +1001,86 @@ common_test_case_t m_spdm_test_group_challenge_auth[] = {
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B1C1,
      "spdm_test_case_challenge_auth_success_10_a1b1c1",
      spdm_test_case_challenge_auth_success_10_a1b1c1,
-     spdm_test_case_challenge_auth_setup_version_10_11},
+     spdm_test_case_challenge_auth_setup_version_10_11,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B2C1,
      "spdm_test_case_challenge_auth_success_10_a1b2c1",
      spdm_test_case_challenge_auth_success_10_a1b2c1,
-     spdm_test_case_challenge_auth_setup_version_10_11},
+     spdm_test_case_challenge_auth_setup_version_10_11,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B3C1,
      "spdm_test_case_challenge_auth_success_10_a1b3c1",
      spdm_test_case_challenge_auth_success_10_a1b3c1,
-     spdm_test_case_challenge_auth_setup_version_10_11},
+     spdm_test_case_challenge_auth_setup_version_10_11,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_VERSION_MISMATCH,
      "spdm_test_case_challenge_auth_version_mismatch",
      spdm_test_case_challenge_auth_version_mismatch,
-     spdm_test_case_challenge_auth_setup_version_any},
+     spdm_test_case_challenge_auth_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_UNEXPECTED_REQUEST,
      "spdm_test_case_challenge_auth_unexpected_request",
      spdm_test_case_challenge_auth_unexpected_request,
-     spdm_test_case_challenge_auth_setup_version_capabilities},
+     spdm_test_case_challenge_auth_setup_version_capabilities,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_INVALID_REQUEST,
      "spdm_test_case_challenge_auth_invalid_request",
      spdm_test_case_challenge_auth_invalid_request,
-     spdm_test_case_challenge_auth_setup_version_any},
+     spdm_test_case_challenge_auth_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B1C1,
      "spdm_test_case_challenge_auth_success_12_a1b1c1",
      spdm_test_case_challenge_auth_success_12_a1b1c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B2C1,
      "spdm_test_case_challenge_auth_success_12_a1b2c1",
      spdm_test_case_challenge_auth_success_12_a1b2c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B3C1,
      "spdm_test_case_challenge_auth_success_12_a1b3c1",
      spdm_test_case_challenge_auth_success_12_a1b3c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B4C1,
      "spdm_test_case_challenge_auth_success_12_a1b4c1",
      spdm_test_case_challenge_auth_success_12_a1b4c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B1C1,
      "spdm_test_case_challenge_auth_success_12_a2b1c1",
      spdm_test_case_challenge_auth_success_12_a2b1c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B2C1,
      "spdm_test_case_challenge_auth_success_12_a2b2c1",
      spdm_test_case_challenge_auth_success_12_a2b2c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B3C1,
      "spdm_test_case_challenge_auth_success_12_a2b3c1",
      spdm_test_case_challenge_auth_success_12_a2b3c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B4C1,
      "spdm_test_case_challenge_auth_success_12_a2b4c1",
      spdm_test_case_challenge_auth_success_12_a2b4c1,
-     spdm_test_case_challenge_auth_setup_version_12},
+     spdm_test_case_challenge_auth_setup_version_12,
+     libspdm_deinit_context_for_responder_validator},
+
     {COMMON_TEST_ID_END, NULL, NULL},
 };

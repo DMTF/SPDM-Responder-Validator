@@ -34,6 +34,7 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     if (spdm_version != 0) {
         libspdm_zero_mem(&parameter, sizeof(parameter));
@@ -187,6 +188,7 @@ bool spdm_test_case_certificate_setup_version_capabilities (void *test_context)
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+    libspdm_init_context_for_responder_validator(spdm_context);
 
     status = libspdm_get_version (spdm_context, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -732,16 +734,23 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
 
 common_test_case_t m_spdm_test_group_certificate[] = {
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, "spdm_test_case_certificate_success_10",
-     spdm_test_case_certificate_success_10, spdm_test_case_certificate_setup_version_any},
+     spdm_test_case_certificate_success_10, spdm_test_case_certificate_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH,
      "spdm_test_case_certificate_version_mismatch", spdm_test_case_certificate_version_mismatch,
-     spdm_test_case_certificate_setup_version_any},
+     spdm_test_case_certificate_setup_version_any,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_UNEXPECTED_REQUEST,
      "spdm_test_case_certificate_unexpected_request",
      spdm_test_case_certificate_unexpected_request,
-     spdm_test_case_certificate_setup_version_capabilities},
+     spdm_test_case_certificate_setup_version_capabilities,
+     libspdm_deinit_context_for_responder_validator},
+
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST,
      "spdm_test_case_certificate_invalid_request", spdm_test_case_certificate_invalid_request,
-     spdm_test_case_certificate_setup_version_any},
+     spdm_test_case_certificate_setup_version_any, libspdm_deinit_context_for_responder_validator},
+
     {COMMON_TEST_ID_END, NULL, NULL},
 };

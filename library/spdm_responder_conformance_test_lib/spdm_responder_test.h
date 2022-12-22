@@ -34,6 +34,30 @@ typedef struct {
  **/
 uint32_t spdm_test_get_one_bit (uint32_t data, uint32_t mask);
 
+/**
+ * Initialize an SPDM context for SPDM-Responder-Validator, as well as secured message contexts.
+ * The secured message contexts are appended to the context structure.
+ *
+ * The total size in bytes of the spdm_context and all secured message
+ * contexts can be returned by libspdm_get_context_size().
+ *
+ * @param  spdm_context         A pointer to the SPDM context.
+ *
+ * @retval RETURN_SUCCESS       context is initialized.
+ * @retval RETURN_DEVICE_ERROR  context initialization failed.
+ */
+libspdm_return_t libspdm_init_context_for_responder_validator(void *context);
+
+/**
+ * Free the memory of contexts within the SPDM context.
+ * These are typically contexts whose memory has been allocated by the cryptography library.
+ * This function does not free the SPDM context itself.
+ *
+ * @param[in]  spdm_context         A pointer to the SPDM context.
+ *
+ */
+void libspdm_deinit_context_for_responder_validator(void *test_context);
+
 extern common_test_case_t m_spdm_test_group_version[];
 extern common_test_case_t m_spdm_test_group_capabilities[];
 extern common_test_case_t m_spdm_test_group_algorithms[];
