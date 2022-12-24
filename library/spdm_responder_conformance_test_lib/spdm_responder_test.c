@@ -48,3 +48,57 @@ void spdm_responder_conformance_test (void *spdm_context,
     spdm_test_context.spdm_context = spdm_context;
     common_test_run_test_suite (&spdm_test_context, &m_spdm_test_suite, test_config);
 }
+
+void spdm_test_case_common_teardown (void *test_context)
+{
+    spdm_test_context_t *spdm_test_context;
+    libspdm_context_t *spdm_context;
+    libspdm_device_send_message_func send_message;
+    libspdm_device_receive_message_func receive_message;
+    libspdm_transport_encode_message_func transport_encode_message;
+    libspdm_transport_decode_message_func transport_decode_message;
+    libspdm_transport_get_header_size_func transport_get_header_size;
+    libspdm_device_acquire_sender_buffer_func acquire_sender_buffer;
+    libspdm_device_release_sender_buffer_func release_sender_buffer;
+    libspdm_device_acquire_receiver_buffer_func acquire_receiver_buffer;
+    libspdm_device_release_receiver_buffer_func release_receiver_buffer;
+    void *scratch_buffer;
+    size_t scratch_buffer_size;
+
+    spdm_test_context = test_context;
+    spdm_context = spdm_test_context->spdm_context;
+    libspdm_deinit_context(spdm_context);
+
+    /* the libspdm_init_context is libspdm_zero_mem(spdm_context, sizeof(libspdm_context_t));
+     * We need to save and restore the registered functons and buffers.
+     **/
+    send_message = spdm_context->send_message;
+    receive_message = spdm_context->receive_message;
+
+    transport_encode_message = spdm_context->transport_encode_message;
+    transport_decode_message = spdm_context->transport_decode_message;
+    transport_get_header_size = spdm_context->transport_get_header_size;
+
+    acquire_sender_buffer = spdm_context->acquire_sender_buffer;
+    release_sender_buffer = spdm_context->release_sender_buffer;
+    acquire_receiver_buffer = spdm_context->acquire_receiver_buffer;
+    release_receiver_buffer = spdm_context->release_receiver_buffer;
+
+    scratch_buffer = spdm_context->scratch_buffer;
+    scratch_buffer_size = spdm_context->scratch_buffer_size;
+
+    libspdm_init_context (spdm_context);
+
+    libspdm_register_device_io_func(spdm_context, send_message,
+                                    receive_message);
+    libspdm_register_transport_layer_func(
+        spdm_context, transport_encode_message,
+        transport_decode_message,
+        transport_get_header_size);
+    libspdm_register_device_buffer_func(spdm_context,
+                                        acquire_sender_buffer,
+                                        release_sender_buffer,
+                                        acquire_receiver_buffer,
+                                        release_receiver_buffer);
+    libspdm_set_scratch_buffer (spdm_context, scratch_buffer, scratch_buffer_size);
+}

@@ -6,6 +6,11 @@
 
 #include "spdm_responder_test.h"
 
+bool spdm_test_case_version_setup_version (void *test_context)
+{
+    return true;
+}
+
 void spdm_test_case_version_success (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
@@ -199,9 +204,15 @@ void spdm_test_case_version_invalid_request (void *test_context)
 }
 
 common_test_case_t m_spdm_test_group_version[] = {
-    {SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10,         "spdm_test_case_version_success",
-     spdm_test_case_version_success},
-    {SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, "spdm_test_case_version_invalid_request",
-     spdm_test_case_version_invalid_request},
+    {SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10,
+     "spdm_test_case_version_success",
+     spdm_test_case_version_success,
+     spdm_test_case_version_setup_version,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST,
+     "spdm_test_case_version_invalid_request",
+     spdm_test_case_version_invalid_request,
+     spdm_test_case_version_setup_version,
+     spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };

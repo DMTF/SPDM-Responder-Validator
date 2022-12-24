@@ -514,12 +514,20 @@ void spdm_test_case_digests_unexpected_request (void *test_context)
 }
 
 common_test_case_t m_spdm_test_group_digests[] = {
-    {SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, "spdm_test_case_digests_success_10",
-     spdm_test_case_digests_success_10, spdm_test_case_digests_setup_version_any},
-    {SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH, "spdm_test_case_digests_version_mismatch",
-     spdm_test_case_digests_version_mismatch, spdm_test_case_digests_setup_version_any},
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10,
+     "spdm_test_case_digests_success_10",
+     spdm_test_case_digests_success_10,
+     spdm_test_case_digests_setup_version_any,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH,
+     "spdm_test_case_digests_version_mismatch",
+     spdm_test_case_digests_version_mismatch,
+     spdm_test_case_digests_setup_version_any,
+     spdm_test_case_common_teardown},
     {SPDM_RESPONDER_TEST_CASE_DIGESTS_UNEXPECTED_REQUEST,
-     "spdm_test_case_digests_unexpected_request", spdm_test_case_digests_unexpected_request,
-     spdm_test_case_digests_setup_version_capabilities},
+     "spdm_test_case_digests_unexpected_request",
+     spdm_test_case_digests_unexpected_request,
+     spdm_test_case_digests_setup_version_capabilities,
+     spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };

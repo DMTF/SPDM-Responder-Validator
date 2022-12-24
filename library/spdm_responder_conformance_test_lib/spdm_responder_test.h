@@ -34,6 +34,8 @@ typedef struct {
  **/
 uint32_t spdm_test_get_one_bit (uint32_t data, uint32_t mask);
 
+void spdm_test_case_common_teardown (void *test_context);
+
 extern common_test_case_t m_spdm_test_group_version[];
 extern common_test_case_t m_spdm_test_group_capabilities[];
 extern common_test_case_t m_spdm_test_group_algorithms[];
