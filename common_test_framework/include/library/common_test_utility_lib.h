@@ -65,7 +65,7 @@ typedef void (*common_test_group_teardown_func_t) (void *test_context);
  |                               +------------+
  |            +------------+
  +----------->| test group |
- +------------+
+ |            +------------+
  |
  **/
 
