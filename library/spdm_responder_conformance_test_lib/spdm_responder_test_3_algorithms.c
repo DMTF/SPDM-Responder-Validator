@@ -1869,11 +1869,11 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
         SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12, 16,
         test_result, "response key_schedule - 0x%04x", key_schedule);
 
-    spdm_response->other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    spdm_response->other_params_selection = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
 
     if (((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_KEY_EX_CAP) != 0) ||
         ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_PSK_CAP) != 0)) {
-        if (spdm_response->other_params_support == SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1) {
+        if (spdm_response->other_params_selection == SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
             test_result = COMMON_TEST_RESULT_FAIL;
@@ -1881,8 +1881,8 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12,
             17,
-            test_result, "response other_params_support - 0x%02x",
-            spdm_response->other_params_support);
+            test_result, "response other_params_selection - 0x%02x",
+            spdm_response->other_params_selection);
     }
 }
 
