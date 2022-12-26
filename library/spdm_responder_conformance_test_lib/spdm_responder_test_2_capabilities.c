@@ -623,13 +623,14 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
                  (SPDM_TEST_VERSION_MASK_V11 | SPDM_TEST_VERSION_MASK_V12)) != 0) {
                 common_test_record_test_message ("test v11 flags - 0x%08x\n",
                                                  invalid_flags_v11[index]);
-                if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
-                    version = SPDM_MESSAGE_VERSION_12;
-                    spdm_request_size = sizeof(spdm_request);
-                } else {
+                if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V11) != 0) {
                     version = SPDM_MESSAGE_VERSION_11;
                     spdm_request_size =
                         offsetof(spdm_get_capabilities_request_t, data_transfer_size);
+                } else if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12)
+                           != 0) {
+                    version = SPDM_MESSAGE_VERSION_12;
+                    spdm_request_size = sizeof(spdm_request);
                 }
                 spdm_request_new.header.spdm_version = version;
                 spdm_request_new.flags = invalid_flags_v11[index];

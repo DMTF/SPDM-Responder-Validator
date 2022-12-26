@@ -553,12 +553,27 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_c failure");
                 return;
             }
+
             result = libspdm_verify_challenge_auth_signature(
-                spdm_context, true, signature_ptr, test_buffer->signature_size);
-            if (result) {
-                test_result = COMMON_TEST_RESULT_PASS;
+                     spdm_context, true, signature_ptr, test_buffer->signature_size);
+            if ((case_id == SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B2C1) ||
+                (case_id == SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_10_A1B3C1) ||
+                (case_id == SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B2C1) ||
+                (case_id == SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B3C1)) {
+                /* these case will verify signature failed, because they don't call get_cert
+                 * and spdm_context->connection_info.peer_used_cert_chain is NULL.
+                 */
+                if (!result) {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                } else {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                }
             } else {
-                test_result = COMMON_TEST_RESULT_FAIL;
+                if (result) {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                } else {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                }
             }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 7,
