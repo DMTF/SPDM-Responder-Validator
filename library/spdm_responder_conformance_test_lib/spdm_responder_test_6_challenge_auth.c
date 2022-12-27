@@ -39,6 +39,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     uint8_t data8;
     spdm_challenge_auth_test_buffer_t *test_buffer;
     size_t index;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -164,6 +165,13 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
                                  test_buffer->total_digest_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
+    }
+
+    for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
+        if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        status = libspdm_get_certificate (spdm_context, slot_id, NULL, NULL);
     }
 
     test_buffer->slot_count = 0;
