@@ -254,9 +254,22 @@ bool spdm_test_case_finish_rsp_setup_version_capabilities (void *test_context)
     size_t data_size;
     spdm_version_number_t spdm_version;
     spdm_finish_rsp_test_buffer_t *test_buffer;
+    uint32_t data32;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
+
+    /*set capability to support key_exchange*/
+    data32 = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_get_version (spdm_context, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
