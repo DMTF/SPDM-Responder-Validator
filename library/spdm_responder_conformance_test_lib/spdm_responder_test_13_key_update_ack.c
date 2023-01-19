@@ -148,7 +148,7 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
         return false;
     }
 
-    status = libspdm_get_certificate (spdm_context, 0, NULL, NULL);
+    status = libspdm_get_certificate (spdm_context, NULL, 0, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }

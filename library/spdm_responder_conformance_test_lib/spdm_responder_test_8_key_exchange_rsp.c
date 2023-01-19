@@ -190,14 +190,15 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
                      &test_buffer->dhe_named_group, &data_size);
     test_buffer->dhe_key_size = libspdm_get_dhe_pub_key_size(test_buffer->dhe_named_group);
 
-    status = libspdm_get_digest (spdm_context, &test_buffer->slot_mask,
+    status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
 
     cert_chain_buffer_size = sizeof(cert_chain_buffer);
-    status = libspdm_get_certificate (spdm_context, 0, &cert_chain_buffer_size, cert_chain_buffer);
+    status = libspdm_get_certificate (spdm_context, NULL, 0,
+                                      &cert_chain_buffer_size, cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
@@ -425,8 +426,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             }
 
             cert_chain_buffer_size = sizeof(cert_chain_buffer);
-            status = libspdm_get_certificate (spdm_context, slot_id, &cert_chain_buffer_size,
-                                              cert_chain_buffer);
+            status = libspdm_get_certificate (spdm_context, NULL, slot_id,
+                                              &cert_chain_buffer_size, cert_chain_buffer);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
