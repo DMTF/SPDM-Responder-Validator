@@ -149,7 +149,7 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
                      &data_size);
     test_buffer->hash_size = libspdm_get_hash_size(test_buffer->hash_algo);
 
-    status = libspdm_get_digest (spdm_context, &test_buffer->slot_mask,
+    status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;

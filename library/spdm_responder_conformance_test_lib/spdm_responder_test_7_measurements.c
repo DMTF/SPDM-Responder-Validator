@@ -159,7 +159,7 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
                      &data_size);
     test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
 
-    status = libspdm_get_digest (spdm_context, &test_buffer->slot_mask, NULL);
+    status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
@@ -171,12 +171,13 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
         }
     }
 
-    status = libspdm_get_certificate (spdm_context, 0, NULL, NULL);
+    status = libspdm_get_certificate (spdm_context, NULL, 0, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
 
-    status = libspdm_challenge (spdm_context, 0, SPDM_CHALLENGE_REQUEST_ALL_MEASUREMENTS_HASH,
+    status = libspdm_challenge (spdm_context, NULL, 0,
+                                SPDM_CHALLENGE_REQUEST_ALL_MEASUREMENTS_HASH,
                                 &test_buffer->measurement_summary_hash, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;

@@ -161,7 +161,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
                      &data_size);
     test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
 
-    status = libspdm_get_digest (spdm_context, &test_buffer->slot_mask,
+    status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
@@ -171,7 +171,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
-        status = libspdm_get_certificate (spdm_context, slot_id, NULL, NULL);
+        status = libspdm_get_certificate (spdm_context, NULL, slot_id, NULL, NULL);
     }
 
     test_buffer->slot_count = 0;
@@ -390,7 +390,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
 
             if ((message_mask & SPDM_MESSAGE_A_MASK_VCA) == 0) {
                 status =
-                    libspdm_challenge (spdm_context, slot_id,
+                    libspdm_challenge (spdm_context, NULL, slot_id,
                                        measurement_hash_type[meas_hash_type_index], NULL, NULL);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
@@ -401,7 +401,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             }
 
             if ((message_mask & SPDM_MESSAGE_B_MASK_GET_DIGESTS) != 0) {
-                status = libspdm_get_digest (spdm_context, NULL, NULL);
+                status = libspdm_get_digest (spdm_context, NULL, NULL, NULL);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
                         SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
@@ -412,8 +412,8 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
 
             if ((message_mask & SPDM_MESSAGE_B_MASK_GET_CERTIFICATE) != 0) {
                 cert_chain_buffer_size = sizeof(cert_chain_buffer);
-                status = libspdm_get_certificate (spdm_context, slot_id, &cert_chain_buffer_size,
-                                                  cert_chain_buffer);
+                status = libspdm_get_certificate (spdm_context, NULL, slot_id,
+                                                  &cert_chain_buffer_size, cert_chain_buffer);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
                         SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
