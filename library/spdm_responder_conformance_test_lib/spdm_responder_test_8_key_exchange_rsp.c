@@ -473,9 +473,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_get_opaque_data_supported_version_data_size(spdm_context);
             *(uint16_t *)ptr = (uint16_t)opaque_key_exchange_req_size;
             ptr += sizeof(uint16_t);
-            status = libspdm_build_opaque_data_supported_version_data(
+            libspdm_build_opaque_data_supported_version_data(
                 spdm_context, &opaque_key_exchange_req_size, ptr);
-            LIBSPDM_ASSERT(status == LIBSPDM_STATUS_SUCCESS);
             ptr += opaque_key_exchange_req_size;
 
             spdm_request_size = (size_t)ptr - (size_t)&spdm_request;
@@ -830,9 +829,8 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
             libspdm_get_opaque_data_supported_version_data_size(spdm_context);
         *(uint16_t *)ptr = (uint16_t)opaque_key_exchange_req_size;
         ptr += sizeof(uint16_t);
-        status = libspdm_build_opaque_data_supported_version_data(
+        libspdm_build_opaque_data_supported_version_data(
             spdm_context, &opaque_key_exchange_req_size, ptr);
-        LIBSPDM_ASSERT(status == LIBSPDM_STATUS_SUCCESS);
         ptr += opaque_key_exchange_req_size;
 
         spdm_request_size = (size_t)ptr - (size_t)&spdm_request;
@@ -1101,9 +1099,8 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
         libspdm_get_opaque_data_supported_version_data_size(spdm_context);
     *(uint16_t *)ptr = (uint16_t)opaque_key_exchange_req_size;
     ptr += sizeof(uint16_t);
-    status = libspdm_build_opaque_data_supported_version_data(
+    libspdm_build_opaque_data_supported_version_data(
         spdm_context, &opaque_key_exchange_req_size, ptr);
-    LIBSPDM_ASSERT(status == LIBSPDM_STATUS_SUCCESS);
     ptr += opaque_key_exchange_req_size;
 
     spdm_request_size = (size_t)ptr - (size_t)&spdm_request;
@@ -1255,9 +1252,8 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
         libspdm_get_opaque_data_supported_version_data_size(spdm_context);
     *(uint16_t *)ptr = (uint16_t)opaque_key_exchange_req_size;
     ptr += sizeof(uint16_t);
-    status = libspdm_build_opaque_data_supported_version_data(
+    libspdm_build_opaque_data_supported_version_data(
         spdm_context, &opaque_key_exchange_req_size, ptr);
-    LIBSPDM_ASSERT(status == LIBSPDM_STATUS_SUCCESS);
     ptr += opaque_key_exchange_req_size;
 
     spdm_request_size = (size_t)ptr - (size_t)&spdm_request;
