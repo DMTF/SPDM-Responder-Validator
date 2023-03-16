@@ -958,9 +958,8 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                 COMMON_TEST_RESULT_NOT_TESTED, "calc_summary_hash failure");
             return;
         }
-        if (libspdm_const_compare_mem (measurement_summary_hash,
-                                       test_buffer->measurement_summary_hash,
-                                       test_buffer->hash_size) == 0) {
+        if (memcmp (measurement_summary_hash,
+                    test_buffer->measurement_summary_hash, test_buffer->hash_size) == 0) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
             test_result = COMMON_TEST_RESULT_FAIL;
@@ -1186,9 +1185,8 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                 return;
             }
 
-            if (libspdm_const_compare_mem ((void *)(spdm_response + 1),
-                                           measurement_record_out,
-                                           measurement_record_length_out) == 0) {
+            if (memcmp ((void *)(spdm_response + 1),
+                         measurement_record_out, measurement_record_length_out) == 0) {
                 test_result = COMMON_TEST_RESULT_PASS;
             } else {
                 test_result = COMMON_TEST_RESULT_FAIL;
