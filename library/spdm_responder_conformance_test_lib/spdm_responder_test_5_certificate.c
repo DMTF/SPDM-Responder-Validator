@@ -372,10 +372,9 @@ void spdm_test_case_certificate_success_10 (void *test_context)
                 COMMON_TEST_RESULT_NOT_TESTED, "calc_cert_hash failure");
             return;
         }
-        if (libspdm_const_compare_mem (cert_chain_hash,
-                                       &test_buffer->total_digest_buffer[hash_index *
-                                                                         test_buffer->hash_size],
-                                       test_buffer->hash_size) == 0) {
+        if (memcmp (cert_chain_hash,
+                    &test_buffer->total_digest_buffer[hash_index * test_buffer->hash_size],
+                    test_buffer->hash_size) == 0) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
             test_result = COMMON_TEST_RESULT_FAIL;

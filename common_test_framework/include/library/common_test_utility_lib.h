@@ -16,6 +16,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdarg.h>
+#include <string.h>
 
 typedef uint32_t common_test_group_id;
 typedef uint32_t common_test_case_id;

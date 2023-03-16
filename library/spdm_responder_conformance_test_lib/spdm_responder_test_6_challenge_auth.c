@@ -530,10 +530,9 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 return;
             }
 
-            if (libspdm_const_compare_mem (cert_chain_hash_ptr,
-                                           &test_buffer->total_digest_buffer[hash_index *
-                                                                             test_buffer->hash_size],
-                                           test_buffer->hash_size) == 0) {
+            if (memcmp (cert_chain_hash_ptr,
+                        &test_buffer->total_digest_buffer[hash_index * test_buffer->hash_size],
+                        test_buffer->hash_size) == 0) {
                 test_result = COMMON_TEST_RESULT_PASS;
             } else {
                 test_result = COMMON_TEST_RESULT_FAIL;
