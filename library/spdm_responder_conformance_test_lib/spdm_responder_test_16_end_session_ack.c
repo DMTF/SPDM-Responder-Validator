@@ -160,10 +160,6 @@ bool spdm_test_case_end_session_ack_setup_session (void *test_context,
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             return false;
         }
-
-        if (test_buffer->heartbeat_period == 0) {
-            return false;
-        }
     }
 
     return true;
@@ -404,14 +400,6 @@ void spdm_test_case_end_session_ack_unexpected_request (void *test_context)
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
             COMMON_TEST_ID_END,
             COMMON_TEST_RESULT_NOT_TESTED, "key_exchange failure");
-        return;
-    }
-    if (test_buffer->heartbeat_period == 0) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "heartbeat_period is 0");
         return;
     }
 
