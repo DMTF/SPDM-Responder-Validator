@@ -20,9 +20,7 @@ typedef struct {
     uint8_t slot_count;
     uint8_t total_digest_buffer[SPDM_MAX_SLOT_COUNT * LIBSPDM_MAX_HASH_SIZE];
 } spdm_key_exchange_rsp_test_buffer_t;
-#pragma pack()
 
-#pragma pack(1)
 typedef struct {
     spdm_message_header_t header;
     uint16_t req_session_id;
@@ -33,8 +31,10 @@ typedef struct {
     uint16_t opaque_length;
     uint8_t opaque_data[SPDM_MAX_OPAQUE_DATA_SIZE];
 } spdm_key_exchange_request_mine_t;
-
 #pragma pack()
+
+static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size;
 
 bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
                                                        size_t spdm_version_count,
@@ -52,8 +52,6 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
     uint8_t data8;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     size_t index;
-    uint8_t cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
-    size_t cert_chain_buffer_size;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -196,9 +194,9 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
         return false;
     }
 
-    cert_chain_buffer_size = sizeof(cert_chain_buffer);
+    m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
     status = libspdm_get_certificate (spdm_context, NULL, 0,
-                                      &cert_chain_buffer_size, cert_chain_buffer);
+                                      &m_cert_chain_buffer_size, m_cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
@@ -340,8 +338,6 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
     spdm_key_exchange_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
-    uint8_t cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
-    size_t cert_chain_buffer_size;
     common_test_result_t test_result;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     uint8_t slot_id;
@@ -425,9 +421,9 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 continue;
             }
 
-            cert_chain_buffer_size = sizeof(cert_chain_buffer);
+            m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
             status = libspdm_get_certificate (spdm_context, NULL, slot_id,
-                                              &cert_chain_buffer_size, cert_chain_buffer);
+                                              &m_cert_chain_buffer_size, m_cert_chain_buffer);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,

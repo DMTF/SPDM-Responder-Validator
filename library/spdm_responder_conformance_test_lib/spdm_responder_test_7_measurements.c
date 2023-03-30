@@ -22,6 +22,9 @@ typedef struct {
 } spdm_measurements_test_buffer_t;
 #pragma pack()
 
+static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size;
+
 bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context, bool need_session,
                                                               size_t spdm_version_count,
                                                               spdm_version_number_t *spdm_version)
@@ -171,7 +174,9 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
         }
     }
 
-    status = libspdm_get_certificate (spdm_context, NULL, 0, NULL, NULL);
+    m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+    status = libspdm_get_certificate (spdm_context, NULL, 0,
+                                      &m_cert_chain_buffer_size, m_cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }

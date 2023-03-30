@@ -14,6 +14,9 @@ typedef struct {
 } spdm_key_update_ack_test_buffer_t;
 #pragma pack()
 
+static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size;
+
 bool spdm_test_case_key_update_ack_setup_session (void *test_context,
                                                   spdm_version_number_t spdm_version,
                                                   bool need_session)
@@ -148,7 +151,9 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
         return false;
     }
 
-    status = libspdm_get_certificate (spdm_context, NULL, 0, NULL, NULL);
+    m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+    status = libspdm_get_certificate (spdm_context, NULL, 0,
+                                      &m_cert_chain_buffer_size, m_cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
     }
