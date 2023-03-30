@@ -24,6 +24,9 @@ typedef struct {
 } spdm_challenge_auth_test_buffer_t;
 #pragma pack()
 
+static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size;
+
 bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
                                                      size_t spdm_version_count,
                                                      spdm_version_number_t *spdm_version)
@@ -171,7 +174,9 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
-        status = libspdm_get_certificate (spdm_context, NULL, slot_id, NULL, NULL);
+        m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+        status = libspdm_get_certificate (spdm_context, NULL, slot_id, &m_cert_chain_buffer_size,
+                                          m_cert_chain_buffer);
     }
 
     test_buffer->slot_count = 0;
@@ -276,8 +281,6 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     spdm_challenge_auth_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
     size_t spdm_response_size;
-    uint8_t cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
-    size_t cert_chain_buffer_size;
     common_test_result_t test_result;
     spdm_challenge_auth_test_buffer_t *test_buffer;
     uint8_t slot_id;
@@ -411,9 +414,9 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             }
 
             if ((message_mask & SPDM_MESSAGE_B_MASK_GET_CERTIFICATE) != 0) {
-                cert_chain_buffer_size = sizeof(cert_chain_buffer);
+                m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
                 status = libspdm_get_certificate (spdm_context, NULL, slot_id,
-                                                  &cert_chain_buffer_size, cert_chain_buffer);
+                                                  &m_cert_chain_buffer_size, m_cert_chain_buffer);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
                         SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
