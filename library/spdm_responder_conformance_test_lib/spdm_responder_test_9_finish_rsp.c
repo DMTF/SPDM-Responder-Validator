@@ -317,7 +317,7 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
     spdm_finish_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_finish_rsp_test_buffer_t *test_buffer;
@@ -570,7 +570,7 @@ void spdm_test_case_finish_rsp_version_mismatch (void *test_context)
     spdm_finish_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t session_id;
     uint8_t req_slot_id_param;
@@ -735,7 +735,7 @@ void spdm_test_case_finish_rsp_unexpected_request (void *test_context)
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_finish_rsp_test_buffer_t *test_buffer;
 
@@ -839,7 +839,7 @@ void spdm_test_case_finish_rsp_unexpected_request_in_session (void *test_context
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     uint32_t session_id;
     uint8_t *ptr;
     void *session_info;
@@ -990,7 +990,7 @@ void spdm_test_case_finish_rsp_invalid_request (void *test_context)
     spdm_finish_request_mine_t spdm_request_new;
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t session_id;
     uint8_t req_slot_id_param;
@@ -1160,7 +1160,7 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
     spdm_finish_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t session_id;
     uint8_t req_slot_id_param;
@@ -1334,7 +1334,7 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
     spdm_finish_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_finish_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t session_id;
     uint8_t req_slot_id_param;

@@ -194,7 +194,7 @@ void spdm_test_case_end_session_ack_success_11_dhe (void *test_context)
     libspdm_return_t status;
     spdm_heartbeat_request_t spdm_request;
     spdm_heartbeat_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_end_session_ack_test_buffer_t *test_buffer;
@@ -272,7 +272,7 @@ void spdm_test_case_end_session_ack_version_mismatch (void *test_context)
     libspdm_return_t status;
     spdm_heartbeat_request_t spdm_request;
     spdm_heartbeat_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_end_session_ack_test_buffer_t *test_buffer;
@@ -384,7 +384,7 @@ void spdm_test_case_end_session_ack_unexpected_request (void *test_context)
     spdm_heartbeat_request_t spdm_request;
     spdm_heartbeat_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_end_session_ack_test_buffer_t *test_buffer;
     uint8_t req_slot_id_param;
@@ -499,7 +499,7 @@ void spdm_test_case_end_session_ack_session_required (void *test_context)
     libspdm_return_t status;
     spdm_heartbeat_request_t spdm_request;
     spdm_heartbeat_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_end_session_ack_test_buffer_t *test_buffer;

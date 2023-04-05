@@ -18,7 +18,7 @@ void spdm_test_case_version_success (void *test_context)
     libspdm_return_t status;
     spdm_get_version_request_t spdm_request;
     spdm_version_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     spdm_version_number_t *version_number_entry;
     size_t spdm_response_size;
     common_test_result_t test_result;
@@ -121,7 +121,7 @@ void spdm_test_case_version_invalid_request (void *test_context)
     libspdm_return_t status;
     spdm_get_version_request_t spdm_request;
     spdm_error_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
 

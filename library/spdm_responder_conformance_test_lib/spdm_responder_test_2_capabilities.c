@@ -119,7 +119,7 @@ void spdm_test_case_capabilities_success_10 (void *test_context)
     spdm_get_capabilities_request_t spdm_request;
     size_t spdm_request_size;
     spdm_capabilities_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     uint32_t flags;
@@ -207,7 +207,7 @@ void spdm_test_case_capabilities_version_mismatch (void *test_context)
     spdm_get_capabilities_request_t spdm_request;
     size_t spdm_request_size;
     spdm_error_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_capabilities_test_buffer_t *test_buffer;
@@ -322,7 +322,7 @@ void spdm_test_case_capabilities_success_11 (void *test_context)
     spdm_get_capabilities_request_t spdm_request;
     size_t spdm_request_size;
     spdm_capabilities_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     uint32_t flags;
@@ -536,7 +536,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
     spdm_get_capabilities_request_t spdm_request_new;
     size_t spdm_request_size;
     spdm_error_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_capabilities_test_buffer_t *test_buffer;
@@ -740,7 +740,7 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
     spdm_get_capabilities_request_t spdm_request;
     size_t spdm_request_size;
     spdm_capabilities_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     uint32_t flags;
@@ -975,7 +975,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
     spdm_get_capabilities_request_t spdm_request_new;
     size_t spdm_request_size;
     spdm_capabilities_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_capabilities_test_buffer_t *test_buffer;

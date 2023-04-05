@@ -213,7 +213,7 @@ void spdm_test_case_digests_success_10 (void *test_context)
     libspdm_return_t status;
     spdm_get_digest_request_t spdm_request;
     spdm_digest_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_digests_test_buffer_t *test_buffer;
@@ -319,7 +319,7 @@ void spdm_test_case_digests_version_mismatch (void *test_context)
     libspdm_return_t status;
     spdm_get_digest_request_t spdm_request;
     spdm_digest_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_digests_test_buffer_t *test_buffer;
@@ -425,7 +425,7 @@ void spdm_test_case_digests_unexpected_request (void *test_context)
     spdm_get_digest_request_t spdm_request;
     spdm_digest_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_digests_test_buffer_t *test_buffer;
 

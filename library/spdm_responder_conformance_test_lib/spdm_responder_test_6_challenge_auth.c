@@ -279,7 +279,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     libspdm_return_t status;
     spdm_challenge_request_t spdm_request;
     spdm_challenge_auth_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_challenge_auth_test_buffer_t *test_buffer;
@@ -673,7 +673,7 @@ void spdm_test_case_challenge_auth_version_mismatch (void *test_context)
     libspdm_return_t status;
     spdm_challenge_request_t spdm_request;
     spdm_challenge_auth_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_challenge_auth_test_buffer_t *test_buffer;
@@ -785,7 +785,7 @@ void spdm_test_case_challenge_auth_unexpected_request (void *test_context)
     spdm_challenge_request_t spdm_request;
     spdm_challenge_auth_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_challenge_auth_test_buffer_t *test_buffer;
 
@@ -886,7 +886,7 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
     spdm_challenge_request_t spdm_request;
     spdm_challenge_request_t spdm_request_new;
     spdm_challenge_auth_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_challenge_auth_test_buffer_t *test_buffer;

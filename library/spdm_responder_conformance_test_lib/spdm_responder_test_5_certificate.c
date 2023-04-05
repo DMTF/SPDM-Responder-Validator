@@ -234,7 +234,7 @@ void spdm_test_case_certificate_success_10 (void *test_context)
     libspdm_return_t status;
     spdm_get_certificate_request_t spdm_request;
     spdm_certificate_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint8_t cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
     size_t cert_chain_buffer_size;
@@ -398,7 +398,7 @@ void spdm_test_case_certificate_version_mismatch (void *test_context)
     libspdm_return_t status;
     spdm_get_certificate_request_t spdm_request;
     spdm_certificate_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_certificate_test_buffer_t *test_buffer;
@@ -512,7 +512,7 @@ void spdm_test_case_certificate_unexpected_request (void *test_context)
     spdm_get_certificate_request_t spdm_request;
     spdm_certificate_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_certificate_test_buffer_t *test_buffer;
 
@@ -615,7 +615,7 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
     spdm_get_certificate_request_t spdm_request;
     spdm_get_certificate_request_t spdm_request_new;
     spdm_certificate_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_certificate_test_buffer_t *test_buffer;

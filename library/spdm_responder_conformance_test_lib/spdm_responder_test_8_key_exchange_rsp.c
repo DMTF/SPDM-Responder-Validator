@@ -336,7 +336,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
     spdm_key_exchange_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_key_exchange_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
@@ -755,7 +755,7 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
     spdm_key_exchange_request_mine_t spdm_request;
     size_t spdm_request_size;
     spdm_key_exchange_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint8_t *ptr;
     size_t dhe_key_size;
@@ -915,7 +915,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request (void *test_context)
     size_t spdm_request_size;
     spdm_key_exchange_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     uint8_t *ptr;
     common_test_result_t test_result;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
@@ -1025,7 +1025,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     size_t spdm_request_size;
     spdm_key_exchange_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     uint8_t *ptr;
     size_t dhe_key_size;
     size_t opaque_key_exchange_req_size;
@@ -1188,7 +1188,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     spdm_key_exchange_request_mine_t spdm_request_new;
     size_t spdm_request_size;
     spdm_key_exchange_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint8_t *ptr;
     size_t dhe_key_size;
