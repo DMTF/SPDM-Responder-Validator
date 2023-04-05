@@ -165,7 +165,7 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
     libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t algo;
     common_test_result_t test_result;
@@ -385,7 +385,7 @@ void spdm_test_case_algorithms_version_mismatch (void *test_context)
     libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_algorithms_test_buffer_t *test_buffer;
@@ -516,7 +516,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
     size_t spdm_request_size;
     spdm_algorithms_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_algorithms_test_buffer_t *test_buffer;
     uint8_t version;
@@ -713,7 +713,7 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
     size_t spdm_request_size;
     spdm_algorithms_response_t *spdm_response;
     size_t spdm_response_size;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     common_test_result_t test_result;
     spdm_algorithms_test_buffer_t *test_buffer;
     size_t index;
@@ -952,7 +952,7 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t algo;
     common_test_result_t test_result;
@@ -1403,7 +1403,7 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
     libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_algorithms_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint32_t algo;
     common_test_result_t test_result;
@@ -1895,7 +1895,7 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
     spdm_negotiate_algorithms_request_mine_t spdm_request_new;
     size_t spdm_request_size;
     spdm_algorithms_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_MESSAGE_BUFFER_SIZE];
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
     spdm_algorithms_test_buffer_t *test_buffer;
