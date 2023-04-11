@@ -8,6 +8,8 @@
 
 #pragma pack(1)
 typedef struct {
+    uint32_t data_transfer_size;
+    uint32_t max_spdm_msg_size;
     uint8_t support_version_bitmask;
     uint8_t version_number_entry_count;
     spdm_version_number_t version_number_entry[LIBSPDM_MAX_VERSION_COUNT];
@@ -21,6 +23,7 @@ bool spdm_test_case_capabilities_setup_version (void *test_context,
     void *spdm_context;
     libspdm_return_t status;
     libspdm_data_parameter_t parameter;
+    size_t data_size;
     spdm_capabilities_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
@@ -42,6 +45,19 @@ bool spdm_test_case_capabilities_setup_version (void *test_context,
     libspdm_zero_mem(test_buffer, sizeof(spdm_capabilities_test_buffer_t));
     spdm_test_context->test_scratch_buffer_size = 0;
 
+    if (spdm_version >= (SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT)) {
+        libspdm_zero_mem(&parameter, sizeof(parameter));
+        parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
+        data_size = sizeof(test_buffer->data_transfer_size);
+        libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_DATA_TRANSFER_SIZE, &parameter,
+                         &test_buffer->data_transfer_size, &data_size);
+        data_size = sizeof(test_buffer->max_spdm_msg_size);
+        libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_MAX_SPDM_MSG_SIZE, &parameter,
+                         &test_buffer->max_spdm_msg_size, &data_size);
+
+        spdm_test_context->test_scratch_buffer_size = sizeof(uint32_t) * 2;
+    }
+
     return true;
 }
 
@@ -52,6 +68,8 @@ bool spdm_test_case_capabilities_setup_version_all (void *test_context)
     libspdm_return_t status;
     size_t index;
     uint8_t version;
+    libspdm_data_parameter_t parameter;
+    size_t data_size;
     spdm_capabilities_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
@@ -62,6 +80,15 @@ bool spdm_test_case_capabilities_setup_version_all (void *test_context)
                    sizeof(spdm_capabilities_test_buffer_t));
     libspdm_zero_mem(test_buffer, sizeof(spdm_capabilities_test_buffer_t));
     spdm_test_context->test_scratch_buffer_size = sizeof(spdm_capabilities_test_buffer_t);
+
+    libspdm_zero_mem(&parameter, sizeof(parameter));
+    parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
+    data_size = sizeof(test_buffer->data_transfer_size);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_DATA_TRANSFER_SIZE, &parameter,
+                     &test_buffer->data_transfer_size, &data_size);
+    data_size = sizeof(test_buffer->max_spdm_msg_size);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_CAPABILITY_MAX_SPDM_MSG_SIZE, &parameter,
+                     &test_buffer->max_spdm_msg_size, &data_size);
 
     test_buffer->version_number_entry_count = LIBSPDM_MAX_VERSION_COUNT;
     status = libspdm_get_version (spdm_context, &test_buffer->version_number_entry_count,
@@ -573,7 +600,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
     };
     uint32_t invalid_transport_size_v12[] = {
         SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12 - 1,
-        LIBSPDM_MAX_SPDM_MSG_SIZE + 1,
+        0, /* to be fixed to MAX_SPDM_MSG_SIZE + 1 */
     };
 
     spdm_test_context = test_context;
@@ -582,6 +609,8 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
     LIBSPDM_ASSERT (spdm_test_context->test_scratch_buffer_size ==
                     offsetof(spdm_capabilities_test_buffer_t, version_number_entry) +
                     sizeof(spdm_version_number_t) * test_buffer->version_number_entry_count);
+
+    invalid_transport_size_v12[1] = test_buffer->max_spdm_msg_size + 1;
 
     if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
         version = SPDM_MESSAGE_VERSION_12;
@@ -608,8 +637,8 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
-    spdm_request.data_transfer_size = LIBSPDM_DATA_TRANSFER_SIZE;
-    spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
+    spdm_request.data_transfer_size = test_buffer->data_transfer_size;
+    spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
     for (index = 0;
          index <
@@ -743,11 +772,13 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
     uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     common_test_result_t test_result;
+    spdm_capabilities_test_buffer_t *test_buffer;
     uint32_t flags;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
-    LIBSPDM_ASSERT (spdm_test_context->test_scratch_buffer_size == 0);
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    LIBSPDM_ASSERT (spdm_test_context->test_scratch_buffer_size == sizeof(uint32_t) * 2);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = SPDM_MESSAGE_VERSION_12;
@@ -767,8 +798,8 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
-    spdm_request.data_transfer_size = LIBSPDM_DATA_TRANSFER_SIZE;
-    spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
+    spdm_request.data_transfer_size = test_buffer->data_transfer_size;
+    spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
@@ -1017,8 +1048,8 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
-    spdm_request.data_transfer_size = LIBSPDM_DATA_TRANSFER_SIZE;
-    spdm_request.max_spdm_msg_size = LIBSPDM_MAX_SPDM_MSG_SIZE;
+    spdm_request.data_transfer_size = test_buffer->data_transfer_size;
+    spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
