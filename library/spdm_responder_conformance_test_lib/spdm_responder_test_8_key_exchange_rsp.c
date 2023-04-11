@@ -437,7 +437,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             spdm_request.header.param1 = measurement_hash_type[meas_hash_type_index];
             spdm_request.header.param2 = slot_id;
             /* ignore spdm_request.random_data */
-            req_session_id = libspdm_allocate_req_session_id(spdm_context);
+            req_session_id = libspdm_allocate_req_session_id(spdm_context, false);
             spdm_request.req_session_id = req_session_id;
             spdm_request.session_policy = 0;
 
@@ -791,7 +791,7 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         spdm_request.header.param1 = SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH;
         spdm_request.header.param2 = 0;
         /* ignore spdm_request.random_data */
-        req_session_id = libspdm_allocate_req_session_id(spdm_context);
+        req_session_id = libspdm_allocate_req_session_id(spdm_context, false);
         spdm_request.req_session_id = req_session_id;
         spdm_request.session_policy = 0;
 
@@ -1042,7 +1042,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    sizeof(test_buffer->version));
 
-    status = libspdm_start_session (spdm_context, false,
+    status = libspdm_start_session (spdm_context, false, NULL, 0,
                                     SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
                                     0, 0, &session_id, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -1059,7 +1059,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     spdm_request.header.request_response_code = SPDM_KEY_EXCHANGE;
     spdm_request.header.param1 = SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH;
     spdm_request.header.param2 = 0;
-    req_session_id = libspdm_allocate_req_session_id(spdm_context);
+    req_session_id = libspdm_allocate_req_session_id(spdm_context, false);
     spdm_request.req_session_id = req_session_id;
     spdm_request.session_policy = 0;
 
@@ -1214,7 +1214,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     spdm_request.header.param1 = SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH;
     spdm_request.header.param2 = 0;
     /* ignore spdm_request.random_data */
-    req_session_id = libspdm_allocate_req_session_id(spdm_context);
+    req_session_id = libspdm_allocate_req_session_id(spdm_context, false);
     spdm_request.req_session_id = req_session_id;
     spdm_request.session_policy = 0;
 

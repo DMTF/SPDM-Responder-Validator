@@ -853,7 +853,7 @@ void spdm_test_case_finish_rsp_unexpected_request_in_session (void *test_context
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    sizeof(test_buffer->version));
 
-    status = libspdm_start_session (spdm_context, false,
+    status = libspdm_start_session (spdm_context, false, NULL, 0,
                                     SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
                                     0, 0, &session_id, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {

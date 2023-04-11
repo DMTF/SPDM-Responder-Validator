@@ -193,7 +193,7 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
             return false;
         }
 
-        status = libspdm_start_session (spdm_context, false,
+        status = libspdm_start_session (spdm_context, false, NULL, 0,
                                         SPDM_KEY_EXCHANGE_REQUEST_ALL_MEASUREMENTS_HASH,
                                         0, 0, &test_buffer->session_id, NULL,
                                         &test_buffer->measurement_summary_hash);

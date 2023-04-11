@@ -159,7 +159,7 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     }
 
     if (need_session) {
-        status = libspdm_start_session (spdm_context, false,
+        status = libspdm_start_session (spdm_context, false, NULL, 0,
                                         SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
                                         0, 0, &test_buffer->session_id,
                                         &test_buffer->heartbeat_period, NULL);
