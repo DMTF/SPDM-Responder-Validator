@@ -13,6 +13,10 @@
 #include "library/spdm_responder_conformance_test_lib.h"
 #include "library/common_test_utility_lib.h"
 
+#ifndef LIBSPDM_MAX_SPDM_MSG_SIZE
+#define LIBSPDM_MAX_SPDM_MSG_SIZE 0x1200
+#endif
+
 #define SPDM_TEST_VERSION_MASK_V10 0x00000001
 #define SPDM_TEST_VERSION_MASK_V11 0x00000002
 #define SPDM_TEST_VERSION_MASK_V12 0x00000004
