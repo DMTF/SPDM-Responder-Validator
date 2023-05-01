@@ -1565,7 +1565,7 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_GET_MEASUREMENTS;
-    spdm_request.header.param1 = 0;
+    spdm_request.header.param1 = SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE;
     spdm_request.header.param2 =
         SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
     spdm_request.slot_id_param = 0;
@@ -1575,7 +1575,8 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
         spdm_request_size = sizeof(spdm_get_measurements_request_t);
     }
 
-    for (index = 0; index < SPDM_MAX_SLOT_COUNT * 2; index++) {
+    /*The valid slot can be detected via DIGESTS and the 0xF is valid too */
+    for (index = 0; index < SPDM_MAX_SLOT_COUNT * 2 - 1; index++) {
         libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
                           sizeof(spdm_request));
 
