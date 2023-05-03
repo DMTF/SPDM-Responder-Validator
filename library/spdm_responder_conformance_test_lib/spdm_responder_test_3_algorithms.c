@@ -44,8 +44,9 @@ bool spdm_test_case_algorithms_setup_version_capabilities (void *test_context,
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
 
+    libspdm_zero_mem(&parameter, sizeof(parameter));
+
     if (spdm_version != 0) {
-        libspdm_zero_mem(&parameter, sizeof(parameter));
         parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
         libspdm_set_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter,
                          &spdm_version, sizeof(spdm_version));
