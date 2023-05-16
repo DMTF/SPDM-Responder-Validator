@@ -1681,7 +1681,8 @@ void spdm_test_case_measurements_unexpected_request_in_session (void *test_conte
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
-                   sizeof(test_buffer->version));
+                   offsetof(spdm_measurements_test_buffer_t, measurement_summary_hash) +
+                   test_buffer->hash_size);
 
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,

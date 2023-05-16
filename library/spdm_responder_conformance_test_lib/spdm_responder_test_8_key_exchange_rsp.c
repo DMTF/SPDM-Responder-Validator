@@ -1041,7 +1041,8 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     spdm_context = spdm_test_context->spdm_context;
     test_buffer = (void *)spdm_test_context->test_scratch_buffer;
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
-                   sizeof(test_buffer->version));
+                   offsetof(spdm_key_exchange_rsp_test_buffer_t, total_digest_buffer) +
+                   test_buffer->hash_size * test_buffer->slot_count);
 
     status = libspdm_start_session (spdm_context, false, NULL, 0,
                                     SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
