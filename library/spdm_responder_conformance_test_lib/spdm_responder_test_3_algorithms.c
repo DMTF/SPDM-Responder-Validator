@@ -859,10 +859,10 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
             if (test_buffer->version < SPDM_MESSAGE_VERSION_11) {
                 continue;
             }
-            spdm_request_new.struct_table[0].alg_count = 0x0F;
-            spdm_request_new.struct_table[1].alg_count = 0x0F;
-            spdm_request_new.struct_table[2].alg_count = 0x0F;
-            spdm_request_new.struct_table[3].alg_count = 0x0F;
+            spdm_request_new.struct_table[0].alg_count = 0x2F;
+            spdm_request_new.struct_table[1].alg_count = 0x2F;
+            spdm_request_new.struct_table[2].alg_count = 0x2F;
+            spdm_request_new.struct_table[3].alg_count = 0x2F;
             common_test_record_test_message ("test multiple alg_count - 0x%02x\n",
                                              spdm_request_new.struct_table[0].alg_count);
             break;
