@@ -57,12 +57,12 @@ void spdm_test_case_common_teardown (void *test_context)
     libspdm_device_receive_message_func receive_message;
     libspdm_transport_encode_message_func transport_encode_message;
     libspdm_transport_decode_message_func transport_decode_message;
-    libspdm_transport_get_header_size_func transport_get_header_size;
     libspdm_device_acquire_sender_buffer_func acquire_sender_buffer;
     libspdm_device_release_sender_buffer_func release_sender_buffer;
     libspdm_device_acquire_receiver_buffer_func acquire_receiver_buffer;
     libspdm_device_release_receiver_buffer_func release_receiver_buffer;
-    uint32_t transport_additional_size;
+    uint32_t transport_header_size;
+    uint32_t transport_tail_size;
     uint32_t max_spdm_msg_size;
     size_t sender_buffer_size;
     size_t receiver_buffer_size;
@@ -79,11 +79,11 @@ void spdm_test_case_common_teardown (void *test_context)
     send_message = spdm_context->send_message;
     receive_message = spdm_context->receive_message;
 
-    max_spdm_msg_size = spdm_context->local_context.capability.max_spdm_msg_size; 
-    transport_additional_size = spdm_context->local_context.capability.transport_additional_size; 
+    max_spdm_msg_size = spdm_context->local_context.capability.max_spdm_msg_size;
+    transport_header_size = spdm_context->local_context.capability.transport_header_size;
+    transport_tail_size = spdm_context->local_context.capability.transport_tail_size;
     transport_encode_message = spdm_context->transport_encode_message;
     transport_decode_message = spdm_context->transport_decode_message;
-    transport_get_header_size = spdm_context->transport_get_header_size;
 
     sender_buffer_size = spdm_context->sender_buffer_size;
     receiver_buffer_size = spdm_context->receiver_buffer_size;
@@ -97,14 +97,13 @@ void spdm_test_case_common_teardown (void *test_context)
 
     libspdm_init_context (spdm_context);
 
-    libspdm_register_device_io_func(spdm_context, send_message,
-                                    receive_message);
+    libspdm_register_device_io_func(spdm_context, send_message, receive_message);
     libspdm_register_transport_layer_func(spdm_context,
                                           max_spdm_msg_size,
-                                          transport_additional_size,
+                                          transport_header_size,
+                                          transport_tail_size,
                                           transport_encode_message,
-                                          transport_decode_message,
-                                          transport_get_header_size);
+                                          transport_decode_message);
     libspdm_register_device_buffer_func(spdm_context,
                                         (uint32_t)sender_buffer_size,
                                         (uint32_t)receiver_buffer_size,
