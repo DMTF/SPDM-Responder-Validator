@@ -55,7 +55,7 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
-    data8 = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    data8 = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_MEASUREMENT_SPEC, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
