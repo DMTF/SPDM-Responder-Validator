@@ -184,7 +184,7 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
     spdm_request.header.param1 = 0;
     spdm_request.header.request_response_code = SPDM_NEGOTIATE_ALGORITHMS;
     spdm_request.header.param2 = 0;
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
@@ -293,7 +293,7 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
     }
 
     algo = spdm_test_get_one_bit (spdm_response->measurement_specification_sel,
-                                  SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF);
+                                  SPDM_MEASUREMENT_SPECIFICATION_DMTF);
     if (algo != 0xFFFFFFFF) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
@@ -414,7 +414,7 @@ void spdm_test_case_algorithms_version_mismatch (void *test_context)
         spdm_request.header.param1 = 0;
         spdm_request.header.request_response_code = SPDM_NEGOTIATE_ALGORITHMS;
         spdm_request.header.param2 = 0;
-        spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+        spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
         spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                       SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                       SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
@@ -550,7 +550,7 @@ void spdm_test_case_algorithms_unexpected_request (void *test_context)
     if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     }
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
@@ -744,7 +744,7 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
     if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     }
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
@@ -987,7 +987,7 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     spdm_request.header.param1 = 4;
     spdm_request.header.request_response_code = SPDM_NEGOTIATE_ALGORITHMS;
     spdm_request.header.param2 = 0;
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
@@ -1134,7 +1134,7 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     }
 
     algo = spdm_test_get_one_bit (spdm_response->measurement_specification_sel,
-                                  SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF);
+                                  SPDM_MEASUREMENT_SPECIFICATION_DMTF);
     if (algo != 0xFFFFFFFF) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
@@ -1438,7 +1438,7 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
     spdm_request.header.param1 = 4;
     spdm_request.header.request_response_code = SPDM_NEGOTIATE_ALGORITHMS;
     spdm_request.header.param2 = 0;
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
@@ -1598,7 +1598,7 @@ void spdm_test_case_algorithms_success_12 (void *test_context)
     }
 
     algo = spdm_test_get_one_bit (spdm_response->measurement_specification_sel,
-                                  SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF);
+                                  SPDM_MEASUREMENT_SPECIFICATION_DMTF);
     if (algo != 0xFFFFFFFF) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
@@ -1934,7 +1934,7 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
     if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
         spdm_request.other_params_support = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     }
-    spdm_request.measurement_specification = SPDM_MEASUREMENT_BLOCK_HEADER_SPECIFICATION_DMTF;
+    spdm_request.measurement_specification = SPDM_MEASUREMENT_SPECIFICATION_DMTF;
     spdm_request.base_asym_algo = SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSAPSS_2048 |
                                   SPDM_ALGORITHMS_BASE_ASYM_ALGO_TPM_ALG_RSASSA_3072 |
