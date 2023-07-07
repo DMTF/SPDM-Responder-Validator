@@ -259,6 +259,8 @@ bool spdm_test_case_finish_rsp_setup_version_capabilities (void *test_context)
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
 
+    libspdm_zero_mem(&parameter, sizeof(parameter));
+    parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
     /*set capability to support key_exchange*/
     data32 = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
