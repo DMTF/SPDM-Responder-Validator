@@ -797,7 +797,8 @@ void spdm_test_case_capabilities_success_12 (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
-                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
+                         SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
     spdm_request.data_transfer_size = test_buffer->data_transfer_size;
     spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
