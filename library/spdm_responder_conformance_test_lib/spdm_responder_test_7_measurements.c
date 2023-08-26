@@ -624,10 +624,14 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
             SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
         /* ignore spdm_request.nonce */
         spdm_request.slot_id_param = slot_id;
-        if (version == SPDM_MESSAGE_VERSION_10) {
-            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+            if (version == SPDM_MESSAGE_VERSION_10) {
+                spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+            } else {
+                spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            }
         } else {
-            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
         }
 
         spdm_response = (void *)message;
@@ -831,10 +835,14 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
             SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_ALL_MEASUREMENTS;
         /* ignore spdm_request.nonce */
         spdm_request.slot_id_param = slot_id;
-        if (version == SPDM_MESSAGE_VERSION_10) {
-            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+            if (version == SPDM_MESSAGE_VERSION_10) {
+                spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+            } else {
+                spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            }
         } else {
-            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
         }
 
         spdm_response = (void *)message;
@@ -1058,7 +1066,6 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
         spdm_request.header.param2 = 0;
         /* ignore spdm_request.nonce */
         spdm_request.slot_id_param = slot_id;
-        spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
 
         meas_count = 0;
         for (meas_index = 1; meas_index <= 0xFE; meas_index++) {
@@ -1078,6 +1085,8 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                 } else {
                     spdm_request_size = sizeof(spdm_get_measurements_request_t);
                 }
+            } else {
+                spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
             }
 
             spdm_request.header.param2 = meas_index;
@@ -1350,10 +1359,14 @@ void spdm_test_case_measurements_version_mismatch (void *test_context)
         spdm_request.header.param2 =
             SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
         spdm_request.slot_id_param = 0;
-        if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
-            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+            if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
+                spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+            } else {
+                spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            }
         } else {
-            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
         }
 
         spdm_response = (void *)message;
@@ -1457,10 +1470,14 @@ void spdm_test_case_measurements_unexpected_request (void *test_context)
     spdm_request.header.param2 =
         SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
     spdm_request.slot_id_param = 0;
-    if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
-        spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+    if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+        if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        } else {
+            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        }
     } else {
-        spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
     }
 
     spdm_response = (void *)message;
@@ -1570,10 +1587,14 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
     spdm_request.header.param2 =
         SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
     spdm_request.slot_id_param = 0;
-    if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
-        spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+    if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+        if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        } else {
+            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        }
     } else {
-        spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
     }
 
     /*The valid slot can be detected via DIGESTS and the 0xF is valid too */
@@ -1705,10 +1726,14 @@ void spdm_test_case_measurements_unexpected_request_in_session (void *test_conte
     spdm_request.header.param2 =
         SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_TOTAL_NUMBER_OF_MEASUREMENTS;
     spdm_request.slot_id_param = 0;
-    if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
-        spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+    if ((spdm_request.header.param1 & SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+        if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        } else {
+            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        }
     } else {
-        spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
     }
 
     spdm_response = (void *)message;
