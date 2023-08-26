@@ -1074,6 +1074,7 @@ void spdm_test_case_finish_rsp_invalid_request (void *test_context)
                 continue;
             }
             common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
+            spdm_request_new.header.param1 = SPDM_FINISH_REQUEST_ATTRIBUTES_SIGNATURE_INCLUDED;
             spdm_request_new.header.param2 = slot_id;
         } else {
             common_test_record_test_message ("test invalid size - 0x%x\n", spdm_request_size);
