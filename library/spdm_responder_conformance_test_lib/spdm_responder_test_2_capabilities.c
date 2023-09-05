@@ -1050,7 +1050,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
     spdm_request.data_transfer_size = test_buffer->data_transfer_size;
-    spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
+    spdm_request.max_spdm_msg_size = spdm_request.data_transfer_size;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
