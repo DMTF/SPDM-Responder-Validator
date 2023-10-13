@@ -450,20 +450,12 @@ bool spdm_test_measurement_calc_summary_hash (uint8_t spdm_version,
             ((spdm_measurement_block_common_header_t *)measurement_record)->index);
 
         LIBSPDM_ASSERT (measurment_data_size < LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE);
-        if (spdm_version < SPDM_MESSAGE_VERSION_12) {
-            libspdm_copy_mem (&measurement_data[measurment_data_size],
-                              LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE - measurment_data_size,
-                              measurement_record + sizeof(spdm_measurement_block_common_header_t),
-                              measurement_size);
-            measurment_data_size += measurement_size;
-        } else {
-            libspdm_copy_mem (&measurement_data[measurment_data_size],
-                              LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE - measurment_data_size,
-                              measurement_record,
-                              sizeof(spdm_measurement_block_common_header_t) + measurement_size);
-            measurment_data_size += sizeof(spdm_measurement_block_common_header_t) +
-                                    measurement_size;
-        }
+        libspdm_copy_mem (&measurement_data[measurment_data_size],
+                           LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE - measurment_data_size,
+                           measurement_record,
+                          sizeof(spdm_measurement_block_common_header_t) + measurement_size);
+        measurment_data_size += sizeof(spdm_measurement_block_common_header_t) +
+                                measurement_size;
 
         measurement_record =
             (void *)((size_t)measurement_record + sizeof(spdm_measurement_block_common_header_t) +
@@ -959,30 +951,32 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
         measurement_record_size = measurement_record_length;
         measurement_block_count = spdm_response->number_of_blocks;
 
-        result = spdm_test_measurement_calc_summary_hash (test_buffer->version,
-                                                          test_buffer->hash_algo,
-                                                          spdm_response->number_of_blocks,
-                                                          measurement_record_length,
-                                                          (void *)(spdm_response + 1),
-                                                          measurement_summary_hash,
-                                                          measurement_index_mask);
-        if (!result) {
+        if (version >= SPDM_MESSAGE_VERSION_12) {
+            result = spdm_test_measurement_calc_summary_hash (test_buffer->version,
+                                                            test_buffer->hash_algo,
+                                                            spdm_response->number_of_blocks,
+                                                            measurement_record_length,
+                                                            (void *)(spdm_response + 1),
+                                                            measurement_summary_hash,
+                                                            measurement_index_mask);
+            if (!result) {
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    COMMON_TEST_RESULT_NOT_TESTED, "calc_summary_hash failure");
+                return;
+            }
+            if (memcmp (measurement_summary_hash,
+                        test_buffer->measurement_summary_hash, test_buffer->hash_size) == 0) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
-                COMMON_TEST_RESULT_NOT_TESTED, "calc_summary_hash failure");
-            return;
-        }
-        if (memcmp (measurement_summary_hash,
-                    test_buffer->measurement_summary_hash, test_buffer->hash_size) == 0) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
-        }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 13,
-            test_result, "response measurement summary hash");
-        if (test_result == COMMON_TEST_RESULT_FAIL) {
-            return;
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 13,
+                test_result, "response measurement summary hash");
+            if (test_result == COMMON_TEST_RESULT_FAIL) {
+                return;
+            }
         }
 
         if ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MEAS_CAP_SIG) != 0) {
