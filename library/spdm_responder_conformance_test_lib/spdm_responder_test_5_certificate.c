@@ -172,7 +172,7 @@ bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
 
 bool spdm_test_case_certificate_setup_version_any (void *test_context)
 {
-    return spdm_test_case_certificate_setup_vca_digest (test_context, 0);
+    return spdm_test_case_certificate_setup_vca_digest (test_context, SPDM_MESSAGE_VERSION_10 << SPDM_VERSION_NUMBER_SHIFT_BIT);
 }
 
 bool spdm_test_case_certificate_setup_version_capabilities (void *test_context)
