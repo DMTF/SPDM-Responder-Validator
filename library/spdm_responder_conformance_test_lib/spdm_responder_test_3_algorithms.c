@@ -39,6 +39,7 @@ bool spdm_test_case_algorithms_setup_version_capabilities (void *test_context,
     libspdm_return_t status;
     libspdm_data_parameter_t parameter;
     size_t data_size;
+    uint32_t data32;
     spdm_algorithms_test_buffer_t *test_buffer;
 
     spdm_test_context = test_context;
@@ -51,6 +52,17 @@ bool spdm_test_case_algorithms_setup_version_capabilities (void *test_context,
         libspdm_set_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter,
                          &spdm_version, sizeof(spdm_version));
     }
+
+    data32 = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_get_version (spdm_context, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
