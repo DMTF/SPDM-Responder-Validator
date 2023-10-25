@@ -664,11 +664,8 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
                 spdm_request_new.flags = invalid_flags_v11[index];
 
                 /*the mut_auth_cap == 1 and encap_cap == 0 case need check for version1.1 only*/
-                if (index == 2) {
-                    version = SPDM_MESSAGE_VERSION_11;
-                    spdm_request_size =
-                        offsetof(spdm_get_capabilities_request_t, data_transfer_size);
-                    spdm_request_new.header.spdm_version = version;
+                if ((index == 2) && (version == SPDM_MESSAGE_VERSION_12)) {
+                    continue;
                 }
             } else {
                 continue;
