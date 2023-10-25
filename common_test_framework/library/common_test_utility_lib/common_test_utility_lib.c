@@ -380,6 +380,8 @@ void common_test_run_test_suite (
     common_test_case_t *test_case;
     common_test_action_t test_action;
     bool result;
+    bool skip_test_case;
+    bool skip_test_group;
 
     m_log_file = fopen (COMMON_TEST_LOG_FILE_NAME, "w+");
     if (m_log_file == NULL) {
@@ -413,6 +415,7 @@ void common_test_run_test_suite (
         assert (test_group->test_cases != NULL);
         fprintf(m_log_file, "test group %d (%s) - start\n", test_group->group_id,
                 test_group->group_name);
+        skip_test_group = false;
         if (test_group->group_setup_func != NULL) {
             fprintf(m_log_file, "test group %d (%s) - setup enter\n", test_group->group_id,
                     test_group->group_name);
@@ -424,64 +427,69 @@ void common_test_run_test_suite (
                                                    COMMON_TEST_ID_END,
                                                    COMMON_TEST_RESULT_NOT_TESTED,
                                                    "group_setup_func fail");
-                continue;
+                skip_test_group = true;
             }
         }
-        for (case_index = 0; ; case_index++) {
-            test_case = &test_group->test_cases[case_index];
-            if (test_case->case_id == COMMON_TEST_ID_END) {
-                break;
-            }
-            if (test_case->case_id == COMMON_TEST_ID_SKIP) {
-                continue;
-            }
-            test_action = common_test_get_test_case_action (test_group->group_id,
-                                                            test_case->case_id, test_suite_config);
-            if (test_action == COMMON_TEST_ACTION_SKIP) {
-                fprintf(m_log_file, "  test case %d.%d (%s) - skipped\n",
+        if (!skip_test_group) {
+            for (case_index = 0; ; case_index++) {
+                test_case = &test_group->test_cases[case_index];
+                if (test_case->case_id == COMMON_TEST_ID_END) {
+                    break;
+                }
+                if (test_case->case_id == COMMON_TEST_ID_SKIP) {
+                    continue;
+                }
+                test_action = common_test_get_test_case_action(test_group->group_id,
+                    test_case->case_id, test_suite_config);
+                if (test_action == COMMON_TEST_ACTION_SKIP) {
+                    fprintf(m_log_file, "  test case %d.%d (%s) - skipped\n",
                         test_group->group_id,
                         test_case->case_id,
                         test_case->case_name);
-                continue;
-            }
-            if (test_case->case_setup_func != NULL) {
-                fprintf(m_log_file, "  test case %d.%d (%s) - setup enter\n",
+                    continue;
+                }
+                skip_test_case = false;
+                if (test_case->case_setup_func != NULL) {
+                    fprintf(m_log_file, "  test case %d.%d (%s) - setup enter\n",
                         test_group->group_id,
                         test_case->case_id,
                         test_case->case_name);
-                result = test_case->case_setup_func (test_context);
-                fprintf(m_log_file, "  test case %d.%d (%s) - setup exit (%d)\n",
+                    result = test_case->case_setup_func(test_context);
+                    fprintf(m_log_file, "  test case %d.%d (%s) - setup exit (%d)\n",
                         test_group->group_id,
                         test_case->case_id,
                         test_case->case_name,
                         result);
-                if (!result) {
-                    common_test_record_test_assertion (test_group->group_id, test_case->case_id,
-                                                       COMMON_TEST_ID_END,
-                                                       COMMON_TEST_RESULT_NOT_TESTED,
-                                                       "case_setup_func fail");
-                    continue;
+                    if (!result) {
+                        common_test_record_test_assertion(test_group->group_id, test_case->case_id,
+                            COMMON_TEST_ID_END,
+                            COMMON_TEST_RESULT_NOT_TESTED,
+                            "case_setup_func fail");
+                        skip_test_case = true;
+                    }
                 }
-            }
-            fprintf(m_log_file, "  test case %d.%d (%s) - start\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
-            test_case->case_func (test_context);
-            fprintf(m_log_file, "  test case %d.%d (%s) - stop\n",
-                    test_group->group_id,
-                    test_case->case_id,
-                    test_case->case_name);
-            if (test_case->case_teardown_func != NULL) {
-                fprintf(m_log_file, "  test case %d.%d (%s) - teardown enter\n",
+                if (!skip_test_case) {
+                    fprintf(m_log_file, "  test case %d.%d (%s) - start\n",
                         test_group->group_id,
                         test_case->case_id,
                         test_case->case_name);
-                test_case->case_teardown_func (test_context);
-                fprintf(m_log_file, "  test case %d.%d (%s) - teardown exit\n",
+                    test_case->case_func(test_context);
+                    fprintf(m_log_file, "  test case %d.%d (%s) - stop\n",
                         test_group->group_id,
                         test_case->case_id,
                         test_case->case_name);
+                }
+                if (test_case->case_teardown_func != NULL) {
+                    fprintf(m_log_file, "  test case %d.%d (%s) - teardown enter\n",
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
+                    test_case->case_teardown_func(test_context);
+                    fprintf(m_log_file, "  test case %d.%d (%s) - teardown exit\n",
+                        test_group->group_id,
+                        test_case->case_id,
+                        test_case->case_name);
+                }
             }
         }
         if (test_group->group_teardown_func != NULL) {
