@@ -1592,90 +1592,92 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
     }
 
     /*The valid slot can be detected via DIGESTS and the 0xF is valid too */
-    for (index = 0; index < SPDM_MAX_SLOT_COUNT * 2 - 1; index++) {
-        libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
-                          sizeof(spdm_request));
+    if (test_buffer->version > SPDM_MESSAGE_VERSION_10) {
+        for (index = 0; index < SPDM_MAX_SLOT_COUNT * 2 - 1; index++) {
+            libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
+                              sizeof(spdm_request));
 
-        slot_id = (uint8_t)index;
-        if ((slot_id < SPDM_MAX_SLOT_COUNT) &&
-            ((test_buffer->slot_mask & (0x1 << slot_id)) != 0)) {
-            continue;
-        }
-        common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
-        spdm_request_new.slot_id_param = slot_id;
+            slot_id = (uint8_t)index;
+            if ((slot_id < SPDM_MAX_SLOT_COUNT) &&
+                ((test_buffer->slot_mask & (0x1 << slot_id)) != 0)) {
+                continue;
+            }
+            common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
+            spdm_request_new.slot_id_param = slot_id;
 
-        spdm_response = (void *)message;
-        spdm_response_size = sizeof(message);
-        libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request_new, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
-        if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            spdm_response = (void *)message;
+            spdm_response_size = sizeof(message);
+            libspdm_zero_mem(message, sizeof(message));
+            status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                               &spdm_request_new, spdm_request_size,
+                                               spdm_response, &spdm_response_size);
+            if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                    SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, COMMON_TEST_ID_END,
+                    COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
+                continue;
+            }
+
+            if (spdm_response_size >= sizeof(spdm_error_response_t)) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, COMMON_TEST_ID_END,
-                COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-            continue;
-        }
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 1,
+                test_result, "response size - %d", spdm_response_size);
+            if (test_result == COMMON_TEST_RESULT_FAIL) {
+                continue;
+            }
 
-        if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
-        }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 1,
-            test_result, "response size - %d", spdm_response_size);
-        if (test_result == COMMON_TEST_RESULT_FAIL) {
-            continue;
-        }
+            if (spdm_response->header.request_response_code == SPDM_ERROR) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 2,
+                test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
+            if (test_result == COMMON_TEST_RESULT_FAIL) {
+                continue;
+            }
 
-        if (spdm_response->header.request_response_code == SPDM_ERROR) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
-        }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 2,
-            test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-        if (test_result == COMMON_TEST_RESULT_FAIL) {
-            continue;
-        }
+            if (spdm_response->header.spdm_version == test_buffer->version) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 3,
+                test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
+            if (test_result == COMMON_TEST_RESULT_FAIL) {
+                continue;
+            }
 
-        if (spdm_response->header.spdm_version == test_buffer->version) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
-        }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 3,
-            test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-        if (test_result == COMMON_TEST_RESULT_FAIL) {
-            continue;
-        }
+            if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 4,
+                test_result, "response param1 - 0x%02x", spdm_response->header.param1);
 
-        if (spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
+            if (spdm_response->header.param2 == 0) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 5,
+                test_result, "response param2 - 0x%02x", spdm_response->header.param2);
         }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 4,
-            test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-        if (spdm_response->header.param2 == 0) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
-        }
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 5,
-            test_result, "response param2 - 0x%02x", spdm_response->header.param2);
     }
 }
 
