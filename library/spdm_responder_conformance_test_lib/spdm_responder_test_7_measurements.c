@@ -951,14 +951,15 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
         measurement_record_size = measurement_record_length;
         measurement_block_count = spdm_response->number_of_blocks;
 
-        if (version >= SPDM_MESSAGE_VERSION_12) {
-            result = spdm_test_measurement_calc_summary_hash (test_buffer->version,
+        
+        result = spdm_test_measurement_calc_summary_hash (test_buffer->version,
                                                             test_buffer->hash_algo,
                                                             spdm_response->number_of_blocks,
                                                             measurement_record_length,
                                                             (void *)(spdm_response + 1),
                                                             measurement_summary_hash,
                                                             measurement_index_mask);
+        if (version >= SPDM_MESSAGE_VERSION_12) {
             if (!result) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
