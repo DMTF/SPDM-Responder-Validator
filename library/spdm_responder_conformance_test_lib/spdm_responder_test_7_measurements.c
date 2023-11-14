@@ -1682,6 +1682,155 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
     }
 }
 
+void spdm_test_case_measurements_success_measurement_block(void *test_context)
+{
+    spdm_test_context_t *spdm_test_context;
+    void *spdm_context;
+    libspdm_return_t status;
+    spdm_get_measurements_request_t spdm_request;
+    size_t spdm_request_size;
+    spdm_measurements_response_t *spdm_response;
+    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
+    size_t spdm_response_size;
+    common_test_result_t test_result;
+    spdm_measurement_block_dmtf_t *measurement_block;
+    spdm_measurements_test_buffer_t *test_buffer;
+    size_t hash_size;
+    uint8_t version;
+
+    spdm_test_context = test_context;
+    spdm_context = spdm_test_context->spdm_context;
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+    version = test_buffer->version;
+
+    common_test_record_test_message("SPDM Measurement Block\n");
+    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
+    spdm_request.header.spdm_version = test_buffer->version;
+    spdm_request.header.request_response_code = SPDM_GET_MEASUREMENTS;
+    spdm_request.header.param1 = SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE;
+    spdm_request.header.param2 =
+        SPDM_GET_MEASUREMENTS_REQUEST_MEASUREMENT_OPERATION_ALL_MEASUREMENTS;
+    spdm_request.slot_id_param = 0;
+    if ((spdm_request.header.param1 &
+         SPDM_GET_MEASUREMENTS_REQUEST_ATTRIBUTES_GENERATE_SIGNATURE) != 0) {
+        if (test_buffer->version == SPDM_MESSAGE_VERSION_10) {
+            spdm_request_size = offsetof(spdm_get_measurements_request_t, slot_id_param);
+        } else {
+            spdm_request_size = sizeof(spdm_get_measurements_request_t);
+        }
+    } else {
+        spdm_request_size = offsetof(spdm_get_measurements_request_t, nonce);
+    }
+
+    spdm_response = (void *)message;
+    spdm_response_size = sizeof(message);
+    libspdm_zero_mem(message, sizeof(message));
+    status = libspdm_send_receive_data(spdm_context, NULL, false,
+                                       &spdm_request, spdm_request_size,
+                                       spdm_response, &spdm_response_size);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, COMMON_TEST_ID_END,
+            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
+        return;
+    }
+
+    measurement_block = (void *)(spdm_response + 1);
+    for (size_t index = 0; index < spdm_response->number_of_blocks; index++) {
+        if (measurement_block->measurement_block_common_header.measurement_specification ==
+            SPDM_MEASUREMENT_SPECIFICATION_DMTF)
+        {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, 1,
+            test_result, "MeasurementSpecification 0x%02x",
+            measurement_block->measurement_block_common_header.measurement_specification);
+        if (test_result == COMMON_TEST_RESULT_FAIL) {
+            return;
+        }
+
+        if ((measurement_block->measurement_block_dmtf_header.dmtf_spec_measurement_value_type &
+             SPDM_MEASUREMENT_BLOCK_MEASUREMENT_TYPE_RAW_BIT_STREAM) == 0)
+        {
+            hash_size = libspdm_get_measurement_hash_size(
+                ((libspdm_context_t *)spdm_context)->connection_info.algorithm.measurement_hash_algo);
+
+            if (measurement_block->measurement_block_common_header.measurement_size ==
+                (hash_size + sizeof(spdm_measurement_block_dmtf_header_t)))
+            {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion(
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, 2,
+                test_result, "SpdmMeasurementBlock MeasurementSize - 0x%02x",
+                measurement_block->measurement_block_common_header.measurement_size);
+            if (test_result == COMMON_TEST_RESULT_FAIL)
+            {
+                return;
+            }
+
+            if (measurement_block->measurement_block_dmtf_header.dmtf_spec_measurement_value_size ==
+                hash_size)
+            {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion(
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, 3,
+                test_result, "SpdmMeasurementBlock DMTFSpecMeasurementValueSize - 0x%02x",
+                measurement_block->measurement_block_dmtf_header.dmtf_spec_measurement_value_size);
+            if (test_result == COMMON_TEST_RESULT_FAIL)
+            {
+                return;
+            }
+        }
+
+        if (version >= SPDM_MESSAGE_VERSION_12)
+        {
+            if ((measurement_block->measurement_block_dmtf_header.
+                 dmtf_spec_measurement_value_type &
+                 (~SPDM_MEASUREMENT_BLOCK_MEASUREMENT_TYPE_RAW_BIT_STREAM)) ==
+                SPDM_MEASUREMENT_BLOCK_MEASUREMENT_TYPE_DEVICE_MODE)
+            {
+                if (measurement_block->measurement_block_dmtf_header.
+                    dmtf_spec_measurement_value_type ==
+                    (SPDM_MEASUREMENT_BLOCK_MEASUREMENT_TYPE_DEVICE_MODE |
+                     SPDM_MEASUREMENT_BLOCK_MEASUREMENT_TYPE_RAW_BIT_STREAM))
+                {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                } else {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                }
+
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
+                    SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, 4,
+                    test_result, "DMTFSpecMeasurementValueType");
+
+                if (test_result == COMMON_TEST_RESULT_FAIL) {
+                    return;
+                }
+            }
+        }
+
+        measurement_block =
+            (void *)((size_t)measurement_block +
+                     sizeof(spdm_measurement_block_common_header_t) +
+                     measurement_block->measurement_block_common_header.
+                     measurement_size);
+    }
+}
+
 void spdm_test_case_measurements_unexpected_request_in_session (void *test_context)
 {
     spdm_test_context_t *spdm_test_context;
@@ -1830,6 +1979,11 @@ common_test_case_t m_spdm_test_group_measurements[] = {
     {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST,
      "spdm_test_case_measurements_invalid_request",
      spdm_test_case_measurements_invalid_request,
+     spdm_test_case_measurements_setup_version_any,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK,
+     "spdm_test_case_measurements_success_measurements_block",
+     spdm_test_case_measurements_success_measurement_block,
      spdm_test_case_measurements_setup_version_any,
      spdm_test_case_common_teardown},
     {SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SUCCESS_11,
