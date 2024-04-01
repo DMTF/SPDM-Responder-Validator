@@ -17,7 +17,6 @@ void spdm_responder_conformance_test (void *spdm_context,
 
 #define SPDM_RESPONDER_TEST_GROUP_VERSION    1
 #define   SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10       1
-#define   SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST  2
 
 #define SPDM_RESPONDER_TEST_GROUP_CAPABILITIES    2
 #define   SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_10                        1
