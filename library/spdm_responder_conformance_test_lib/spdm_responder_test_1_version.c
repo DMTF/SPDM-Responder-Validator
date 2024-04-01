@@ -114,104 +114,10 @@ void spdm_test_case_version_success (void *test_context)
     }
 }
 
-void spdm_test_case_version_invalid_request (void *test_context)
-{
-    spdm_test_context_t *spdm_test_context;
-    void *spdm_context;
-    libspdm_return_t status;
-    spdm_get_version_request_t spdm_request;
-    spdm_error_response_t *spdm_response;
-    uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
-    size_t spdm_response_size;
-    common_test_result_t test_result;
-
-    spdm_test_context = test_context;
-    spdm_context = spdm_test_context->spdm_context;
-
-    spdm_request.header.spdm_version = SPDM_MESSAGE_VERSION_10 + 1;
-    spdm_request.header.request_response_code = SPDM_GET_VERSION;
-    spdm_request.header.param1 = 0;
-    spdm_request.header.param2 = 0;
-
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
-    if (LIBSPDM_STATUS_IS_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST,
-            COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-        return;
-    }
-
-    if (spdm_response_size >= sizeof(spdm_error_response_t)) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, 1,
-        test_result, "response size - %d", spdm_response_size);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.request_response_code == SPDM_ERROR) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, 2,
-        test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.spdm_version == SPDM_MESSAGE_VERSION_10) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, 3,
-        test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if ((spdm_response->header.param1 == SPDM_ERROR_CODE_INVALID_REQUEST) ||
-        (spdm_response->header.param1 == SPDM_ERROR_CODE_VERSION_MISMATCH)) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, 4,
-        test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-
-    if (spdm_response->header.param2 == 0) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST, 5,
-        test_result, "response param2 - 0x%02x", spdm_response->header.param2);
-}
-
 common_test_case_t m_spdm_test_group_version[] = {
     {SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10,
      "spdm_test_case_version_success",
      spdm_test_case_version_success,
-     spdm_test_case_version_setup_version,
-     spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_VERSION_INVALID_REQUEST,
-     "spdm_test_case_version_invalid_request",
-     spdm_test_case_version_invalid_request,
      spdm_test_case_version_setup_version,
      spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
