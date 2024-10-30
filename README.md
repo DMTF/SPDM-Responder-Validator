@@ -88,7 +88,7 @@ Some SPDM flows (such as mutual authentication and Responder-initiated key updat
 
 The test cases implementation is based upon DMTF's [libspdm](https://github.com/DMTF/libspdm). The test cases checkpoint has no assumption on the libspdm implementation.
 
-The test case implemenmtation supports the following transport binding by default:
+The test case implementation supports the following transport binding by default:
 
    MCTP and secured MCTP follow :
 
@@ -112,7 +112,7 @@ The test case implemenmtation supports the following transport binding by defaul
                                          const common_test_suite_config_t *test_config);
    ```
    
-   The test integrator shall preprare a `spdm_context` and initialize it with required functions callbacks.
+   The test integrator shall prepare a `spdm_context` and initialize it with required functions callbacks.
    ```
 void *spdm_test_client_init(void)
 {
@@ -159,7 +159,7 @@ void *spdm_test_client_init(void)
 }
    ```
 
-   The test integrator shall preprare a `test_config` and initialize it with required test cases.
+   The test integrator shall prepare a `test_config` and initialize it with required test cases.
    ```
 common_test_case_config_t m_spdm_test_group_version_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, COMMON_TEST_ACTION_RUN},
