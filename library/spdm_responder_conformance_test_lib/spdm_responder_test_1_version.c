@@ -100,13 +100,17 @@ void spdm_test_case_version_success (void *test_context)
 
     version_number_entry = (void *)(spdm_response + 1);
     for (index = 0; index < spdm_response->version_number_entry_count; index++) {
-        version = version_number_entry[index];
-        version = version >> SPDM_VERSION_NUMBER_SHIFT_BIT;
-        if (version == SPDM_MESSAGE_VERSION_10 || version == SPDM_MESSAGE_VERSION_11 ||
-            version == SPDM_MESSAGE_VERSION_12) {
-            test_result = COMMON_TEST_RESULT_PASS;
-        } else {
-            test_result = COMMON_TEST_RESULT_FAIL;
+        version = version_number_entry[index] >> SPDM_VERSION_NUMBER_SHIFT_BIT;
+        switch (version) {
+            case SPDM_MESSAGE_VERSION_10:
+            case SPDM_MESSAGE_VERSION_11:
+            case SPDM_MESSAGE_VERSION_12:
+            case SPDM_MESSAGE_VERSION_13:
+                test_result = COMMON_TEST_RESULT_PASS;
+                break;
+            default:
+                test_result = COMMON_TEST_RESULT_FAIL;
+                break;
         }
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_VERSION, SPDM_RESPONDER_TEST_CASE_VERSION_SUCCESS_10, 5,
