@@ -1109,7 +1109,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
         status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request, spdm_request_size,
+                                           &spdm_request_new, spdm_request_size,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
