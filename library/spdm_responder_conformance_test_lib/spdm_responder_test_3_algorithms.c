@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2025 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/spdm-emu/blob/main/LICENSE.md
  **/
 
@@ -57,6 +57,7 @@ bool spdm_test_case_algorithms_setup_version_capabilities (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MAC_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_MUT_AUTH_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
