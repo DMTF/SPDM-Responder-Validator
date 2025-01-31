@@ -283,6 +283,27 @@ void spdm_test_case_digests_success_10 (void *test_context)
         return;
     }
 
+    if (spdm_response->header.spdm_version >= SPDM_MESSAGE_VERSION_13) {
+        uint8_t supported = spdm_response->header.param1;
+        uint8_t provisioned = spdm_response->header.param2;
+
+        test_result = COMMON_TEST_RESULT_PASS;
+
+        uint8_t i = 0;
+        while(i <= 7) {
+            if ((provisioned & (1 << i)) == 1) {
+                if ((supported & (1 << i)) == 0) {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                    break;
+                }
+            }
+            i++;
+        }
+
+        common_test_record_test_assertion (SPDM_RESPONDER_TEST_GROUP_DIGESTS, SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, 6,
+        test_result, "response ProvisionedSlotMask == SupportedSlotMask - 0x%02x", spdm_response->header.spdm_version);
+    }
+
     if ((spdm_response->header.param2 & 0x1) != 0) {
         test_result = COMMON_TEST_RESULT_PASS;
     } else {
@@ -309,7 +330,7 @@ void spdm_test_case_digests_success_10 (void *test_context)
         test_result = COMMON_TEST_RESULT_FAIL;
     }
     common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_DIGESTS, SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, 4,
+        SPDM_RESPONDER_TEST_GROUP_DIGESTS, SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, 5,
         test_result, "response spdm_response_size - 0x%08x", spdm_response_size);
 }
 
