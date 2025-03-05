@@ -283,7 +283,7 @@ void spdm_test_case_certificate_success_10 (void *test_context)
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                    SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 return;
             }
@@ -369,7 +369,7 @@ void spdm_test_case_certificate_success_10 (void *test_context)
                           cert_chain_hash);
         if (!result) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "calc_cert_hash failure");
             return;
         }
@@ -439,7 +439,7 @@ void spdm_test_case_certificate_version_mismatch (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -540,7 +540,7 @@ void spdm_test_case_certificate_unexpected_request (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-            SPDM_RESPONDER_TEST_CASE_CERTIFICATE_UNEXPECTED_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_CERTIFICATE_UNEXPECTED_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -664,7 +664,7 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
