@@ -387,7 +387,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             status = libspdm_init_connection (spdm_context, false);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "init_connection failure");
                 continue;
             }
@@ -398,7 +398,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                                        measurement_hash_type[meas_hash_type_index], NULL, NULL);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
-                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 1,
                         COMMON_TEST_RESULT_NOT_TESTED, "first challenge failure");
                     continue;
                 }
@@ -408,7 +408,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 status = libspdm_get_digest (spdm_context, NULL, NULL, NULL);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
-                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 2,
                         COMMON_TEST_RESULT_NOT_TESTED, "get_digest failure");
                     continue;
                 }
@@ -420,7 +420,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                                                   &m_cert_chain_buffer_size, m_cert_chain_buffer);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
-                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                        SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 3,
                         COMMON_TEST_RESULT_NOT_TESTED, "get_certificate failure");
                     continue;
                 }
@@ -441,7 +441,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                                                spdm_response, &spdm_response_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 4,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 return;
             }
@@ -472,7 +472,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 }
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 1,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 5,
                 test_result, "response size - %d", spdm_response_size);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -491,7 +491,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 2,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 6,
                 test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -503,7 +503,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 3,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 7,
                 test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -516,7 +516,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 4,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 8,
                 test_result, "response param1 - 0x%02x", spdm_response->header.param1);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -528,7 +528,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 5,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 9,
                 test_result, "response param2 - 0x%02x", spdm_response->header.param2);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -542,7 +542,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 6,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 10,
                 test_result, "response cert chain hash");
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -552,7 +552,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                                               sizeof(spdm_request));
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 11,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_c failure");
                 return;
             }
@@ -560,7 +560,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                                               (size_t)signature_ptr - (size_t)spdm_response);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 12,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_c failure");
                 return;
             }
@@ -572,7 +572,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 7,
+                SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 13,
                 test_result, "response signature");
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -712,7 +712,7 @@ void spdm_test_case_challenge_auth_version_mismatch (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH,
-                SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -811,7 +811,7 @@ void spdm_test_case_challenge_auth_unexpected_request (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH,
-            SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_UNEXPECTED_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_UNEXPECTED_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -940,7 +940,7 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH,
-                SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_INVALID_REQUEST, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_INVALID_REQUEST, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -1075,7 +1075,7 @@ common_test_case_t m_spdm_test_group_challenge_auth[] = {
     {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B4C1,
      "spdm_test_case_challenge_auth_success_12_a2b4c1",
      spdm_test_case_challenge_auth_success_12_a2b4c1,
-     spdm_test_case_challenge_auth_setup_version_12,
+     spdm_test_case_challenge_auth_setup_version_12, 
      spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };

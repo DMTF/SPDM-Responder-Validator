@@ -226,7 +226,7 @@ void spdm_test_case_heartbeat_ack_success_11_dhe (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-            SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -316,7 +316,7 @@ void spdm_test_case_heartbeat_ack_version_mismatch (void *test_context)
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
                 SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_VERSION_MISMATCH_IN_DHE_SESSION,
-                COMMON_TEST_ID_END,
+                0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -409,7 +409,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "key_exchange failure");
         return;
     }
@@ -417,7 +417,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            1,
             COMMON_TEST_RESULT_NOT_TESTED, "heartbeat_period is 0");
         return;
     }
@@ -438,7 +438,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
             SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            2,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -450,7 +450,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 1,
+        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 3,
         test_result, "response size - %d", spdm_response_size);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -463,7 +463,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 2,
+        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 4,
         test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -476,7 +476,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 3,
+        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 5,
         test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -489,7 +489,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 4,
+        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 6,
         test_result, "response param1 - 0x%02x", spdm_response->header.param1);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -502,7 +502,7 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 5,
+        SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 7,
         test_result, "response param2 - 0x%02x", spdm_response->header.param2);
 }
 
@@ -539,7 +539,7 @@ void spdm_test_case_heartbeat_ack_session_required (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK,
-            SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_REQUIRED, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SESSION_REQUIRED, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
