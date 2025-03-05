@@ -419,7 +419,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             status = libspdm_init_connection (spdm_context, false);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "init_connection failure");
                 continue;
             }
@@ -429,7 +429,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                                               &m_cert_chain_buffer_size, m_cert_chain_buffer);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "get_certificate failure");
                 continue;
             }
@@ -449,7 +449,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 test_buffer->dhe_named_group, true);
             if (dhe_context == NULL) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
                 return;
             }
@@ -462,7 +462,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
                 return;
             }
@@ -488,7 +488,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 return;
             }
@@ -600,7 +600,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "assign_session_id failure");
                 return;
             }
@@ -615,7 +615,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
                 return;
             }
@@ -626,7 +626,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
                 return;
             }
@@ -653,7 +653,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
                 return;
             }
@@ -667,7 +667,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_compute_key failure");
                 return;
             }
@@ -680,7 +680,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "calculate_th1_hash failure");
                 return;
             }
@@ -690,7 +690,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "generate_session_handshake_key failure");
                 return;
             }
@@ -715,7 +715,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     libspdm_free_session_id(spdm_context, session_id);
                     common_test_record_test_assertion (
-                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, COMMON_TEST_ID_END,
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                         COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
                     return;
                 }
@@ -804,7 +804,7 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         if (dhe_context == NULL) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
             return;
         }
@@ -818,7 +818,7 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
                 test_buffer->dhe_named_group, dhe_context);
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
             return;
         }
@@ -843,7 +843,7 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -951,7 +951,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -1053,7 +1053,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "start_session failure");
         return;
     }
@@ -1074,7 +1074,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
         return;
     }
@@ -1089,7 +1089,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
         return;
     }
@@ -1115,7 +1115,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -1228,7 +1228,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     if (dhe_context == NULL) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
         return;
     }
@@ -1242,7 +1242,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
             test_buffer->dhe_named_group, dhe_context);
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
         return;
     }
@@ -1291,7 +1291,7 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }

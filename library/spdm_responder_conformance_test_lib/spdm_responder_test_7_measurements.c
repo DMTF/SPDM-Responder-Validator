@@ -634,7 +634,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             return;
         }
@@ -745,7 +745,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               &spdm_request, spdm_request_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -754,7 +754,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               (size_t)signature_ptr - (size_t)spdm_response);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -845,7 +845,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             return;
         }
@@ -965,7 +965,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               &spdm_request, spdm_request_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -974,7 +974,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               (size_t)signature_ptr - (size_t)spdm_response);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -987,7 +987,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                     test_result = COMMON_TEST_RESULT_FAIL;
                 }
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 14,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     test_result, "response param2 (slot_id) - 0x%02x",
                     spdm_response->header.param2 & SPDM_MEASUREMENTS_RESPONSE_SLOT_ID_MASK);
                 if (test_result == COMMON_TEST_RESULT_FAIL) {
@@ -1006,7 +1006,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                     test_result = COMMON_TEST_RESULT_FAIL;
                 }
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 14,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     test_result, "response param2 (content changed) - 0x%02x",
                     spdm_response->header.param2 & SPDM_MEASUREMENTS_RESPONSE_CONTENT_CHANGE_MASK);
                 if (test_result == COMMON_TEST_RESULT_FAIL) {
@@ -1073,7 +1073,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                                spdm_response, &spdm_response_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 return;
             }
@@ -1191,7 +1191,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               &spdm_request, spdm_request_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -1200,7 +1200,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                                               (size_t)signature_ptr - (size_t)spdm_response);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_m failure");
                 return;
             }
@@ -1352,7 +1352,7 @@ void spdm_test_case_measurements_version_mismatch (void *test_context)
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_VERSION_MISMATCH, COMMON_TEST_ID_END,
+                SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_VERSION_MISMATCH, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -1463,7 +1463,7 @@ void spdm_test_case_measurements_unexpected_request (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -1594,7 +1594,7 @@ void spdm_test_case_measurements_invalid_request (void *test_context)
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-                    SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, COMMON_TEST_ID_END,
+                    SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_INVALID_REQUEST, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 continue;
             }
@@ -1710,7 +1710,7 @@ void spdm_test_case_measurements_success_measurement_block(void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
-            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_SPDM_MEASUREMENT_BLOCK, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -1839,7 +1839,7 @@ void spdm_test_case_measurements_unexpected_request_in_session (void *test_conte
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "key_exchange failure");
         return;
     }
@@ -1871,7 +1871,7 @@ void spdm_test_case_measurements_unexpected_request_in_session (void *test_conte
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
