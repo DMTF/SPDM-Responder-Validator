@@ -231,7 +231,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -307,7 +307,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (!result) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 6,
             COMMON_TEST_RESULT_NOT_TESTED, "create_update_session_data_key(Req) failure");
         return;
     }
@@ -317,7 +317,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (!result) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 7,
             COMMON_TEST_RESULT_NOT_TESTED, "activate_update_session_data_key(Req) failure");
         return;
     }
@@ -340,7 +340,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 8,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -352,7 +352,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 6,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 9,
         test_result, "response size - %d", spdm_response_size);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -365,7 +365,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 7,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 10,
         test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -378,7 +378,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 8,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 11,
         test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -391,7 +391,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 9,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 12,
         test_result, "response param1 - 0x%02x", spdm_response->header.param1);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -404,7 +404,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 10,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 13,
         test_result, "response param2 - 0x%02x", spdm_response->header.param2);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -429,7 +429,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (!result) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 14,
             COMMON_TEST_RESULT_NOT_TESTED, "create_update_session_data_key(Rsp) failure");
         return;
     }
@@ -440,127 +440,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
-        return;
-    }
-
-    if (spdm_response_size >= sizeof(spdm_key_update_response_t)) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 11,
-        test_result, "response size - %d", spdm_response_size);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.request_response_code == SPDM_KEY_UPDATE_ACK) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 12,
-        test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.spdm_version == test_buffer->version) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 13,
-        test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.param1 == spdm_request.header.param1) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 14,
-        test_result, "response param1 - 0x%02x", spdm_response->header.param1);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    if (spdm_response->header.param2 == spdm_request.header.param2) {
-        test_result = COMMON_TEST_RESULT_PASS;
-    } else {
-        test_result = COMMON_TEST_RESULT_FAIL;
-    }
-    common_test_record_test_assertion (
-        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 15,
-        test_result, "response param2 - 0x%02x", spdm_response->header.param2);
-    if (test_result == COMMON_TEST_RESULT_FAIL) {
-        return;
-    }
-
-    result = libspdm_activate_update_session_data_key(
-        session_info->secured_message_context,
-        LIBSPDM_KEY_UPDATE_ACTION_RESPONDER, true);
-    if (!result) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "activate_update_session_data_key(Rsp) failure");
-        return;
-    }
-
-    result = libspdm_create_update_session_data_key(
-        session_info->secured_message_context,
-        LIBSPDM_KEY_UPDATE_ACTION_REQUESTER);
-    if (!result) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "create_update_session_data_key(Req) failure");
-        return;
-    }
-    result = libspdm_activate_update_session_data_key(
-        session_info->secured_message_context,
-        LIBSPDM_KEY_UPDATE_ACTION_REQUESTER, true);
-    if (!result) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
-            COMMON_TEST_RESULT_NOT_TESTED, "activate_update_session_data_key(Req) failure");
-        return;
-    }
-
-    /* verify key */
-    common_test_record_test_message ("test verify new key\n");
-
-    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = test_buffer->version;
-    spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_VERIFY_NEW_KEY;
-    spdm_request.header.param2 = 0x0;
-
-    spdm_response = (void *)message;
-    spdm_response_size = sizeof(message);
-    libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
-    if (LIBSPDM_STATUS_IS_ERROR(status)) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 15,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -629,6 +509,126 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
     }
+
+    result = libspdm_activate_update_session_data_key(
+        session_info->secured_message_context,
+        LIBSPDM_KEY_UPDATE_ACTION_RESPONDER, true);
+    if (!result) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 21,
+            COMMON_TEST_RESULT_NOT_TESTED, "activate_update_session_data_key(Rsp) failure");
+        return;
+    }
+
+    result = libspdm_create_update_session_data_key(
+        session_info->secured_message_context,
+        LIBSPDM_KEY_UPDATE_ACTION_REQUESTER);
+    if (!result) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 22,
+            COMMON_TEST_RESULT_NOT_TESTED, "create_update_session_data_key(Req) failure");
+        return;
+    }
+    result = libspdm_activate_update_session_data_key(
+        session_info->secured_message_context,
+        LIBSPDM_KEY_UPDATE_ACTION_REQUESTER, true);
+    if (!result) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 23,
+            COMMON_TEST_RESULT_NOT_TESTED, "activate_update_session_data_key(Req) failure");
+        return;
+    }
+
+    /* verify key */
+    common_test_record_test_message ("test verify new key\n");
+
+    libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
+    spdm_request.header.spdm_version = test_buffer->version;
+    spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_VERIFY_NEW_KEY;
+    spdm_request.header.param2 = 0x0;
+
+    spdm_response = (void *)message;
+    spdm_response_size = sizeof(message);
+    libspdm_zero_mem(message, sizeof(message));
+    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
+                                       &spdm_request, sizeof(spdm_request),
+                                       spdm_response, &spdm_response_size);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 24,
+            COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
+        return;
+    }
+
+    if (spdm_response_size >= sizeof(spdm_key_update_response_t)) {
+        test_result = COMMON_TEST_RESULT_PASS;
+    } else {
+        test_result = COMMON_TEST_RESULT_FAIL;
+    }
+    common_test_record_test_assertion (
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 25,
+        test_result, "response size - %d", spdm_response_size);
+    if (test_result == COMMON_TEST_RESULT_FAIL) {
+        return;
+    }
+
+    if (spdm_response->header.request_response_code == SPDM_KEY_UPDATE_ACK) {
+        test_result = COMMON_TEST_RESULT_PASS;
+    } else {
+        test_result = COMMON_TEST_RESULT_FAIL;
+    }
+    common_test_record_test_assertion (
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 26,
+        test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
+    if (test_result == COMMON_TEST_RESULT_FAIL) {
+        return;
+    }
+
+    if (spdm_response->header.spdm_version == test_buffer->version) {
+        test_result = COMMON_TEST_RESULT_PASS;
+    } else {
+        test_result = COMMON_TEST_RESULT_FAIL;
+    }
+    common_test_record_test_assertion (
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 27,
+        test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
+    if (test_result == COMMON_TEST_RESULT_FAIL) {
+        return;
+    }
+
+    if (spdm_response->header.param1 == spdm_request.header.param1) {
+        test_result = COMMON_TEST_RESULT_PASS;
+    } else {
+        test_result = COMMON_TEST_RESULT_FAIL;
+    }
+    common_test_record_test_assertion (
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 28,
+        test_result, "response param1 - 0x%02x", spdm_response->header.param1);
+    if (test_result == COMMON_TEST_RESULT_FAIL) {
+        return;
+    }
+
+    if (spdm_response->header.param2 == spdm_request.header.param2) {
+        test_result = COMMON_TEST_RESULT_PASS;
+    } else {
+        test_result = COMMON_TEST_RESULT_FAIL;
+    }
+    common_test_record_test_assertion (
+        SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SUCCESS_11_IN_DHE_SESSION, 29,
+        test_result, "response param2 - 0x%02x", spdm_response->header.param2);
+    if (test_result == COMMON_TEST_RESULT_FAIL) {
+        return;
+    }
 }
 
 void spdm_test_case_key_update_ack_version_mismatch (void *test_context)
@@ -676,7 +676,7 @@ void spdm_test_case_key_update_ack_version_mismatch (void *test_context)
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
                 SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_VERSION_MISMATCH_IN_DHE_SESSION,
-                COMMON_TEST_ID_END,
+                0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -784,7 +784,7 @@ void spdm_test_case_key_update_ack_invalid_request (void *test_context)
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
                 SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_INVALID_REQUEST_IN_DHE_SESSION,
-                COMMON_TEST_ID_END,
+                0,
                 COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
             continue;
         }
@@ -877,7 +877,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_MEASUREMENTS,
             SPDM_RESPONDER_TEST_CASE_MEASUREMENTS_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            0,
             COMMON_TEST_RESULT_NOT_TESTED, "key_exchange failure");
         return;
     }
@@ -898,7 +898,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
             SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS,
-            COMMON_TEST_ID_END,
+            1,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
@@ -910,7 +910,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 1,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 2,
         test_result, "response size - %d", spdm_response_size);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -923,7 +923,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 2,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 3,
         test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -936,7 +936,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 3,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 4,
         test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -949,7 +949,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 4,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 5,
         test_result, "response param1 - 0x%02x", spdm_response->header.param1);
     if (test_result == COMMON_TEST_RESULT_FAIL) {
         return;
@@ -962,7 +962,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     }
     common_test_record_test_assertion (
         SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 5,
+        SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_UNEXPECTED_REQUEST_IN_DHE_SESSION_HS, 6,
         test_result, "response param2 - 0x%02x", spdm_response->header.param2);
 }
 
@@ -999,7 +999,7 @@ void spdm_test_case_key_update_ack_session_required (void *test_context)
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,
-            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SESSION_REQUIRED, COMMON_TEST_ID_END,
+            SPDM_RESPONDER_TEST_CASE_KEY_UPDATE_ACK_SESSION_REQUIRED, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
         return;
     }
