@@ -389,6 +389,11 @@ void common_test_run_test_suite (
         return;
     }
 
+    fprintf(m_log_file, "LIBSPDM_MAJOR_VERSION : 0x%02X\n", LIBSPDM_MAJOR_VERSION);
+    fprintf(m_log_file, "LIBSPDM_MINOR_VERSION : 0x%02X\n", LIBSPDM_MINOR_VERSION);
+    fprintf(m_log_file, "LIBSPDM_PATCH_VERSION : 0x%02X\n", LIBSPDM_PATCH_VERSION);
+    fprintf(m_log_file, "LIBSPDM_ALPHA : 0x%02X\n", LIBSPDM_ALPHA);
+
     m_test_suite_result = common_test_allocate_test_suite_result (test_suite);
 
     if (test_suite_config != NULL && test_suite_config->config_name != NULL) {
