@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 
 INCLUDE_DIRECTORIES(${LIBSPDM_DIR}/include
                     ${SPDM_RESPONDER_VALIDATOR_DIR}/include
