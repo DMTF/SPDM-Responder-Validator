@@ -35,6 +35,7 @@ void spdm_responder_conformance_test (void *spdm_context,
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_11                        5
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12                        6
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_UNEXPECTED_REQUEST_NON_IDENTICAL  7
+#define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_13                        8
 
 #define SPDM_RESPONDER_TEST_GROUP_DIGESTS    4
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10                            1
