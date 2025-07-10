@@ -41,7 +41,7 @@ void spdm_responder_conformance_test (void *spdm_context,
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH                      2
 
 #define SPDM_RESPONDER_TEST_GROUP_CERTIFICATE    5
-#define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS                                1
+#define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10                             1
 #define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH                       2
 #define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST                        4
 #define   SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SPDM_X509_CERTIFICATE                  5

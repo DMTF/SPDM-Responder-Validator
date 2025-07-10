@@ -236,7 +236,7 @@ void spdm_test_case_certificate_success (void *test_context)
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                    SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 0,
+                    SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
                 return;
             }
@@ -248,7 +248,7 @@ void spdm_test_case_certificate_success (void *test_context)
             }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 1,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 1,
                 test_result, "response size - %d", spdm_response_size);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -261,7 +261,7 @@ void spdm_test_case_certificate_success (void *test_context)
             }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 2,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 2,
                 test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -274,7 +274,7 @@ void spdm_test_case_certificate_success (void *test_context)
             }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 3,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 3,
                 test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -288,7 +288,7 @@ void spdm_test_case_certificate_success (void *test_context)
             }
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_CERTIFICATE,
-                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 4,
+                SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 4,
                 test_result, "response portion_length - 0x%04x", spdm_response->portion_length);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -310,7 +310,7 @@ void spdm_test_case_certificate_success (void *test_context)
             test_result = COMMON_TEST_RESULT_FAIL;
         }
         common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 5,
+            SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 5,
             test_result, "response cert chain buffer size - 0x%x, cert_chain.length - 0x%04x",
             cert_chain_buffer_size, spdm_cert_chain->length);
         if (test_result == COMMON_TEST_RESULT_FAIL) {
@@ -321,7 +321,7 @@ void spdm_test_case_certificate_success (void *test_context)
                           cert_chain_hash);
         if (!result) {
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 0,
+                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "calc_cert_hash failure");
             return;
         }
@@ -333,7 +333,7 @@ void spdm_test_case_certificate_success (void *test_context)
             test_result = COMMON_TEST_RESULT_FAIL;
         }
         common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 6,
+            SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 6,
             test_result, "response cert chain hash");
         if (test_result == COMMON_TEST_RESULT_FAIL) {
             return;
@@ -347,7 +347,7 @@ void spdm_test_case_certificate_success (void *test_context)
                 test_result = COMMON_TEST_RESULT_FAIL;
             }
             common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS, 7,
+                SPDM_RESPONDER_TEST_GROUP_CERTIFICATE, SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10, 7,
                 test_result, "response cert_info - 0x%x", cert_info );
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
@@ -693,7 +693,7 @@ void spdm_test_case_certificate_size_req(void *test_context)
 }
 
 common_test_case_t m_spdm_test_group_certificate[] = {
-    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS,
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SUCCESS_10,
      "spdm_test_case_certificate_success",
      spdm_test_case_certificate_success,
      spdm_test_case_certificate_setup_version_any,
