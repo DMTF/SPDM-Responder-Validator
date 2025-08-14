@@ -232,7 +232,7 @@ bool spdm_test_case_challenge_auth_setup_version_10_11 (void *test_context)
                                                            spdm_version), spdm_version);
 }
 
-bool spdm_test_case_challenge_auth_setup_version_12_13 (void *test_context)
+bool spdm_test_case_challenge_auth_setup_version_12 (void *test_context)
 {
     spdm_version_number_t spdm_version[] = {
         SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
@@ -306,28 +306,28 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
         switch (message_mask) {
         case SPDM_MESSAGE_A_MASK_VCA | SPDM_MESSAGE_B_MASK_GET_DIGESTS |
             SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B1C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B1C1;
             break;
         case SPDM_MESSAGE_A_MASK_VCA:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B2C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B2C1;
             break;
         case SPDM_MESSAGE_A_MASK_VCA | SPDM_MESSAGE_B_MASK_GET_DIGESTS:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B3C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B3C1;
             break;
         case SPDM_MESSAGE_A_MASK_VCA | SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B4C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B4C1;
             break;
         case SPDM_MESSAGE_B_MASK_GET_DIGESTS | SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B1C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B1C1;
             break;
         case 0:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B2C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B2C1;
             break;
         case SPDM_MESSAGE_B_MASK_GET_DIGESTS:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B3C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B3C1;
             break;
         case SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
-            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B4C1;
+            case_id = SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B4C1;
             break;
         default:
             LIBSPDM_ASSERT(false);
@@ -416,6 +416,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 spdm_request_13.header.request_response_code = SPDM_CHALLENGE;
                 spdm_request_13.header.param1 = slot_id;
                 spdm_request_13.header.param2 = measurement_hash_type[meas_hash_type_index];
+                libspdm_get_random_number(SPDM_REQ_CONTEXT_SIZE, &spdm_request_13.requester_context[0]);
                 spdm_request_size = sizeof(spdm_request) + SPDM_REQ_CONTEXT_SIZE;
             }
 
@@ -480,6 +481,17 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                          *opaque_length_ptr);
 
             if (test_buffer->version >= SPDM_MESSAGE_VERSION_13) {
+                uint8_t *requester_context = (uint8_t*)signature_ptr;
+
+                if (memcmp(requester_context, spdm_request_13.requester_context, SPDM_REQ_CONTEXT_SIZE) != 0) {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                } else {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                }
+
+                common_test_record_test_assertion (SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 8,
+                test_result, "requester_context - %lx", &spdm_request_13.requester_context);
+
                 signature_ptr += SPDM_REQ_CONTEXT_SIZE;
             }
 
@@ -611,7 +623,7 @@ void spdm_test_case_challenge_auth_success_10_a1b3c1 (void *test_context)
                                                  SPDM_MESSAGE_B_MASK_GET_DIGESTS);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a1b1c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a1b1c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
@@ -620,14 +632,14 @@ void spdm_test_case_challenge_auth_success_12_13_a1b1c1 (void *test_context)
                                                  SPDM_MESSAGE_B_MASK_GET_CERTIFICATE);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a1b2c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a1b2c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
                                                  SPDM_MESSAGE_A_MASK_VCA);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a1b3c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a1b3c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
@@ -635,7 +647,7 @@ void spdm_test_case_challenge_auth_success_12_13_a1b3c1 (void *test_context)
                                                  SPDM_MESSAGE_B_MASK_GET_DIGESTS);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a1b4c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a1b4c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
@@ -643,7 +655,7 @@ void spdm_test_case_challenge_auth_success_12_13_a1b4c1 (void *test_context)
                                                  SPDM_MESSAGE_B_MASK_GET_CERTIFICATE);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a2b1c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a2b1c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
@@ -651,20 +663,20 @@ void spdm_test_case_challenge_auth_success_12_13_a2b1c1 (void *test_context)
                                                  SPDM_MESSAGE_B_MASK_GET_CERTIFICATE);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a2b2c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a2b2c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12, 0);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a2b3c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a2b3c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
                                                  SPDM_MESSAGE_B_MASK_GET_DIGESTS);
 }
 
-void spdm_test_case_challenge_auth_success_12_13_a2b4c1 (void *test_context)
+void spdm_test_case_challenge_auth_success_12_a2b4c1 (void *test_context)
 {
     spdm_test_case_challenge_auth_success_10_12 (test_context,
                                                  SPDM_MESSAGE_VERSION_12,
@@ -932,45 +944,45 @@ common_test_case_t m_spdm_test_group_challenge_auth[] = {
      spdm_test_case_challenge_auth_invalid_request,
      spdm_test_case_challenge_auth_setup_version_any,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B1C1,
-     "spdm_test_case_challenge_auth_success_12_13_a1b1c1",
-     spdm_test_case_challenge_auth_success_12_13_a1b1c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B1C1,
+     "spdm_test_case_challenge_auth_success_12_a1b1c1",
+     spdm_test_case_challenge_auth_success_12_a1b1c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B2C1,
-     "spdm_test_case_challenge_auth_success_12_13_a1b2c1",
-     spdm_test_case_challenge_auth_success_12_13_a1b2c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B2C1,
+     "spdm_test_case_challenge_auth_success_12_a1b2c1",
+     spdm_test_case_challenge_auth_success_12_a1b2c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B3C1,
-     "spdm_test_case_challenge_auth_success_12_13_a1b3c1",
-     spdm_test_case_challenge_auth_success_12_13_a1b3c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B3C1,
+     "spdm_test_case_challenge_auth_success_12_a1b3c1",
+     spdm_test_case_challenge_auth_success_12_a1b3c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A1B4C1,
-     "spdm_test_case_challenge_auth_success_12_13_a1b4c1",
-     spdm_test_case_challenge_auth_success_12_13_a1b4c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A1B4C1,
+     "spdm_test_case_challenge_auth_success_12_a1b4c1",
+     spdm_test_case_challenge_auth_success_12_a1b4c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B1C1,
-     "spdm_test_case_challenge_auth_success_12_13_a2b1c1",
-     spdm_test_case_challenge_auth_success_12_13_a2b1c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B1C1,
+     "spdm_test_case_challenge_auth_success_12_a2b1c1",
+     spdm_test_case_challenge_auth_success_12_a2b1c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B2C1,
-     "spdm_test_case_challenge_auth_success_12_13_a2b2c1",
-     spdm_test_case_challenge_auth_success_12_13_a2b2c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B2C1,
+     "spdm_test_case_challenge_auth_success_12_a2b2c1",
+     spdm_test_case_challenge_auth_success_12_a2b2c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B3C1,
-     "spdm_test_case_challenge_auth_success_12_13_a2b3c1",
-     spdm_test_case_challenge_auth_success_12_13_a2b3c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B3C1,
+     "spdm_test_case_challenge_auth_success_12_a2b3c1",
+     spdm_test_case_challenge_auth_success_12_a2b3c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
-    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_13_A2B4C1,
-     "spdm_test_case_challenge_auth_success_12_13_a2b4c1",
-     spdm_test_case_challenge_auth_success_12_13_a2b4c1,
-     spdm_test_case_challenge_auth_setup_version_12_13,
+    {SPDM_RESPONDER_TEST_CASE_CHALLENGE_AUTH_SUCCESS_12_A2B4C1,
+     "spdm_test_case_challenge_auth_success_12_a2b4c1",
+     spdm_test_case_challenge_auth_success_12_a2b4c1,
+     spdm_test_case_challenge_auth_setup_version_12,
      spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };
