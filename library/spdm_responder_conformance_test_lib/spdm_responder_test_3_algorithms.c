@@ -596,7 +596,7 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
     spdm_request.struct_table[3].alg_type =
         SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_KEY_SCHEDULE;
     spdm_request.struct_table[3].alg_count = 0x20;
-    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH;
+    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
 
     for (index = 0; index < 6; index++) {
         libspdm_copy_mem (&spdm_request_new, sizeof(spdm_request_new), &spdm_request,
@@ -818,7 +818,7 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     spdm_request.struct_table[3].alg_type =
         SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_KEY_SCHEDULE;
     spdm_request.struct_table[3].alg_count = 0x20;
-    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH;
+    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
@@ -1085,7 +1085,7 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
             }
             key_schedule_is_found = true;
             key_schedule = (uint16_t)spdm_test_get_one_bit (struct_table->alg_supported,
-                                                            SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH);
+                                                            SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM);
             break;
         default:
             test_result = COMMON_TEST_RESULT_FAIL;
@@ -1296,7 +1296,7 @@ void spdm_test_case_algorithms_success_12_13 (void *test_context, uint32_t spdm_
     spdm_request.struct_table[3].alg_type =
         SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_KEY_SCHEDULE;
     spdm_request.struct_table[3].alg_count = 0x20;
-    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH;
+    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
@@ -1570,7 +1570,7 @@ void spdm_test_case_algorithms_success_12_13 (void *test_context, uint32_t spdm_
             }
             key_schedule_is_found = true;
             key_schedule = (uint16_t)spdm_test_get_one_bit (struct_table->alg_supported,
-                                                            SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH);
+                                                            SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM);
             break;
         default:
             test_result = COMMON_TEST_RESULT_FAIL;
@@ -1804,7 +1804,7 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
     spdm_request.struct_table[3].alg_type =
         SPDM_NEGOTIATE_ALGORITHMS_STRUCT_TABLE_ALG_TYPE_KEY_SCHEDULE;
     spdm_request.struct_table[3].alg_count = 0x20;
-    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH;
+    spdm_request.struct_table[3].alg_supported = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);

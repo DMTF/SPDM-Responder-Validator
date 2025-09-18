@@ -118,7 +118,7 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
              SPDM_ALGORITHMS_BASE_ASYM_ALGO_EDDSA_ED448;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_BASE_ASYM_ALG, &parameter,
                      &data16, sizeof(data16));
-    data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_HMAC_HASH;
+    data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
