@@ -377,9 +377,7 @@ void spdm_test_case_capabilities_success_11 (void *test_context)
     spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
-    spdm_request.reserved = 0;
     spdm_request.ct_exponent = 0;
-    spdm_request.reserved2 = 0;
     spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
@@ -644,9 +642,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
     spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
-    spdm_request.reserved = 0;
     spdm_request.ct_exponent = 0;
-    spdm_request.reserved2 = 0;
     spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
@@ -829,9 +825,7 @@ void spdm_test_case_capabilities_success_12_13 (void *test_context, uint32_t spd
     spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
-    spdm_request.reserved = 0;
     spdm_request.ct_exponent = 0;
-    spdm_request.reserved2 = 0;
     spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
@@ -1096,9 +1090,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
     spdm_request.header.request_response_code = SPDM_GET_CAPABILITIES;
     spdm_request.header.param1 = 0;
     spdm_request.header.param2 = 0;
-    spdm_request.reserved = 0;
     spdm_request.ct_exponent = 0;
-    spdm_request.reserved2 = 0;
     spdm_request.flags = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHAL_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCRYPT_CAP |
