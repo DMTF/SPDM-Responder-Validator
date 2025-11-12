@@ -528,7 +528,10 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             rsp_session_id = spdm_response->rsp_session_id;
             session_id = libspdm_generate_session_id(req_session_id, rsp_session_id);
             common_test_record_test_message ("test session_id - 0x%08x\n", session_id);
-            session_info = libspdm_assign_session_id(spdm_context, session_id, false);
+            session_info = libspdm_assign_session_id(spdm_context, session_id,
+                                                     SECURED_SPDM_VERSION_11 <<
+                                                     SPDM_VERSION_NUMBER_SHIFT_BIT,
+                                                     false);
             if (session_info == NULL) {
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
