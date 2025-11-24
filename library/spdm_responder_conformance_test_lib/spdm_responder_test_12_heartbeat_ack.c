@@ -51,7 +51,8 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_EX_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
