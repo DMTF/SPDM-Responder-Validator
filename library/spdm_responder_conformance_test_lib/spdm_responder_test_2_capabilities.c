@@ -181,7 +181,7 @@ void spdm_test_case_capabilities_success_10 (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                        &spdm_request, spdm_request_size,
                                        spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -282,7 +282,7 @@ void spdm_test_case_capabilities_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request, spdm_request_size,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -391,7 +391,7 @@ void spdm_test_case_capabilities_success_11 (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                        &spdm_request, spdm_request_size,
                                        spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -715,7 +715,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request_new, spdm_request_size,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -842,7 +842,7 @@ void spdm_test_case_capabilities_success_12_13 (void *test_context, uint32_t spd
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                        &spdm_request, spdm_request_size,
                                        spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -1106,7 +1106,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                        &spdm_request, spdm_request_size,
                                        spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -1162,7 +1162,7 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request_new, spdm_request_size,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {

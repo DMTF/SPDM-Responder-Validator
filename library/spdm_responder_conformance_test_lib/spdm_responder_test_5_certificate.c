@@ -231,7 +231,7 @@ void spdm_test_case_certificate_success (void *test_context)
             spdm_response = (void *)message;
             spdm_response_size = sizeof(message);
             libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
+            status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                                &spdm_request, sizeof(spdm_request),
                                                spdm_response, &spdm_response_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -397,7 +397,7 @@ void spdm_test_case_certificate_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request, sizeof(spdm_request),
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -519,7 +519,7 @@ void spdm_test_case_certificate_invalid_request (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request_new, sizeof(spdm_request_new),
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -628,7 +628,7 @@ void spdm_test_case_certificate_size_req(void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
                                            &spdm_request, sizeof(spdm_request),
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
