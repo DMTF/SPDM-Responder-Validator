@@ -582,7 +582,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 return;
             }
             result = libspdm_verify_challenge_auth_signature(
-                spdm_context, true, signature_ptr, test_buffer->signature_size);
+                spdm_context, true, slot_id, signature_ptr, test_buffer->signature_size);
             if (result) {
                 test_result = COMMON_TEST_RESULT_PASS;
             } else {
