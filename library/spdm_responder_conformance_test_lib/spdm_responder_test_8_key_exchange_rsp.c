@@ -52,6 +52,7 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
     uint8_t data8;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     size_t index;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -196,17 +197,23 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
         return false;
     }
 
-    m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
-    status = libspdm_get_certificate (spdm_context, NULL, 0,
-                                      &m_cert_chain_buffer_size, m_cert_chain_buffer);
-    if (LIBSPDM_STATUS_IS_ERROR(status)) {
-        return false;
-    }
-
     test_buffer->slot_count = 0;
     for (index = 0; index < SPDM_MAX_SLOT_COUNT; index++) {
         if ((test_buffer->slot_mask & (1 << index)) != 0) {
             test_buffer->slot_count++;
+        }
+    }
+
+    for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
+        if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+
+        m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+        status = libspdm_get_certificate (spdm_context, NULL, slot_id,
+                                          &m_cert_chain_buffer_size, m_cert_chain_buffer);
+        if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            return false;
         }
     }
 
@@ -287,7 +294,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
     uint16_t req_session_id;
     uint16_t rsp_session_id;
     uint32_t session_id;
-    void *session_info;
+    libspdm_session_info_t *session_info;
     void *secured_message_context;
     size_t opaque_key_exchange_req_size;
     uint16_t *opaque_length_ptr;
@@ -541,6 +548,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                     COMMON_TEST_RESULT_NOT_TESTED, "assign_session_id failure");
                 return;
             }
+            session_info->peer_used_cert_chain_slot_id = slot_id;
             secured_message_context = libspdm_get_secured_message_context_via_session_info(
                 session_info);
             LIBSPDM_ASSERT (secured_message_context != NULL);

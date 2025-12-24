@@ -106,6 +106,7 @@ void spdm_test_case_version_success (void *test_context)
             case SPDM_MESSAGE_VERSION_11:
             case SPDM_MESSAGE_VERSION_12:
             case SPDM_MESSAGE_VERSION_13:
+            case SPDM_MESSAGE_VERSION_14:
                 test_result = COMMON_TEST_RESULT_PASS;
                 break;
             default:
