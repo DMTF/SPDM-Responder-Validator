@@ -183,9 +183,9 @@ void spdm_test_case_algorithms_success_10 (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, spdm_request.length,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, spdm_request.length,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_10,
@@ -410,9 +410,9 @@ void spdm_test_case_algorithms_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request, spdm_request.length,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request, spdm_request.length,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,
@@ -649,9 +649,9 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request_new, spdm_request_new.length,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request_new, spdm_request_new.length,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,
@@ -824,9 +824,9 @@ void spdm_test_case_algorithms_success_11 (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, spdm_request.length,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, spdm_request.length,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_11,
@@ -1302,9 +1302,9 @@ void spdm_test_case_algorithms_success_12_13 (void *test_context, uint32_t spdm_
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, spdm_request.length,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, spdm_request.length,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS, test_version,
@@ -1810,9 +1810,9 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, spdm_request.length,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, spdm_request.length,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,
@@ -1895,9 +1895,9 @@ void spdm_test_case_algorithms_unexpected_non_identical (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request_new, spdm_request_new.length,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request_new, spdm_request_new.length,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_ALGORITHMS,

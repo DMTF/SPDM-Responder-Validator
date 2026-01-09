@@ -422,9 +422,9 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             spdm_response = (void *)message;
             spdm_response_size = sizeof(message);
             libspdm_zero_mem(message, sizeof(message));
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                               &spdm_request, spdm_request_size,
-                                               spdm_response, &spdm_response_size);
+            status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                    &spdm_request, spdm_request_size,
+                                                    spdm_response, &spdm_response_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_secured_message_dhe_free(
                     test_buffer->dhe_named_group, dhe_context);
@@ -779,9 +779,9 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
@@ -940,9 +940,9 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                       &spdm_request, spdm_request_size,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                            &spdm_request, spdm_request_size,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
@@ -1117,9 +1117,9 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request_new, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request_new, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
