@@ -375,13 +375,13 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
         if (hs_clear) {
-            status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                               &spdm_request, spdm_request_size,
-                                               spdm_response, &spdm_response_size);
+            status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                    &spdm_request, spdm_request_size,
+                                                    spdm_response, &spdm_response_size);
         } else {
-            status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                               &spdm_request, spdm_request_size,
-                                               spdm_response, &spdm_response_size);
+            status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                                    &spdm_request, spdm_request_size,
+                                                    spdm_response, &spdm_response_size);
         }
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
@@ -588,9 +588,9 @@ void spdm_test_case_finish_rsp_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                           &spdm_request, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                                &spdm_request, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -738,9 +738,9 @@ void spdm_test_case_finish_rsp_unexpected_request_in_session (void *test_context
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                       &spdm_request, spdm_request_size,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                            &spdm_request, spdm_request_size,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -911,9 +911,9 @@ void spdm_test_case_finish_rsp_invalid_request (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                           &spdm_request_new, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                                &spdm_request_new, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -1071,13 +1071,13 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
     if (hs_clear) {
-        status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                                &spdm_request, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
     } else {
-        status = libspdm_send_receive_data(spdm_context, &session_id, false,
-                                           &spdm_request, spdm_request_size,
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, &session_id,
+                                                &spdm_request, spdm_request_size,
+                                                spdm_response, &spdm_response_size);
     }
     if (LIBSPDM_STATUS_IS_ERROR(status) && (status != LIBSPDM_STATUS_SESSION_MSG_ERROR)) {
         common_test_record_test_assertion (
@@ -1237,9 +1237,9 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, spdm_request_size,
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, spdm_request_size,
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,

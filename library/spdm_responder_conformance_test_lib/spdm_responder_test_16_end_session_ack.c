@@ -216,9 +216,9 @@ void spdm_test_case_end_session_ack_success_11_dhe (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, &test_buffer->session_id,
+                                            &spdm_request, sizeof(spdm_request),
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,
@@ -302,9 +302,9 @@ void spdm_test_case_end_session_ack_version_mismatch (void *test_context)
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
-        status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                           &spdm_request, sizeof(spdm_request),
-                                           spdm_response, &spdm_response_size);
+        status = libspdm_send_receive_spdm_data(spdm_context, &test_buffer->session_id,
+                                                &spdm_request, sizeof(spdm_request),
+                                                spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,
@@ -416,9 +416,9 @@ void spdm_test_case_end_session_ack_unexpected_request (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, &test_buffer->session_id, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, &test_buffer->session_id,
+                                            &spdm_request, sizeof(spdm_request),
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,
@@ -518,9 +518,9 @@ void spdm_test_case_end_session_ack_session_required (void *test_context)
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
     libspdm_zero_mem(message, sizeof(message));
-    status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                       &spdm_request, sizeof(spdm_request),
-                                       spdm_response, &spdm_response_size);
+    status = libspdm_send_receive_spdm_data(spdm_context, NULL,
+                                            &spdm_request, sizeof(spdm_request),
+                                            spdm_response, &spdm_response_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_END_SESSION_ACK,
