@@ -219,7 +219,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_KEY;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_UPDATE_KEY;
     spdm_request.header.param2 = 0x0;
 
     spdm_response = (void *)message;
@@ -329,7 +329,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_VERIFY_NEW_KEY;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_VERIFY_NEW_KEY;
     spdm_request.header.param2 = 0x0;
 
     spdm_response = (void *)message;
@@ -417,7 +417,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_ALL_KEYS;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_UPDATE_ALL_KEYS;
     spdm_request.header.param2 = 0x0;
 
     spdm_response = (void *)message;
@@ -549,7 +549,7 @@ void spdm_test_case_key_update_ack_success_11_dhe (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_VERIFY_NEW_KEY;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_VERIFY_NEW_KEY;
     spdm_request.header.param2 = 0x0;
 
     spdm_response = (void *)message;
@@ -661,7 +661,7 @@ void spdm_test_case_key_update_ack_version_mismatch (void *test_context)
         libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
         spdm_request.header.spdm_version = mismatched_version[index];
         spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-        spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_KEY;
+        spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_UPDATE_KEY;
         spdm_request.header.param2 = 0;
 
         spdm_response = (void *)message;
@@ -752,8 +752,8 @@ void spdm_test_case_key_update_ack_invalid_request (void *test_context)
     common_test_result_t test_result;
     spdm_key_update_ack_test_buffer_t *test_buffer;
     uint8_t invalid_operation[] = {
-        SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_KEY - 1,
-        SPDM_KEY_UPDATE_OPERATIONS_TABLE_VERIFY_NEW_KEY + 1,
+        SPDM_KEY_UPDATE_OPERATIONS_UPDATE_KEY - 1,
+        SPDM_KEY_UPDATE_OPERATIONS_VERIFY_NEW_KEY + 1,
     };
     size_t index;
 
@@ -883,7 +883,7 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_KEY;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_UPDATE_KEY;
     spdm_request.header.param2 = 0;
 
     spdm_response = (void *)message;
@@ -985,7 +985,7 @@ void spdm_test_case_key_update_ack_session_required (void *test_context)
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
     spdm_request.header.request_response_code = SPDM_KEY_UPDATE;
-    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_TABLE_UPDATE_KEY;
+    spdm_request.header.param1 = SPDM_KEY_UPDATE_OPERATIONS_UPDATE_KEY;
     spdm_request.header.param2 = 0;
 
     spdm_response = (void *)message;
