@@ -17,6 +17,10 @@ typedef struct {
 } spdm_certificate_test_buffer_t;
 #pragma pack()
 
+#ifndef LIBSPDM_MAX_CERT_CHAIN_BLOCK_LEN
+#define LIBSPDM_MAX_CERT_CHAIN_BLOCK_LEN 100
+#endif
+
 bool spdm_test_case_certificate_setup_vca_digest (void *test_context,
                                                   spdm_version_number_t spdm_version)
 {
@@ -190,7 +194,7 @@ void spdm_test_case_certificate_success (void *test_context)
     spdm_certificate_response_t *spdm_response;
     uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
-    uint8_t cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
+    uint8_t cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
     size_t cert_chain_buffer_size;
     spdm_cert_chain_t *spdm_cert_chain;
     uint8_t cert_chain_hash[LIBSPDM_MAX_HASH_SIZE];

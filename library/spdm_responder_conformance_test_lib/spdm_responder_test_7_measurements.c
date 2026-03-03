@@ -22,6 +22,10 @@ typedef struct {
 } spdm_measurements_test_buffer_t;
 #pragma pack()
 
+#ifndef LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE
+#define LIBSPDM_MAX_MEASUREMENT_RECORD_SIZE 0x1000
+#endif
+
 static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
 
@@ -742,7 +746,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
             }
 
             result = libspdm_verify_measurement_signature(
-                spdm_context, NULL, signature_ptr, signature_size);
+                spdm_context, NULL, slot_id, signature_ptr, signature_size);
             if (result) {
                 test_result = COMMON_TEST_RESULT_PASS;
             } else {
@@ -962,7 +966,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
             }
 
             result = libspdm_verify_measurement_signature(
-                spdm_context, NULL, signature_ptr, signature_size);
+                spdm_context, NULL, slot_id, signature_ptr, signature_size);
             if (result) {
                 test_result = COMMON_TEST_RESULT_PASS;
             } else {
@@ -1193,7 +1197,7 @@ void spdm_test_case_measurements_success_10_11_12 (void *test_context, uint8_t v
                 }
 
                 result = libspdm_verify_measurement_signature(
-                    spdm_context, NULL, signature_ptr, signature_size);
+                    spdm_context, NULL, slot_id, signature_ptr, signature_size);
                 if (result) {
                     test_result = COMMON_TEST_RESULT_PASS;
                 } else {
