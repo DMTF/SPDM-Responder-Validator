@@ -114,8 +114,12 @@ bool spdm_test_case_capabilities_setup_version_all (void *test_context)
                 test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V13;
                 break;
             default:
-                return false;
+                break;
         }
+    }
+
+    if (test_buffer->support_version_bitmask == 0) {
+        return false;
     }
 
     spdm_test_context->test_scratch_buffer_size = offsetof(spdm_capabilities_test_buffer_t,
