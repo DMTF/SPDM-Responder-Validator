@@ -412,13 +412,13 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 spdm_request.header.param2 = measurement_hash_type[meas_hash_type_index];
                 spdm_request_size = sizeof(spdm_request);
             } else {
-                libspdm_zero_mem(&spdm_request, sizeof(spdm_request_13));
+                libspdm_zero_mem(&spdm_request_13, sizeof(spdm_request_13));
                 spdm_request_13.header.spdm_version = test_buffer->version;
                 spdm_request_13.header.request_response_code = SPDM_CHALLENGE;
                 spdm_request_13.header.param1 = slot_id;
                 spdm_request_13.header.param2 = measurement_hash_type[meas_hash_type_index];
                 libspdm_get_random_number(SPDM_REQ_CONTEXT_SIZE, &spdm_request_13.requester_context[0]);
-                spdm_request_size = sizeof(spdm_request) + SPDM_REQ_CONTEXT_SIZE;
+                spdm_request_size = sizeof(spdm_request_13);
             }
 
             spdm_response = (void *)message;
