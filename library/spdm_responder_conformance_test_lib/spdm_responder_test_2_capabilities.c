@@ -652,6 +652,15 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+    if (test_buffer->data_transfer_size < SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12 ||
+        test_buffer->data_transfer_size > LIBSPDM_MAX_SPDM_MSG_SIZE) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+            SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "invalid data_transfer_size - 0x%08x",
+            test_buffer->data_transfer_size);
+        return;
+    }
     spdm_request.data_transfer_size = test_buffer->data_transfer_size;
     spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
@@ -836,6 +845,15 @@ void spdm_test_case_capabilities_success_12_13 (void *test_context, uint32_t spd
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+    if (test_buffer->data_transfer_size < SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12 ||
+        test_buffer->data_transfer_size > LIBSPDM_MAX_SPDM_MSG_SIZE) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+            test_version, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "invalid data_transfer_size - 0x%08x",
+            test_buffer->data_transfer_size);
+        return;
+    }
     spdm_request.data_transfer_size = test_buffer->data_transfer_size;
     spdm_request.max_spdm_msg_size = test_buffer->max_spdm_msg_size;
 
@@ -1100,6 +1118,15 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
                          SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP;
+    if (test_buffer->data_transfer_size < SPDM_MIN_DATA_TRANSFER_SIZE_VERSION_12 ||
+        test_buffer->data_transfer_size > LIBSPDM_MAX_SPDM_MSG_SIZE) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+            SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "invalid data_transfer_size - 0x%08x",
+            test_buffer->data_transfer_size);
+        return;
+    }
     spdm_request.data_transfer_size = test_buffer->data_transfer_size;
     spdm_request.max_spdm_msg_size = spdm_request.data_transfer_size;
 
