@@ -1045,6 +1045,40 @@ void spdm_test_case_capabilities_success_12_13 (void *test_context, uint32_t spd
             test_version, 15,
             test_result, "response flags - 0x%08x", spdm_response->flags);
     }
+
+    if (message_version >= SPDM_MESSAGE_VERSION_13) {
+        if ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_EP_INFO_CAP) !=
+            SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_EP_INFO_CAP) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, test_version, 16,
+            test_result, "response flags - 0x%08x", spdm_response->flags);
+
+        if ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP) !=
+            SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP) {
+            test_result = COMMON_TEST_RESULT_PASS;
+        } else {
+            test_result = COMMON_TEST_RESULT_FAIL;
+        }
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_CAPABILITIES, test_version, 17,
+            test_result, "response flags - 0x%08x", spdm_response->flags);
+
+        if ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP) != 0) {
+            if ((flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_GET_KEY_PAIR_INFO_CAP) != 0) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_CAPABILITIES,
+                test_version, 18,
+                test_result, "response flags - 0x%08x", spdm_response->flags);
+        }
+    }
 }
 void spdm_test_case_capabilities_success_12 (void *test_context)
 {
