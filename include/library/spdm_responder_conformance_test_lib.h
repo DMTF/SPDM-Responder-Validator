@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF, Componolit. All rights reserved.
+ *  Copyright 2021-2026 DMTF, Componolit. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -35,6 +35,7 @@ void spdm_responder_conformance_test (void *spdm_context,
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12                        6
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_UNEXPECTED_REQUEST_NON_IDENTICAL  7
 #define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_13                        8
+#define   SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_14                        9
 
 #define SPDM_RESPONDER_TEST_GROUP_DIGESTS    4
 #define   SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10                            1
