@@ -43,8 +43,8 @@ typedef struct {
 } spdm_challenge_auth_test_buffer_t;
 #pragma pack()
 
-static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
-static size_t m_cert_chain_buffer_size;
+static uint8_t m_cert_chain_buffer[SPDM_MAX_SLOT_COUNT][LIBSPDM_MAX_CERT_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size[SPDM_MAX_SLOT_COUNT];
 
 bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
                                                      size_t spdm_version_count,
@@ -248,9 +248,10 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
-        m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
-        status = libspdm_get_certificate (spdm_context, NULL, slot_id, &m_cert_chain_buffer_size,
-                                          m_cert_chain_buffer);
+        m_cert_chain_buffer_size[slot_id] = sizeof(m_cert_chain_buffer[slot_id]);
+        status = libspdm_get_certificate (spdm_context, NULL, slot_id,
+                                          &m_cert_chain_buffer_size[slot_id],
+                                          m_cert_chain_buffer[slot_id]);
     }
 
     test_buffer->slot_count = 0;
@@ -317,6 +318,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     uint16_t *opaque_length_ptr;
     uint8_t *signature_ptr;
     bool result;
+    libspdm_data_parameter_t parameter;
     uint8_t measurement_hash_type[] = {
         SPDM_CHALLENGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
         SPDM_CHALLENGE_REQUEST_TCB_COMPONENT_MEASUREMENT_HASH,
@@ -444,15 +446,26 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             }
 
             if ((message_mask & SPDM_MESSAGE_B_MASK_GET_CERTIFICATE) != 0) {
-                m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+                m_cert_chain_buffer_size[slot_id] = sizeof(m_cert_chain_buffer[slot_id]);
                 status = libspdm_get_certificate (spdm_context, NULL, slot_id,
-                                                  &m_cert_chain_buffer_size, m_cert_chain_buffer);
+                                                  &m_cert_chain_buffer_size[slot_id],
+                                                  m_cert_chain_buffer[slot_id]);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
                         SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 0,
                         COMMON_TEST_RESULT_NOT_TESTED, "get_certificate failure");
                     continue;
                 }
+            } else {
+                /* GET_CERTIFICATE is not sent in this case, but the signature
+                 * verify below still needs the peer cert chain captured during
+                 * setup to find the leaf public key for this slot. */
+                libspdm_zero_mem(&parameter, sizeof(parameter));
+                parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+                parameter.additional_data[0] = slot_id;
+                libspdm_set_data (spdm_context, LIBSPDM_DATA_PEER_USED_CERT_CHAIN_BUFFER,
+                                  &parameter, m_cert_chain_buffer[slot_id],
+                                  m_cert_chain_buffer_size[slot_id]);
             }
 
             /* ignore spdm_request.nonce */
