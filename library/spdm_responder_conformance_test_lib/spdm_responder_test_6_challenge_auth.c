@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -35,6 +35,7 @@ typedef struct {
     uint32_t hash_algo;
     uint32_t hash_size;
     uint32_t asym_algo;
+    uint32_t pqc_asym_algo;
     uint32_t signature_size;
     uint8_t slot_mask;
     uint8_t slot_count;
@@ -85,7 +86,8 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_LARGE_RESP_CAP;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
@@ -150,6 +152,45 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_PQC_ASYM_ALG, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_KEM_ALG_ML_KEM_512 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_768 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_1024;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_init_connection (spdm_context, false);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -186,7 +227,16 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     data_size = sizeof(test_buffer->asym_algo);
     libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_ASYM_ALGO, &parameter, &test_buffer->asym_algo,
                      &data_size);
-    test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+    data_size = sizeof(test_buffer->pqc_asym_algo);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter, &test_buffer->pqc_asym_algo,
+                     &data_size);
+    if (test_buffer->asym_algo != 0) {
+        test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+    } else if (test_buffer->pqc_asym_algo != 0) {
+        test_buffer->signature_size = libspdm_get_pqc_asym_signature_size(test_buffer->pqc_asym_algo);
+    } else {
+        return false;
+    }
 
     status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
@@ -238,6 +288,7 @@ bool spdm_test_case_challenge_auth_setup_version_12 (void *test_context)
     spdm_version_number_t spdm_version[] = {
         SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
         SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT,
     };
     return spdm_test_case_challenge_auth_setup_vca_digest (test_context,
                                                            LIBSPDM_ARRAY_SIZE(
@@ -302,8 +353,10 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
         break;
     case SPDM_MESSAGE_VERSION_12:
     case SPDM_MESSAGE_VERSION_13:
+    case SPDM_MESSAGE_VERSION_14:
         LIBSPDM_ASSERT ((test_buffer->version == SPDM_MESSAGE_VERSION_12) ||
-                        (test_buffer->version == SPDM_MESSAGE_VERSION_13));
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_13) ||
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_14));
         switch (message_mask) {
         case SPDM_MESSAGE_A_MASK_VCA | SPDM_MESSAGE_B_MASK_GET_DIGESTS |
             SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
