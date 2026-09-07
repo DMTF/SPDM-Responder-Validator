@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -13,9 +13,13 @@ typedef struct {
     uint32_t hash_algo;
     uint32_t hash_size;
     uint32_t asym_algo;
+    uint32_t pqc_asym_algo;
     uint32_t signature_size;
     uint16_t dhe_named_group;
     uint32_t dhe_key_size;
+    uint32_t kem_alg;
+    uint32_t kem_encap_key_size;
+    uint32_t kem_cipher_text_size;
     uint8_t slot_mask;
     uint8_t slot_count;
     uint8_t total_digest_buffer[SPDM_MAX_SLOT_COUNT * LIBSPDM_MAX_HASH_SIZE];
@@ -27,13 +31,13 @@ typedef struct {
     uint8_t session_policy;
     uint8_t reserved;
     uint8_t random_data[32];
-    uint8_t exchange_data[LIBSPDM_MAX_DHE_KEY_SIZE];
+    uint8_t exchange_data[LIBSPDM_REQ_EXCHANGE_DATA_MAX_SIZE];
     uint16_t opaque_length;
     uint8_t opaque_data[SPDM_MAX_OPAQUE_DATA_SIZE];
 } spdm_key_exchange_request_mine_t;
 #pragma pack()
 
-static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static uint8_t m_cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
 
 bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
@@ -73,7 +77,8 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_LARGE_RESP_CAP;
     if (hs_clear) {
         data32 |= SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HANDSHAKE_IN_THE_CLEAR_CAP;
     }
@@ -141,6 +146,45 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_PQC_ASYM_ALG, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_KEM_ALG_ML_KEM_512 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_768 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_1024;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_init_connection (spdm_context, false);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -184,12 +228,28 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
     data_size = sizeof(test_buffer->asym_algo);
     libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_ASYM_ALGO, &parameter, &test_buffer->asym_algo,
                      &data_size);
-    test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+
+    data_size = sizeof(test_buffer->pqc_asym_algo);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &test_buffer->pqc_asym_algo, &data_size);
+
+    if (test_buffer->pqc_asym_algo != 0) {
+        test_buffer->signature_size =
+            libspdm_get_pqc_asym_signature_size(test_buffer->pqc_asym_algo);
+    } else {
+        test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+    }
 
     data_size = sizeof(test_buffer->dhe_named_group);
     libspdm_get_data(spdm_context, LIBSPDM_DATA_DHE_NAME_GROUP, &parameter,
                      &test_buffer->dhe_named_group, &data_size);
     test_buffer->dhe_key_size = libspdm_get_dhe_pub_key_size(test_buffer->dhe_named_group);
+
+    data_size = sizeof(test_buffer->kem_alg);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &test_buffer->kem_alg, &data_size);
+    test_buffer->kem_encap_key_size = libspdm_get_kem_encap_key_size(test_buffer->kem_alg);
+    test_buffer->kem_cipher_text_size = libspdm_get_kem_cipher_text_size(test_buffer->kem_alg);
 
     status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
@@ -253,7 +313,9 @@ bool spdm_test_case_key_exchange_rsp_setup_version_11_hs_clear (void *test_conte
 bool spdm_test_case_key_exchange_rsp_setup_version_12 (void *test_context)
 {
     spdm_version_number_t spdm_version[] = {
-        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
     };
     return spdm_test_case_key_exchange_rsp_setup_vca_digest (test_context,
                                                              LIBSPDM_ARRAY_SIZE(
@@ -264,11 +326,24 @@ bool spdm_test_case_key_exchange_rsp_setup_version_12 (void *test_context)
 bool spdm_test_case_key_exchange_rsp_setup_version_12_hs_clear (void *test_context)
 {
     spdm_version_number_t spdm_version[] = {
-        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
     };
     return spdm_test_case_key_exchange_rsp_setup_vca_digest (test_context,
                                                              LIBSPDM_ARRAY_SIZE(
                                                                  spdm_version), spdm_version, true);
+}
+
+static void spdm_key_exchange_rsp_free_exchange_context (
+    spdm_key_exchange_rsp_test_buffer_t *test_buffer, void *dhe_context, void *kem_context)
+{
+    if (dhe_context != NULL) {
+        libspdm_secured_message_dhe_free(test_buffer->dhe_named_group, dhe_context);
+    }
+    if (kem_context != NULL) {
+        libspdm_secured_message_kem_free(test_buffer->kem_alg, kem_context);
+    }
 }
 
 void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t version,
@@ -286,11 +361,15 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     uint8_t slot_id;
     size_t dhe_key_size;
+    size_t kem_encap_key_size;
+    size_t exchange_data_req_size;
+    size_t exchange_data_rsp_size;
     uint8_t meas_hash_type_index;
     uint32_t meas_hash_size;
     uint32_t verify_data_size;
     uint8_t *ptr;
     void *dhe_context;
+    void *kem_context;
     uint16_t req_session_id;
     uint16_t rsp_session_id;
     uint32_t session_id;
@@ -327,7 +406,11 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
         }
         break;
     case SPDM_MESSAGE_VERSION_12:
-        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_12);
+    case SPDM_MESSAGE_VERSION_13:
+    case SPDM_MESSAGE_VERSION_14:
+        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_12 ||
+                        test_buffer->version == SPDM_MESSAGE_VERSION_13 ||
+                        test_buffer->version == SPDM_MESSAGE_VERSION_14);
         if (hs_clear) {
             case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR;
         } else {
@@ -385,29 +468,59 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             spdm_request.req_session_id = req_session_id;
             spdm_request.session_policy = 0;
 
-            dhe_context = libspdm_secured_message_dhe_new(
-                test_buffer->version,
-                test_buffer->dhe_named_group, true);
-            if (dhe_context == NULL) {
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
-                    COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
-                return;
-            }
-            dhe_key_size = test_buffer->dhe_key_size;
+            dhe_context = NULL;
+            kem_context = NULL;
             ptr = spdm_request.exchange_data;
-            result = libspdm_secured_message_dhe_generate_key(
-                test_buffer->dhe_named_group,
-                dhe_context, ptr, &dhe_key_size);
-            if (!result) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
-                common_test_record_test_assertion (
-                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
-                    COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
-                return;
+            if (test_buffer->kem_alg != 0) {
+                kem_encap_key_size = test_buffer->kem_encap_key_size;
+                kem_context = libspdm_secured_message_kem_new(
+                    test_buffer->version,
+                    test_buffer->kem_alg, true);
+                if (kem_context == NULL) {
+                    common_test_record_test_assertion (
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
+                        COMMON_TEST_RESULT_NOT_TESTED, "kem_new failure");
+                    return;
+                }
+                result = libspdm_secured_message_kem_generate_key(
+                    test_buffer->kem_alg,
+                    kem_context, ptr, &kem_encap_key_size);
+                if (!result) {
+                    spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                                kem_context);
+                    common_test_record_test_assertion (
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
+                        COMMON_TEST_RESULT_NOT_TESTED, "kem_generate_key failure");
+                    return;
+                }
+                exchange_data_req_size = kem_encap_key_size;
+                exchange_data_rsp_size = test_buffer->kem_cipher_text_size;
+            } else {
+                dhe_context = libspdm_secured_message_dhe_new(
+                    test_buffer->version,
+                    test_buffer->dhe_named_group, true);
+                if (dhe_context == NULL) {
+                    common_test_record_test_assertion (
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
+                        COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
+                    return;
+                }
+                dhe_key_size = test_buffer->dhe_key_size;
+                result = libspdm_secured_message_dhe_generate_key(
+                    test_buffer->dhe_named_group,
+                    dhe_context, ptr, &dhe_key_size);
+                if (!result) {
+                    spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                                kem_context);
+                    common_test_record_test_assertion (
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
+                        COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
+                    return;
+                }
+                exchange_data_req_size = dhe_key_size;
+                exchange_data_rsp_size = dhe_key_size;
             }
-            ptr += dhe_key_size;
+            ptr += exchange_data_req_size;
 
             opaque_key_exchange_req_size =
                 libspdm_get_opaque_data_supported_version_data_size(spdm_context);
@@ -426,8 +539,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                                                &spdm_request, spdm_request_size,
                                                spdm_response, &spdm_response_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "send/receive failure");
@@ -447,14 +560,14 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             }
             opaque_length_ptr =
                 (void *)((size_t)spdm_response + sizeof(spdm_key_exchange_response_t) +
-                         test_buffer->dhe_key_size + meas_hash_size);
+                         exchange_data_rsp_size + meas_hash_size);
             if (spdm_response_size < sizeof(spdm_key_exchange_response_t) +
-                test_buffer->dhe_key_size + meas_hash_size + sizeof(uint16_t) +
+                exchange_data_rsp_size + meas_hash_size + sizeof(uint16_t) +
                 test_buffer->signature_size + verify_data_size) {
                 test_result = COMMON_TEST_RESULT_FAIL;
             } else {
                 if (spdm_response_size < sizeof(spdm_key_exchange_response_t) +
-                    test_buffer->dhe_key_size + meas_hash_size + sizeof(uint16_t) +
+                    exchange_data_rsp_size + meas_hash_size + sizeof(uint16_t) +
                     *opaque_length_ptr + test_buffer->signature_size + verify_data_size) {
                     test_result = COMMON_TEST_RESULT_FAIL;
                 } else {
@@ -465,14 +578,14 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 1,
                 test_result, "response size - %d", spdm_response_size);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
             exchange_data_ptr =
                 (void *)((size_t)spdm_response + sizeof(spdm_key_exchange_response_t));
             signature_ptr = (void *)((size_t)spdm_response + sizeof(spdm_key_exchange_response_t) +
-                                     test_buffer->dhe_key_size + meas_hash_size + sizeof(uint16_t) +
+                                     exchange_data_rsp_size + meas_hash_size + sizeof(uint16_t) +
                                      *opaque_length_ptr);
             verify_data_ptr = (void *)(signature_ptr + test_buffer->signature_size);
             if (spdm_response->header.request_response_code == SPDM_KEY_EXCHANGE_RSP) {
@@ -484,8 +597,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 2,
                 test_result, "response code - 0x%02x", spdm_response->header.request_response_code);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
 
@@ -498,8 +611,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 3,
                 test_result, "response version - 0x%02x", spdm_response->header.spdm_version);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
 
@@ -513,8 +626,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 test_result, "response mut_auth_requested - 0x%02x",
                 spdm_response->mut_auth_requested);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
 
@@ -528,8 +641,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 test_result, "response req_slot_id_param - 0x%02x",
                 spdm_response->req_slot_id_param);
             if (test_result == COMMON_TEST_RESULT_FAIL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
 
@@ -541,8 +654,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                                                      SPDM_VERSION_NUMBER_SHIFT_BIT,
                                                      false);
             if (session_info == NULL) {
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "assign_session_id failure");
@@ -557,8 +670,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                                               spdm_request_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
@@ -568,8 +681,8 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                                               (size_t)signature_ptr - (size_t)spdm_response);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
@@ -587,38 +700,44 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 test_result, "response signature");
             if (test_result == COMMON_TEST_RESULT_FAIL) {
                 libspdm_free_session_id(spdm_context, session_id);
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 return;
             }
             status = libspdm_append_message_k(spdm_context, session_info, true, signature_ptr,
                                               test_buffer->signature_size);
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_k failure");
                 return;
             }
 
-            result = libspdm_secured_message_dhe_compute_key(
-                test_buffer->dhe_named_group,
-                dhe_context, exchange_data_ptr, test_buffer->dhe_key_size,
-                secured_message_context);
+            if (kem_context != NULL) {
+                result = libspdm_secured_message_kem_decapsulate(
+                    test_buffer->kem_alg,
+                    kem_context, exchange_data_ptr, exchange_data_rsp_size,
+                    secured_message_context);
+            } else {
+                result = libspdm_secured_message_dhe_compute_key(
+                    test_buffer->dhe_named_group,
+                    dhe_context, exchange_data_ptr, exchange_data_rsp_size,
+                    secured_message_context);
+            }
             if (LIBSPDM_STATUS_IS_ERROR(status)) {
                 libspdm_free_session_id(spdm_context, session_id);
-                libspdm_secured_message_dhe_free(
-                    test_buffer->dhe_named_group, dhe_context);
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "dhe_compute_key failure");
                 return;
             }
 
-            libspdm_secured_message_dhe_free(
-                test_buffer->dhe_named_group, dhe_context);
+            spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context, kem_context);
 
             result = libspdm_calculate_th1_hash(spdm_context, session_info, true,
                                                 th1_hash_data);
