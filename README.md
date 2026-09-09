@@ -1,6 +1,6 @@
 # SPDM Responder Validator
 
-Copyright 2022 DMTF. All rights reserved.
+Copyright 2022-2026 DMTF. All rights reserved.
 
 ## About
 
@@ -8,9 +8,9 @@ The SPDM Responder Validator tests the protocol behavior of an SPDM Responder de
 
 Reference:
 
-   [DSP0274](https://www.dmtf.org/dsp/DSP0274)  Security Protocol and Data Model (SPDM) Specification (version [1.0.1](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf), version [1.1.1](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.1.1.pdf) and version [1.2.1](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.2.1.pdf))
+   [DSP0274](https://www.dmtf.org/dsp/DSP0274)  Security Protocol and Data Model (SPDM) Specification (version [1.0.3](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.3.pdf), version [1.1.5](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.1.5.pdf), version [1.2.4](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.2.4.pdf), version [1.3.3](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.3.pdf), version [1.4.1](https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.4.1.pdf))
 
-   [DSP0277](https://www.dmtf.org/dsp/DSP0277)  Secured Messages using SPDM Specification (version [1.1.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.1.0.pdf))
+   [DSP0277](https://www.dmtf.org/dsp/DSP0277)  Secured Messages using SPDM Specification (version [1.0.1](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.0.1.pdf), version [1.1.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.1.0.pdf), version [1.2.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.2.0.pdf), version [1.3.0](https://www.dmtf.org/sites/default/files/standards/documents/DSP0277_1.3.0.pdf))
 
    [DSP-IS0023](https://www.dmtf.org/dsp/DSP-IS0023)  SPDM Conformance Test Suite Guidance (version [1.0.0WIP50](https://www.dmtf.org/sites/default/files/standards/documents/DSP-IS0023_1.0.0WIP50.pdf))
 
@@ -57,6 +57,22 @@ The test case design is described below.
 19. Test for CHUNK_SEND_ACK
 
 20. Test for CHUNK_RESPONSE
+
+21. Test for KEY_PAIR_INFO
+
+22. Test for SET_KEY_PAIR_INFO_ACK
+
+23. Test for SUPPORTED_EVENT_TYPES
+
+24. Test for SUBSCRIBE_EVENT_TYPES_ACK
+
+25. Test for EVENT_ACK
+
+26. Test for ENDPOINT_INFO
+
+27. Test for MEASUREMENT_EXTENSION_LOG
+
+28. Test for SLOT_MANAGEMENT_RESP
 
 ### Test Assumptions
 
@@ -173,6 +189,8 @@ common_test_case_config_t m_spdm_test_group_capabilities_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_12, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_13, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CAPABILITIES_SUCCESS_14, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
@@ -183,12 +201,15 @@ common_test_case_config_t m_spdm_test_group_algorithms_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_11, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_12, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_UNEXPECTED_REQUEST_NON_IDENTICAL, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_13, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_ALGORITHMS_SUCCESS_14, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
 common_test_case_config_t m_spdm_test_group_digests_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_10, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_DIGESTS_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_DIGESTS_SUCCESS_13, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
@@ -197,6 +218,9 @@ common_test_case_config_t m_spdm_test_group_certificate_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_VERSION_MISMATCH, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_SPDM_X509_CERTIFICATE, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_LARGE_RESP, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_NO_PARTIAL_CHAIN, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_CERTIFICATE_NO_PARTIAL_CHAIN_LARGE, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
@@ -238,6 +262,8 @@ common_test_case_config_t m_spdm_test_group_key_exchange_rsp_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_MULTI_KEY, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
@@ -252,6 +278,8 @@ common_test_case_config_t m_spdm_test_group_finish_rsp_configs[] = {
     {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR, COMMON_TEST_ACTION_RUN},
     {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_MULTI_KEY, COMMON_TEST_ACTION_RUN},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY, COMMON_TEST_ACTION_RUN},
     {COMMON_TEST_ID_END, COMMON_TEST_ACTION_SKIP},
 };
 
