@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -15,17 +15,19 @@ typedef struct {
 } spdm_heartbeat_ack_test_buffer_t;
 #pragma pack()
 
-static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static uint8_t m_cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
 
 bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
-                                                 spdm_version_number_t spdm_version,
+                                                 size_t spdm_version_count,
+                                                 spdm_version_number_t *spdm_version,
                                                  bool need_session)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
     libspdm_return_t status;
     libspdm_data_parameter_t parameter;
+    spdm_version_number_t version;
     uint32_t rsp_cap_flags;
     size_t data_size;
     uint32_t data32;
@@ -38,10 +40,10 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
 
     libspdm_zero_mem(&parameter, sizeof(parameter));
 
-    if (spdm_version != 0) {
+    if (spdm_version_count != 0) {
         parameter.location = LIBSPDM_DATA_LOCATION_LOCAL;
         libspdm_set_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter,
-                         &spdm_version, sizeof(spdm_version));
+                         spdm_version, sizeof(spdm_version_number_t) * spdm_version_count);
     }
 
     data32 = SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CERT_CAP |
@@ -52,7 +54,8 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_LARGE_RESP_CAP;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
@@ -117,6 +120,45 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_PQC_ASYM_ALG, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_KEM_ALG_ML_KEM_512 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_768 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_1024;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_init_connection (spdm_context, false);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -129,13 +171,13 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     libspdm_zero_mem(test_buffer, sizeof(spdm_heartbeat_ack_test_buffer_t));
     spdm_test_context->test_scratch_buffer_size = sizeof(spdm_heartbeat_ack_test_buffer_t);
 
-    spdm_version = 0;
-    data_size = sizeof(spdm_version);
+    version = 0;
+    data_size = sizeof(version);
     libspdm_zero_mem(&parameter, sizeof(parameter));
     parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
-    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &spdm_version,
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_SPDM_VERSION, &parameter, &version,
                      &data_size);
-    test_buffer->version = (spdm_version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
+    test_buffer->version = (version >> SPDM_VERSION_NUMBER_SHIFT_BIT);
 
     rsp_cap_flags = 0;
     data_size = sizeof(rsp_cap_flags);
@@ -179,19 +221,24 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
 
 bool spdm_test_case_heartbeat_ack_setup_version_any (void *test_context)
 {
-    return spdm_test_case_heartbeat_ack_setup_session (test_context, 0, true);
+    return spdm_test_case_heartbeat_ack_setup_session (test_context, 0, NULL, true);
 }
 
 bool spdm_test_case_heartbeat_ack_setup_version_12 (void *test_context)
 {
+    spdm_version_number_t spdm_version[] = {
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
+    };
     return spdm_test_case_heartbeat_ack_setup_session (test_context,
-                                                       SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
-        true);
+                                                       LIBSPDM_ARRAY_SIZE(spdm_version),
+                                                       spdm_version, true);
 }
 
 bool spdm_test_case_heartbeat_ack_setup_version_any_session_cap (void *test_context)
 {
-    return spdm_test_case_heartbeat_ack_setup_session (test_context, 0, false);
+    return spdm_test_case_heartbeat_ack_setup_session (test_context, 0, NULL, false);
 }
 
 void spdm_test_case_heartbeat_ack_success_11_dhe (void *test_context)
