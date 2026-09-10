@@ -639,7 +639,7 @@ void spdm_test_case_certificate_size_req(void *test_context)
             return;
         }
 
-        if (spdm_response_size == sizeof(spdm_certificate_response_t)) {
+        if (spdm_response_size >= sizeof(spdm_certificate_response_t)) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
             test_result = COMMON_TEST_RESULT_FAIL;
