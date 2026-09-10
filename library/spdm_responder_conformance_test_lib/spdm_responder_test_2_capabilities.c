@@ -113,6 +113,9 @@ bool spdm_test_case_capabilities_setup_version_all (void *test_context)
             case SPDM_MESSAGE_VERSION_13:
                 test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V13;
                 break;
+            case SPDM_MESSAGE_VERSION_14:
+                test_buffer->support_version_bitmask |= SPDM_TEST_VERSION_MASK_V14;
+                break;
             default:
                 break;
         }
@@ -1136,7 +1139,10 @@ void spdm_test_case_capabilities_unexpected_non_identical (void *test_context)
                     offsetof(spdm_capabilities_test_buffer_t, version_number_entry) +
                     sizeof(spdm_version_number_t) * test_buffer->version_number_entry_count);
 
-    if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V13) != 0) {
+    if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V14) != 0) {
+        version = SPDM_MESSAGE_VERSION_14;
+        spdm_request_size = sizeof(spdm_request);
+    } else if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V13) != 0) {
         version = SPDM_MESSAGE_VERSION_13;
         spdm_request_size = sizeof(spdm_request);
     } else if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
