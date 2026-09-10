@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -19,12 +19,38 @@ typedef struct {
 
 typedef struct {
     spdm_message_header_t header;
+    uint16_t opaque_length;
     uint8_t verify_data[LIBSPDM_MAX_HASH_SIZE];
 } spdm_finish_request_mine_t;
 #pragma pack()
 
-static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
+static uint8_t m_cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
+
+/* Builds a FINISH request for negotiated version 1.1~1.4 and returns the
+ * offset of RequesterVerifyData in *verify_data_ptr. Version 1.4+ inserts a
+ * 2-byte OpaqueDataLength field (always 0 here) between the fixed header
+ * and RequesterVerifyData. */
+static size_t spdm_test_case_finish_rsp_build_request (uint8_t version,
+                                                       spdm_finish_request_mine_t *spdm_request,
+                                                       uint8_t **verify_data_ptr)
+{
+    uint8_t *ptr;
+
+    spdm_request->header.spdm_version = version;
+    spdm_request->header.request_response_code = SPDM_FINISH;
+    spdm_request->header.param1 = 0;
+    spdm_request->header.param2 = 0;
+
+    ptr = (uint8_t *)spdm_request + sizeof(spdm_finish_request_t);
+    if (version >= SPDM_MESSAGE_VERSION_14) {
+        *(uint16_t *)ptr = 0;
+        ptr += sizeof(uint16_t);
+    }
+    *verify_data_ptr = ptr;
+
+    return (size_t)(ptr - (uint8_t *)spdm_request);
+}
 
 bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
                                                  size_t spdm_version_count,
@@ -61,7 +87,8 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_LARGE_RESP_CAP;
     if (hs_clear) {
         data32 |= SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HANDSHAKE_IN_THE_CLEAR_CAP;
     }
@@ -129,6 +156,45 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_PQC_ASYM_ALG, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_KEM_ALG_ML_KEM_512 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_768 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_1024;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_init_connection (spdm_context, false);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -229,7 +295,9 @@ bool spdm_test_case_finish_rsp_setup_version_11_hs_clear (void *test_context)
 bool spdm_test_case_finish_rsp_setup_version_12 (void *test_context)
 {
     spdm_version_number_t spdm_version[] = {
-        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
@@ -239,7 +307,9 @@ bool spdm_test_case_finish_rsp_setup_version_12 (void *test_context)
 bool spdm_test_case_finish_rsp_setup_version_12_hs_clear (void *test_context)
 {
     spdm_version_number_t spdm_version[] = {
-        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
@@ -265,6 +335,8 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
     uint8_t *ptr;
     void *session_info;
     uint8_t *verify_data_ptr;
+    uint16_t *opaque_length_ptr;
+    size_t opaque_entry_size;
     uint8_t th2_hash_data[LIBSPDM_MAX_HASH_SIZE];
     bool result;
     common_test_case_id case_id;
@@ -286,7 +358,11 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         }
         break;
     case SPDM_MESSAGE_VERSION_12:
-        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_12);
+    case SPDM_MESSAGE_VERSION_13:
+    case SPDM_MESSAGE_VERSION_14:
+        LIBSPDM_ASSERT ((test_buffer->version == SPDM_MESSAGE_VERSION_12) ||
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_13) ||
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_14));
         if (hs_clear) {
             case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR;
         } else {
@@ -338,21 +414,18 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         LIBSPDM_ASSERT (session_info != NULL);
 
         libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-        spdm_request.header.spdm_version = test_buffer->version;
-        spdm_request.header.request_response_code = SPDM_FINISH;
-        spdm_request.header.param1 = 0;
-        spdm_request.header.param2 = 0;
+        spdm_request_size = spdm_test_case_finish_rsp_build_request (
+            test_buffer->version, &spdm_request, &ptr);
 
         status = libspdm_append_message_f(spdm_context, session_info, true,
                                           (uint8_t *)&spdm_request,
-                                          sizeof(spdm_finish_request_t));
+                                          spdm_request_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
                 COMMON_TEST_RESULT_NOT_TESTED, "append_message_f failure");
             continue;
         }
-        ptr = spdm_request.verify_data;
         result = libspdm_generate_finish_req_hmac(spdm_context, session_info, ptr);
         if (!result) {
             common_test_record_test_assertion (
@@ -369,7 +442,7 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
             continue;
         }
 
-        spdm_request_size = sizeof(spdm_finish_request_t) + test_buffer->hash_size;
+        spdm_request_size = spdm_request_size + test_buffer->hash_size;
 
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
@@ -395,10 +468,27 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         } else {
             verify_data_size = 0;
         }
-        if (spdm_response_size < sizeof(spdm_finish_response_t) + verify_data_size) {
-            test_result = COMMON_TEST_RESULT_FAIL;
+        opaque_length_ptr = NULL;
+        if (test_buffer->version >= SPDM_MESSAGE_VERSION_14) {
+            if (spdm_response_size < sizeof(spdm_finish_response_t) +
+                sizeof(uint16_t) + verify_data_size) {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            } else {
+                opaque_length_ptr =
+                    (void *)((size_t)spdm_response + sizeof(spdm_finish_response_t));
+                if (spdm_response_size < sizeof(spdm_finish_response_t) +
+                    sizeof(uint16_t) + *opaque_length_ptr + verify_data_size) {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                } else {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                }
+            }
         } else {
-            test_result = COMMON_TEST_RESULT_PASS;
+            if (spdm_response_size < sizeof(spdm_finish_response_t) + verify_data_size) {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            } else {
+                test_result = COMMON_TEST_RESULT_PASS;
+            }
         }
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 1,
@@ -406,7 +496,10 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         if (test_result == COMMON_TEST_RESULT_FAIL) {
             return;
         }
-        verify_data_ptr = (void *)((size_t)spdm_response + sizeof(spdm_finish_response_t));
+        opaque_entry_size = (opaque_length_ptr != NULL) ?
+                            sizeof(uint16_t) + *opaque_length_ptr : 0;
+        verify_data_ptr = (void *)((size_t)spdm_response + sizeof(spdm_finish_response_t) +
+                                   opaque_entry_size);
         if (spdm_response->header.request_response_code == SPDM_FINISH_RSP) {
             test_result = COMMON_TEST_RESULT_PASS;
         } else {
@@ -432,7 +525,7 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         }
 
         status = libspdm_append_message_f(spdm_context, session_info, true, spdm_response,
-                                          sizeof(spdm_finish_response_t));
+                                          sizeof(spdm_finish_response_t) + opaque_entry_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
@@ -460,6 +553,20 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
                     COMMON_TEST_RESULT_NOT_TESTED, "append_message_f failure");
+                return;
+            }
+        }
+
+        if (test_buffer->version >= SPDM_MESSAGE_VERSION_14) {
+            if (*opaque_length_ptr <= SPDM_MAX_OPAQUE_DATA_SIZE) {
+                test_result = COMMON_TEST_RESULT_PASS;
+            } else {
+                test_result = COMMON_TEST_RESULT_FAIL;
+            }
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, hs_clear ? 5 : 4,
+                test_result, "response opaque_data_length - %d", *opaque_length_ptr);
+            if (test_result == COMMON_TEST_RESULT_FAIL) {
                 return;
             }
         }
@@ -1032,20 +1139,17 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
     LIBSPDM_ASSERT (session_info != NULL);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = test_buffer->version;
-    spdm_request.header.request_response_code = SPDM_FINISH;
-    spdm_request.header.param1 = 0;
-    spdm_request.header.param2 = 0;
+    spdm_request_size = spdm_test_case_finish_rsp_build_request (
+        test_buffer->version, &spdm_request, &ptr);
 
     status = libspdm_append_message_f(spdm_context, session_info, true, (uint8_t *)&spdm_request,
-                                      sizeof(spdm_finish_request_t));
+                                      spdm_request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
             COMMON_TEST_RESULT_NOT_TESTED, "append_message_f failure");
         return;
     }
-    ptr = spdm_request.verify_data;
     result = libspdm_generate_finish_req_hmac(spdm_context, session_info, ptr);
     if (!result) {
         common_test_record_test_assertion (
@@ -1065,7 +1169,7 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
         return;
     }
 
-    spdm_request_size = sizeof(spdm_finish_request_t) + test_buffer->hash_size;
+    spdm_request_size = spdm_request_size + test_buffer->hash_size;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
@@ -1199,13 +1303,11 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
     LIBSPDM_ASSERT (session_info != NULL);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
-    spdm_request.header.spdm_version = test_buffer->version;
-    spdm_request.header.request_response_code = SPDM_FINISH;
-    spdm_request.header.param1 = 0;
-    spdm_request.header.param2 = 0;
+    spdm_request_size = spdm_test_case_finish_rsp_build_request (
+        test_buffer->version, &spdm_request, &ptr);
 
     status = libspdm_append_message_f(spdm_context, session_info, true, (uint8_t *)&spdm_request,
-                                      sizeof(spdm_finish_request_t));
+                                      spdm_request_size);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -1213,7 +1315,6 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
             COMMON_TEST_RESULT_NOT_TESTED, "append_message_f failure");
         return;
     }
-    ptr = spdm_request.verify_data;
     result = libspdm_generate_finish_req_hmac(spdm_context, session_info, ptr);
     if (!result) {
         common_test_record_test_assertion (
@@ -1232,7 +1333,7 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
         return;
     }
 
-    spdm_request_size = sizeof(spdm_finish_request_t) + test_buffer->hash_size;
+    spdm_request_size = spdm_request_size + test_buffer->hash_size;
 
     spdm_response = (void *)message;
     spdm_response_size = sizeof(message);
