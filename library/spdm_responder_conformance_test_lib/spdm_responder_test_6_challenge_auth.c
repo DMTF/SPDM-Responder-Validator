@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -35,6 +35,7 @@ typedef struct {
     uint32_t hash_algo;
     uint32_t hash_size;
     uint32_t asym_algo;
+    uint32_t pqc_asym_algo;
     uint32_t signature_size;
     uint8_t slot_mask;
     uint8_t slot_count;
@@ -42,8 +43,8 @@ typedef struct {
 } spdm_challenge_auth_test_buffer_t;
 #pragma pack()
 
-static uint8_t m_cert_chain_buffer[SPDM_MAX_CERTIFICATE_CHAIN_SIZE];
-static size_t m_cert_chain_buffer_size;
+static uint8_t m_cert_chain_buffer[SPDM_MAX_SLOT_COUNT][LIBSPDM_MAX_CERT_CHAIN_SIZE];
+static size_t m_cert_chain_buffer_size[SPDM_MAX_SLOT_COUNT];
 
 bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
                                                      size_t spdm_version_count,
@@ -85,7 +86,8 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_ENCAP_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_HBEAT_CAP |
              SPDM_GET_CAPABILITIES_REQUEST_FLAGS_KEY_UPD_CAP |
-             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP;
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_CHUNK_CAP |
+             SPDM_GET_CAPABILITIES_REQUEST_FLAGS_LARGE_RESP_CAP;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_CAPABILITY_FLAGS, &parameter,
                      &data32, sizeof(data32));
 
@@ -150,6 +152,45 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_65 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_87 |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_128F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_192F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256S |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHA2_256F |
+             SPDM_ALGORITHMS_PQC_ASYM_ALGO_SLH_DSA_SHAKE_256F;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_REQ_PQC_ASYM_ALG, &parameter,
+                     &data32, sizeof(data32));
+    data32 = SPDM_ALGORITHMS_KEM_ALG_ML_KEM_512 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_768 |
+             SPDM_ALGORITHMS_KEM_ALG_ML_KEM_1024;
+    libspdm_set_data(spdm_context, LIBSPDM_DATA_KEM_ALG, &parameter,
+                     &data32, sizeof(data32));
 
     status = libspdm_init_connection (spdm_context, false);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
@@ -186,7 +227,16 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     data_size = sizeof(test_buffer->asym_algo);
     libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_ASYM_ALGO, &parameter, &test_buffer->asym_algo,
                      &data_size);
-    test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+    data_size = sizeof(test_buffer->pqc_asym_algo);
+    libspdm_get_data(spdm_context, LIBSPDM_DATA_PQC_ASYM_ALGO, &parameter, &test_buffer->pqc_asym_algo,
+                     &data_size);
+    if (test_buffer->asym_algo != 0) {
+        test_buffer->signature_size = libspdm_get_asym_signature_size(test_buffer->asym_algo);
+    } else if (test_buffer->pqc_asym_algo != 0) {
+        test_buffer->signature_size = libspdm_get_pqc_asym_signature_size(test_buffer->pqc_asym_algo);
+    } else {
+        return false;
+    }
 
     status = libspdm_get_digest (spdm_context, NULL, &test_buffer->slot_mask,
                                  test_buffer->total_digest_buffer);
@@ -198,9 +248,10 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
-        m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
-        status = libspdm_get_certificate (spdm_context, NULL, slot_id, &m_cert_chain_buffer_size,
-                                          m_cert_chain_buffer);
+        m_cert_chain_buffer_size[slot_id] = sizeof(m_cert_chain_buffer[slot_id]);
+        status = libspdm_get_certificate (spdm_context, NULL, slot_id,
+                                          &m_cert_chain_buffer_size[slot_id],
+                                          m_cert_chain_buffer[slot_id]);
     }
 
     test_buffer->slot_count = 0;
@@ -238,6 +289,7 @@ bool spdm_test_case_challenge_auth_setup_version_12 (void *test_context)
     spdm_version_number_t spdm_version[] = {
         SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
         SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT,
     };
     return spdm_test_case_challenge_auth_setup_vca_digest (test_context,
                                                            LIBSPDM_ARRAY_SIZE(
@@ -266,6 +318,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     uint16_t *opaque_length_ptr;
     uint8_t *signature_ptr;
     bool result;
+    libspdm_data_parameter_t parameter;
     uint8_t measurement_hash_type[] = {
         SPDM_CHALLENGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
         SPDM_CHALLENGE_REQUEST_TCB_COMPONENT_MEASUREMENT_HASH,
@@ -302,8 +355,10 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
         break;
     case SPDM_MESSAGE_VERSION_12:
     case SPDM_MESSAGE_VERSION_13:
+    case SPDM_MESSAGE_VERSION_14:
         LIBSPDM_ASSERT ((test_buffer->version == SPDM_MESSAGE_VERSION_12) ||
-                        (test_buffer->version == SPDM_MESSAGE_VERSION_13));
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_13) ||
+                        (test_buffer->version == SPDM_MESSAGE_VERSION_14));
         switch (message_mask) {
         case SPDM_MESSAGE_A_MASK_VCA | SPDM_MESSAGE_B_MASK_GET_DIGESTS |
             SPDM_MESSAGE_B_MASK_GET_CERTIFICATE:
@@ -391,15 +446,26 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             }
 
             if ((message_mask & SPDM_MESSAGE_B_MASK_GET_CERTIFICATE) != 0) {
-                m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
+                m_cert_chain_buffer_size[slot_id] = sizeof(m_cert_chain_buffer[slot_id]);
                 status = libspdm_get_certificate (spdm_context, NULL, slot_id,
-                                                  &m_cert_chain_buffer_size, m_cert_chain_buffer);
+                                                  &m_cert_chain_buffer_size[slot_id],
+                                                  m_cert_chain_buffer[slot_id]);
                 if (LIBSPDM_STATUS_IS_ERROR(status)) {
                     common_test_record_test_assertion (
                         SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 0,
                         COMMON_TEST_RESULT_NOT_TESTED, "get_certificate failure");
                     continue;
                 }
+            } else {
+                /* GET_CERTIFICATE is not sent in this case, but the signature
+                 * verify below still needs the peer cert chain captured during
+                 * setup to find the leaf public key for this slot. */
+                libspdm_zero_mem(&parameter, sizeof(parameter));
+                parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+                parameter.additional_data[0] = slot_id;
+                libspdm_set_data (spdm_context, LIBSPDM_DATA_PEER_USED_CERT_CHAIN_BUFFER,
+                                  &parameter, m_cert_chain_buffer[slot_id],
+                                  m_cert_chain_buffer_size[slot_id]);
             }
 
             /* ignore spdm_request.nonce */
