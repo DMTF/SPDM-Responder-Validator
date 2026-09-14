@@ -424,6 +424,17 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
             }
 
             if ((message_mask & SPDM_MESSAGE_A_MASK_VCA) == 0) {
+                /* This preliminary CHALLENGE represents the CHALLENGE already done in
+                 * TestSetup for A2 cases. The peer cert chain was reset by
+                 * libspdm_init_connection() above, so restore it from the chain
+                 * captured during setup for signature verification. */
+                libspdm_zero_mem(&parameter, sizeof(parameter));
+                parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+                parameter.additional_data[0] = slot_id;
+                libspdm_set_data (spdm_context, LIBSPDM_DATA_PEER_USED_CERT_CHAIN_BUFFER,
+                                  &parameter, m_cert_chain_buffer[slot_id],
+                                  m_cert_chain_buffer_size[slot_id]);
+
                 status =
                     libspdm_challenge (spdm_context, NULL, slot_id,
                                        measurement_hash_type[meas_hash_type_index], NULL, NULL);
