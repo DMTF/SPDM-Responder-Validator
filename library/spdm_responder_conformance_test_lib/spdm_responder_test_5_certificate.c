@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -282,6 +282,7 @@ void spdm_test_case_certificate_success (void *test_context)
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     bool result;
 
     spdm_test_context = test_context;
@@ -291,9 +292,15 @@ void spdm_test_case_certificate_success (void *test_context)
                    offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,
@@ -686,6 +693,7 @@ void spdm_test_case_certificate_size_req(void *test_context)
     common_test_result_t test_result;
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
+    uint8_t valid_slot_mask;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -694,8 +702,13 @@ void spdm_test_case_certificate_size_req(void *test_context)
                    offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x\n", slot_id);
@@ -790,6 +803,7 @@ void spdm_test_case_certificate_large_resp (void *test_context)
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     bool result;
     uint32_t large_length;
 
@@ -800,9 +814,15 @@ void spdm_test_case_certificate_large_resp (void *test_context)
                    offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,
@@ -982,6 +1002,7 @@ void spdm_test_case_certificate_no_partial_chain (void *test_context)
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     bool result;
 
     spdm_test_context = test_context;
@@ -991,9 +1012,15 @@ void spdm_test_case_certificate_no_partial_chain (void *test_context)
                    offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,
@@ -1143,6 +1170,7 @@ void spdm_test_case_certificate_no_partial_chain_large (void *test_context)
     spdm_certificate_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     bool result;
 
     spdm_test_context = test_context;
@@ -1152,9 +1180,15 @@ void spdm_test_case_certificate_no_partial_chain_large (void *test_context)
                    offsetof(spdm_certificate_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,

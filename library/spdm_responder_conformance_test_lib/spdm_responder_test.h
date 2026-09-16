@@ -97,6 +97,23 @@ typedef struct {
  **/
 uint32_t spdm_test_get_one_bit (uint32_t data, uint32_t mask);
 
+/**
+ * Filter slot_mask down to slots that are usable for the given key usage.
+ *
+ * If MULTI_KEY_CONN_RSP is false, slot_mask is returned unchanged.
+ * If MULTI_KEY_CONN_RSP is true, a slot is kept only if its DIGESTS.CertModel is not None,
+ * and, when key_usage_bit is non-zero, its DIGESTS.KeyUsageMask has key_usage_bit set.
+ *
+ * @param key_usage_bit  One of SPDM_KEY_USAGE_BIT_MASK_*_USE, or 0 to skip the KeyUsageMask check.
+ **/
+uint8_t spdm_test_filter_valid_slot_mask (void *spdm_context, uint8_t slot_mask,
+                                          uint16_t key_usage_bit);
+
+/**
+ * Return the lowest set bit-index in slot_mask, or SPDM_MAX_SLOT_COUNT if slot_mask is 0.
+ **/
+uint8_t spdm_test_get_first_slot_id (uint8_t slot_mask);
+
 void spdm_test_case_common_teardown (void *test_context);
 
 extern common_test_case_t m_spdm_test_group_version[];

@@ -9,7 +9,8 @@
 #pragma pack(1)
 typedef struct {
     uint8_t version;
-    uint8_t reserved[3];
+    uint8_t slot_id;
+    uint8_t reserved[2];
     uint32_t session_id;
 } spdm_key_update_ack_test_buffer_t;
 #pragma pack()
@@ -33,6 +34,8 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
     uint16_t data16;
     uint8_t data8;
     spdm_key_update_ack_test_buffer_t *test_buffer;
+    uint8_t slot_mask;
+    uint8_t total_digest_buffer[SPDM_MAX_SLOT_COUNT * LIBSPDM_MAX_HASH_SIZE];
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -195,8 +198,19 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
         return false;
     }
 
+    status = libspdm_get_digest (spdm_context, NULL, &slot_mask, total_digest_buffer);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        return false;
+    }
+    slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, slot_mask,
+                                                  SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
+    test_buffer->slot_id = spdm_test_get_first_slot_id (slot_mask);
+    if (test_buffer->slot_id == SPDM_MAX_SLOT_COUNT) {
+        return false;
+    }
+
     m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
-    status = libspdm_get_certificate (spdm_context, NULL, 0,
+    status = libspdm_get_certificate (spdm_context, NULL, test_buffer->slot_id,
                                       &m_cert_chain_buffer_size, m_cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
@@ -205,7 +219,8 @@ bool spdm_test_case_key_update_ack_setup_session (void *test_context,
     if (need_session) {
         status = libspdm_start_session (spdm_context, false, NULL, 0,
                                         SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                        0, 0, &test_buffer->session_id, NULL, NULL);
+                                        test_buffer->slot_id, 0, &test_buffer->session_id, NULL,
+                                        NULL);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             return false;
         }
@@ -916,8 +931,8 @@ void spdm_test_case_key_update_ack_unexpected_request (void *test_context)
 
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &test_buffer->session_id, NULL,
-                                                &req_slot_id_param, NULL);
+                                                test_buffer->slot_id, 0, &test_buffer->session_id,
+                                                NULL, &req_slot_id_param, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_UPDATE_ACK,

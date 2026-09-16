@@ -241,6 +241,9 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
         return false;
     }
 
+    test_buffer->slot_mask = spdm_test_filter_valid_slot_mask (
+        spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
+
     m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
     status = libspdm_get_certificate (spdm_context, NULL, 0,
                                       &m_cert_chain_buffer_size, m_cert_chain_buffer);
@@ -611,6 +614,7 @@ void spdm_test_case_finish_rsp_version_mismatch (void *test_context)
     spdm_finish_rsp_test_buffer_t *test_buffer;
     uint8_t mismatched_version[2];
     size_t index;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -622,9 +626,19 @@ void spdm_test_case_finish_rsp_version_mismatch (void *test_context)
     mismatched_version[0] = (uint8_t)(test_buffer->version - 1);
     mismatched_version[1] = (uint8_t)(test_buffer->version + 1);
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
+            SPDM_RESPONDER_TEST_CASE_FINISH_RSP_VERSION_MISMATCH, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &session_id, NULL, &req_slot_id_param, NULL);
+                                                slot_id, 0, &session_id, NULL, &req_slot_id_param,
+                                                NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -769,6 +783,7 @@ void spdm_test_case_finish_rsp_unexpected_request_in_session (void *test_context
     bool result;
     common_test_result_t test_result;
     spdm_finish_rsp_test_buffer_t *test_buffer;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -777,9 +792,18 @@ void spdm_test_case_finish_rsp_unexpected_request_in_session (void *test_context
                    offsetof(spdm_finish_rsp_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
+            SPDM_RESPONDER_TEST_CASE_FINISH_RSP_UNEXPECTED_REQUEST_IN_SESSION, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_start_session (spdm_context, false, NULL, 0,
                                     SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                    0, 0, &session_id, NULL, NULL);
+                                    slot_id, 0, &session_id, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -933,9 +957,19 @@ void spdm_test_case_finish_rsp_invalid_request (void *test_context)
                    offsetof(spdm_finish_rsp_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
+            SPDM_RESPONDER_TEST_CASE_FINISH_RSP_INVALID_REQUEST, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &session_id, NULL, &req_slot_id_param, NULL);
+                                                slot_id, 0, &session_id, NULL, &req_slot_id_param,
+                                                NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
@@ -1096,6 +1130,7 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
     spdm_finish_rsp_test_buffer_t *test_buffer;
     common_test_case_id case_id;
     size_t index;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -1110,9 +1145,18 @@ void spdm_test_case_finish_rsp_decrypt_error_invalid_verify_data_common (void *t
         case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_DECRYPT_ERROR_INVALID_VERIFY_DATA;
     }
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &session_id, NULL, &req_slot_id_param, NULL);
+                                                slot_id, 0, &session_id, NULL, &req_slot_id_param,
+                                                NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP, case_id, 0,
@@ -1265,6 +1309,7 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
     bool result;
     common_test_result_t test_result;
     spdm_finish_rsp_test_buffer_t *test_buffer;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -1273,9 +1318,19 @@ void spdm_test_case_finish_rsp_session_required (void *test_context)
                    offsetof(spdm_finish_rsp_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,
+            SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED, 0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &session_id, NULL, &req_slot_id_param, NULL);
+                                                slot_id, 0, &session_id, NULL, &req_slot_id_param,
+                                                NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_FINISH_RSP,

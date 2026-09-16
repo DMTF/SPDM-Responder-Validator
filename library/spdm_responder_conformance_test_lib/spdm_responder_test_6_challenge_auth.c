@@ -312,6 +312,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     spdm_challenge_auth_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     uint8_t meas_hash_type_index;
     uint32_t meas_hash_size;
     uint8_t *cert_chain_hash_ptr;
@@ -395,9 +396,16 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
         return;
     }
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask,
+                                                        SPDM_KEY_USAGE_BIT_MASK_CHALLENGE_USE);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,
