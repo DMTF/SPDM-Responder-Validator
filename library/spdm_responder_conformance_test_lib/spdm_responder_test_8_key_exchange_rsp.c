@@ -57,6 +57,7 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     size_t index;
     uint8_t slot_id;
+    uint8_t key_ex_slot_mask;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -257,6 +258,9 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
         return false;
     }
 
+    key_ex_slot_mask = spdm_test_filter_valid_slot_mask (
+        spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
+
     test_buffer->slot_count = 0;
     for (index = 0; index < SPDM_MAX_SLOT_COUNT; index++) {
         if ((test_buffer->slot_mask & (1 << index)) != 0) {
@@ -276,6 +280,7 @@ bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
             return false;
         }
     }
+    test_buffer->slot_mask = key_ex_slot_mask;
 
     spdm_test_context->test_scratch_buffer_size = offsetof(spdm_key_exchange_rsp_test_buffer_t,
                                                            total_digest_buffer) +
@@ -989,6 +994,7 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     common_test_result_t test_result;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
     uint32_t session_id;
+    uint8_t slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -997,9 +1003,19 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
                    offsetof(spdm_key_exchange_rsp_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
 
+    slot_id = spdm_test_get_first_slot_id (test_buffer->slot_mask);
+    if (slot_id == SPDM_MAX_SLOT_COUNT) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
+            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
+            0,
+            COMMON_TEST_RESULT_NOT_TESTED, "no valid slot");
+        return;
+    }
+
     status = libspdm_start_session (spdm_context, false, NULL, 0,
                                     SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                    0, 0, &session_id, NULL, NULL);
+                                    slot_id, 0, &session_id, NULL, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
