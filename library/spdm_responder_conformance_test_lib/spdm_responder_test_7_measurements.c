@@ -196,7 +196,7 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
     data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
-    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1 | SPDM_ALGORITHMS_MULTI_KEY_CONN;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
