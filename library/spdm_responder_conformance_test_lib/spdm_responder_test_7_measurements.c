@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -111,6 +111,9 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
     spdm_measurements_test_buffer_t *test_buffer;
     size_t index;
     uint8_t slot_id;
+    uint8_t challenge_slot_mask;
+    uint8_t key_ex_slot_mask;
+    uint8_t key_ex_slot_id;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -194,7 +197,7 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
     data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
-    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1 | SPDM_ALGORITHMS_MULTI_KEY_CONN;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
@@ -289,12 +292,18 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
         return false;
     }
 
+    test_buffer->slot_mask = spdm_test_filter_valid_slot_mask (
+        spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_MEASUREMENT_USE);
+
     test_buffer->slot_count = 0;
     for (index = 0; index < SPDM_MAX_SLOT_COUNT; index++) {
         if ((test_buffer->slot_mask & (1 << index)) != 0) {
             test_buffer->slot_count++;
         }
     }
+
+    challenge_slot_mask = spdm_test_filter_valid_slot_mask (
+        spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_CHALLENGE_USE);
 
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
@@ -306,6 +315,10 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
                                           &m_cert_chain_buffer_size, m_cert_chain_buffer);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             return false;
+        }
+
+        if ((challenge_slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
         }
 
         status = libspdm_challenge (spdm_context, NULL, slot_id,
@@ -321,9 +334,16 @@ bool spdm_test_case_measurements_setup_vca_challenge_session (void *test_context
             return false;
         }
 
+        key_ex_slot_mask = spdm_test_filter_valid_slot_mask (
+            spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
+        key_ex_slot_id = spdm_test_get_first_slot_id (key_ex_slot_mask);
+        if (key_ex_slot_id == SPDM_MAX_SLOT_COUNT) {
+            return false;
+        }
+
         status = libspdm_start_session (spdm_context, false, NULL, 0,
                                         SPDM_KEY_EXCHANGE_REQUEST_ALL_MEASUREMENTS_HASH,
-                                        0, 0, &test_buffer->session_id, NULL,
+                                        key_ex_slot_id, 0, &test_buffer->session_id, NULL,
                                         &test_buffer->measurement_summary_hash);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             return false;

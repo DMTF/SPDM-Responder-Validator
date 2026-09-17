@@ -149,7 +149,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
-    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1 | SPDM_ALGORITHMS_MULTI_KEY_CONN;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
@@ -312,6 +312,7 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
     spdm_challenge_auth_test_buffer_t *test_buffer;
     uint8_t slot_id;
     uint8_t hash_index;
+    uint8_t valid_slot_mask;
     uint8_t meas_hash_type_index;
     uint32_t meas_hash_size;
     uint8_t *cert_chain_hash_ptr;
@@ -395,9 +396,16 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
         return;
     }
 
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask,
+                                                        SPDM_KEY_USAGE_BIT_MASK_CHALLENGE_USE);
+
     hash_index = 0;
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+            continue;
+        }
+        if ((valid_slot_mask & (0x1 << slot_id)) == 0) {
+            hash_index++;
             continue;
         }
         common_test_record_test_message ("test slot - 0x%02x (hash index - 0x%02x)\n", slot_id,

@@ -10,7 +10,8 @@
 typedef struct {
     uint8_t version;
     uint8_t heartbeat_period;
-    uint8_t reserved[2];
+    uint8_t slot_id;
+    uint8_t reserved;
     uint32_t session_id;
 } spdm_heartbeat_ack_test_buffer_t;
 #pragma pack()
@@ -34,6 +35,8 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     uint16_t data16;
     uint8_t data8;
     spdm_heartbeat_ack_test_buffer_t *test_buffer;
+    uint8_t slot_mask;
+    uint8_t total_digest_buffer[SPDM_MAX_SLOT_COUNT * LIBSPDM_MAX_HASH_SIZE];
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -117,7 +120,7 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
-    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1 | SPDM_ALGORITHMS_MULTI_KEY_CONN;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
@@ -195,8 +198,19 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
         return false;
     }
 
+    status = libspdm_get_digest (spdm_context, NULL, &slot_mask, total_digest_buffer);
+    if (LIBSPDM_STATUS_IS_ERROR(status)) {
+        return false;
+    }
+    slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, slot_mask,
+                                                  SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
+    test_buffer->slot_id = spdm_test_get_first_slot_id (slot_mask);
+    if (test_buffer->slot_id == SPDM_MAX_SLOT_COUNT) {
+        return false;
+    }
+
     m_cert_chain_buffer_size = sizeof(m_cert_chain_buffer);
-    status = libspdm_get_certificate (spdm_context, NULL, 0,
+    status = libspdm_get_certificate (spdm_context, NULL, test_buffer->slot_id,
                                       &m_cert_chain_buffer_size, m_cert_chain_buffer);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         return false;
@@ -205,7 +219,7 @@ bool spdm_test_case_heartbeat_ack_setup_session (void *test_context,
     if (need_session) {
         status = libspdm_start_session (spdm_context, false, NULL, 0,
                                         SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                        0, 0, &test_buffer->session_id,
+                                        test_buffer->slot_id, 0, &test_buffer->session_id,
                                         &test_buffer->heartbeat_period, NULL);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             return false;
@@ -448,7 +462,8 @@ void spdm_test_case_heartbeat_ack_unexpected_request (void *test_context)
 
     status = libspdm_send_receive_key_exchange (spdm_context,
                                                 SPDM_KEY_EXCHANGE_REQUEST_NO_MEASUREMENT_SUMMARY_HASH,
-                                                0, 0, &test_buffer->session_id, &test_buffer->heartbeat_period,
+                                                test_buffer->slot_id, 0, &test_buffer->session_id,
+                                                &test_buffer->heartbeat_period,
                                                 &req_slot_id_param, NULL);
     if (LIBSPDM_STATUS_IS_ERROR(status)) {
         common_test_record_test_assertion (
