@@ -87,6 +87,8 @@ void spdm_responder_conformance_test (void *spdm_context,
 #define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST               6
 #define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12                    7
 #define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR           8
+#define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_MULTI_KEY          9
+#define   SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY 10
 
 #define SPDM_RESPONDER_TEST_GROUP_FINISH_RSP    9
 #define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_11                                            \
@@ -109,6 +111,10 @@ void spdm_responder_conformance_test (void *spdm_context,
     10
 #define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SESSION_REQUIRED                                      \
     11
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_MULTI_KEY                                  \
+    12
+#define   SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY                         \
+    13
 
 #define SPDM_RESPONDER_TEST_GROUP_HEARTBEAT_ACK    12
 #define   SPDM_RESPONDER_TEST_CASE_HEARTBEAT_ACK_SUCCESS_11_IN_DHE_SESSION             1

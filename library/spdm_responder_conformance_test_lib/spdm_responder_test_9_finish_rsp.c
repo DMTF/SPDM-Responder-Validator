@@ -54,7 +54,8 @@ static size_t spdm_test_case_finish_rsp_build_request (uint8_t version,
 
 bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
                                                  size_t spdm_version_count,
-                                                 spdm_version_number_t *spdm_version, bool hs_clear)
+                                                 spdm_version_number_t *spdm_version, bool hs_clear,
+                                                 bool multi_key)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
@@ -153,7 +154,10 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
     data16 = SPDM_ALGORITHMS_KEY_SCHEDULE_SPDM;
     libspdm_set_data(spdm_context, LIBSPDM_DATA_KEY_SCHEDULE, &parameter, &data16,
                      sizeof(data16));
-    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1 | SPDM_ALGORITHMS_MULTI_KEY_CONN;
+    data8 = SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1;
+    if (multi_key) {
+        data8 |= SPDM_ALGORITHMS_MULTI_KEY_CONN;
+    }
     libspdm_set_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
                      &data8, sizeof(data8));
     data32 = SPDM_ALGORITHMS_PQC_ASYM_ALGO_ML_DSA_44 |
@@ -230,6 +234,18 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
         }
     }
 
+    if (multi_key) {
+        if ((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP) == 0) {
+            return false;
+        }
+    } else {
+        if (((test_buffer->rsp_cap_flags & SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP) ==
+             SPDM_GET_CAPABILITIES_RESPONSE_FLAGS_MULTI_KEY_CAP_ONLY) &&
+            (test_buffer->version >= SPDM_MESSAGE_VERSION_13)) {
+            return false;
+        }
+    }
+
     data_size = sizeof(test_buffer->hash_algo);
     libspdm_get_data(spdm_context, LIBSPDM_DATA_BASE_HASH_ALGO, &parameter, &test_buffer->hash_algo,
                      &data_size);
@@ -267,12 +283,12 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
 
 bool spdm_test_case_finish_rsp_setup_version_any (void *test_context)
 {
-    return spdm_test_case_finish_rsp_setup_vca_digest (test_context, 0, NULL, false);
+    return spdm_test_case_finish_rsp_setup_vca_digest (test_context, 0, NULL, false, false);
 }
 
 bool spdm_test_case_finish_rsp_setup_version_any_hs_clear (void *test_context)
 {
-    return spdm_test_case_finish_rsp_setup_vca_digest (test_context, 0, NULL, true);
+    return spdm_test_case_finish_rsp_setup_vca_digest (test_context, 0, NULL, true, false);
 }
 
 bool spdm_test_case_finish_rsp_setup_version_11 (void *test_context)
@@ -282,7 +298,8 @@ bool spdm_test_case_finish_rsp_setup_version_11 (void *test_context)
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
-                                                           spdm_version), spdm_version, false);
+                                                           spdm_version), spdm_version, false,
+                                                       false);
 }
 
 bool spdm_test_case_finish_rsp_setup_version_11_hs_clear (void *test_context)
@@ -292,7 +309,8 @@ bool spdm_test_case_finish_rsp_setup_version_11_hs_clear (void *test_context)
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
-                                                           spdm_version), spdm_version, true);
+                                                           spdm_version), spdm_version, true,
+                                                       false);
 }
 
 bool spdm_test_case_finish_rsp_setup_version_12 (void *test_context)
@@ -304,7 +322,8 @@ bool spdm_test_case_finish_rsp_setup_version_12 (void *test_context)
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
-                                                           spdm_version), spdm_version, false);
+                                                           spdm_version), spdm_version, false,
+                                                       false);
 }
 
 bool spdm_test_case_finish_rsp_setup_version_12_hs_clear (void *test_context)
@@ -316,10 +335,36 @@ bool spdm_test_case_finish_rsp_setup_version_12_hs_clear (void *test_context)
     };
     return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
                                                        LIBSPDM_ARRAY_SIZE(
-                                                           spdm_version), spdm_version, true);
+                                                           spdm_version), spdm_version, true,
+                                                       false);
 }
 
-void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t version, bool hs_clear)
+bool spdm_test_case_finish_rsp_setup_version_13_multi_key (void *test_context)
+{
+    spdm_version_number_t spdm_version[] = {
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
+    };
+    return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
+                                                       LIBSPDM_ARRAY_SIZE(
+                                                           spdm_version), spdm_version, false,
+                                                       true);
+}
+
+bool spdm_test_case_finish_rsp_setup_version_13_hs_clear_multi_key (void *test_context)
+{
+    spdm_version_number_t spdm_version[] = {
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT
+    };
+    return spdm_test_case_finish_rsp_setup_vca_digest (test_context,
+                                                       LIBSPDM_ARRAY_SIZE(
+                                                           spdm_version), spdm_version, true,
+                                                       true);
+}
+
+void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t version, bool hs_clear,
+                                              bool multi_key)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
@@ -366,10 +411,18 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
         LIBSPDM_ASSERT ((test_buffer->version == SPDM_MESSAGE_VERSION_12) ||
                         (test_buffer->version == SPDM_MESSAGE_VERSION_13) ||
                         (test_buffer->version == SPDM_MESSAGE_VERSION_14));
-        if (hs_clear) {
-            case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR;
+        if (multi_key) {
+            if (hs_clear) {
+                case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY;
+            } else {
+                case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_MULTI_KEY;
+            }
         } else {
-            case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12;
+            if (hs_clear) {
+                case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12_HS_CLEAR;
+            } else {
+                case_id = SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_12;
+            }
         }
         break;
     default:
@@ -574,25 +627,37 @@ void spdm_test_case_finish_rsp_success_11_12 (void *test_context, uint8_t versio
 void spdm_test_case_finish_rsp_success_11 (void *test_context)
 {
     spdm_test_case_finish_rsp_success_11_12 (test_context,
-                                             SPDM_MESSAGE_VERSION_11, false);
+                                             SPDM_MESSAGE_VERSION_11, false, false);
 }
 
 void spdm_test_case_finish_rsp_success_11_hs_clear (void *test_context)
 {
     spdm_test_case_finish_rsp_success_11_12 (test_context,
-                                             SPDM_MESSAGE_VERSION_11, true);
+                                             SPDM_MESSAGE_VERSION_11, true, false);
 }
 
 void spdm_test_case_finish_rsp_success_12 (void *test_context)
 {
     spdm_test_case_finish_rsp_success_11_12 (test_context,
-                                             SPDM_MESSAGE_VERSION_12, false);
+                                             SPDM_MESSAGE_VERSION_12, false, false);
 }
 
 void spdm_test_case_finish_rsp_success_12_hs_clear (void *test_context)
 {
     spdm_test_case_finish_rsp_success_11_12 (test_context,
-                                             SPDM_MESSAGE_VERSION_12, true);
+                                             SPDM_MESSAGE_VERSION_12, true, false);
+}
+
+void spdm_test_case_finish_rsp_success_13_multi_key (void *test_context)
+{
+    spdm_test_case_finish_rsp_success_11_12 (test_context,
+                                             SPDM_MESSAGE_VERSION_13, false, true);
+}
+
+void spdm_test_case_finish_rsp_success_13_hs_clear_multi_key (void *test_context)
+{
+    spdm_test_case_finish_rsp_success_11_12 (test_context,
+                                             SPDM_MESSAGE_VERSION_13, true, true);
 }
 
 void spdm_test_case_finish_rsp_version_mismatch (void *test_context)
@@ -1490,6 +1555,16 @@ common_test_case_t m_spdm_test_group_finish_rsp[] = {
      "spdm_test_case_finish_rsp_session_required",
      spdm_test_case_finish_rsp_session_required,
      spdm_test_case_finish_rsp_setup_version_12,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_MULTI_KEY,
+     "spdm_test_case_finish_rsp_success_13_multi_key",
+     spdm_test_case_finish_rsp_success_13_multi_key,
+     spdm_test_case_finish_rsp_setup_version_13_multi_key,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_FINISH_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY,
+     "spdm_test_case_finish_rsp_success_13_hs_clear_multi_key",
+     spdm_test_case_finish_rsp_success_13_hs_clear_multi_key,
+     spdm_test_case_finish_rsp_setup_version_13_hs_clear_multi_key,
      spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };
