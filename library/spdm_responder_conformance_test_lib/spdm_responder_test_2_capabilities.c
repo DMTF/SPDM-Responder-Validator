@@ -1,6 +1,6 @@
 /**
  *  Copyright Notice:
- *  Copyright 2021-2025 DMTF. All rights reserved.
+ *  Copyright 2021-2026 DMTF. All rights reserved.
  *  License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/SPDM-Responder-Validator/blob/main/LICENSE.md
  **/
 
@@ -715,7 +715,7 @@ void spdm_test_case_capabilities_invalid_request (void *test_context)
         } else {
             if ((test_buffer->support_version_bitmask & SPDM_TEST_VERSION_MASK_V12) != 0) {
                 common_test_record_test_message ("test v12 transfer_size - 0x%08x\n",
-                                                 invalid_transport_size_v12[index - LIBSPDM_ARRAY_SIZE(invalid_flags_v11)]);
+                                                 spdm_request_new.max_spdm_msg_size - 1);
                 version = SPDM_MESSAGE_VERSION_12;
                 spdm_request_size = sizeof(spdm_request);
                 spdm_request_new.header.spdm_version = version;
