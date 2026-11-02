@@ -940,9 +940,9 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         result = libspdm_secured_message_dhe_generate_key(
             test_buffer->dhe_named_group,
             dhe_context, ptr, &dhe_key_size);
+        libspdm_secured_message_dhe_free(
+            test_buffer->dhe_named_group, dhe_context);
         if (!result) {
-            libspdm_secured_message_dhe_free(
-                test_buffer->dhe_named_group, dhe_context);
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
                 SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
@@ -1111,9 +1111,9 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     result = libspdm_secured_message_dhe_generate_key(
         test_buffer->dhe_named_group,
         dhe_context, ptr, &dhe_key_size);
+    libspdm_secured_message_dhe_free(
+        test_buffer->dhe_named_group, dhe_context);
     if (!result) {
-        libspdm_secured_message_dhe_free(
-            test_buffer->dhe_named_group, dhe_context);
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
@@ -1265,9 +1265,9 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     result = libspdm_secured_message_dhe_generate_key(
         test_buffer->dhe_named_group,
         dhe_context, ptr, &dhe_key_size);
+    libspdm_secured_message_dhe_free(
+        test_buffer->dhe_named_group, dhe_context);
     if (!result) {
-        libspdm_secured_message_dhe_free(
-            test_buffer->dhe_named_group, dhe_context);
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
