@@ -500,6 +500,8 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
     libspdm_return_t status;
     spdm_negotiate_algorithms_request_mine_t spdm_request;
     spdm_negotiate_algorithms_request_mine_t spdm_request_new;
+    uint8_t spdm_request_buffer[sizeof(spdm_negotiate_algorithms_request_mine_t) +
+                                SPDM_NEGOTIATE_ALGORITHMS_REQUEST_MAX_LENGTH_VERSION_11 + 1];
     size_t spdm_request_size;
     spdm_algorithms_response_t *spdm_response;
     size_t spdm_response_size;
@@ -658,11 +660,16 @@ void spdm_test_case_algorithms_invalid_request (void *test_context)
             break;
         }
 
+        /* Case 0 sends more bytes than spdm_request_new holds. */
+        libspdm_zero_mem(spdm_request_buffer, sizeof(spdm_request_buffer));
+        libspdm_copy_mem(spdm_request_buffer, sizeof(spdm_request_buffer),
+                         &spdm_request_new, sizeof(spdm_request_new));
+
         spdm_response = (void *)message;
         spdm_response_size = sizeof(message);
         libspdm_zero_mem(message, sizeof(message));
         status = libspdm_send_receive_data(spdm_context, NULL, false,
-                                           &spdm_request_new, spdm_request_new.length,
+                                           spdm_request_buffer, spdm_request_new.length,
                                            spdm_response, &spdm_response_size);
         if (LIBSPDM_STATUS_IS_ERROR(status)) {
             common_test_record_test_assertion (
