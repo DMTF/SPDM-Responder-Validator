@@ -40,6 +40,13 @@ typedef struct {
 static uint8_t m_cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
 
+/* IANA Private Enterprise Number of DMTF, used as the vendor ID of the unknown opaque element. */
+#define SPDM_TEST_OPAQUE_ELEMENT_VENDOR_ID_IANA_DMTF 412
+
+/* Arbitrary payload of the unknown vendor-defined opaque element. Its length is deliberately not a
+ * multiple of 4 so that the element requires alignment padding. */
+static const uint8_t m_unknown_opaque_element_data[] = {0x53, 0x50, 0x44, 0x4d, 0x56};
+
 bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
                                                        size_t spdm_version_count,
                                                        spdm_version_number_t *spdm_version,
@@ -392,8 +399,140 @@ static void spdm_key_exchange_rsp_free_exchange_context (
     }
 }
 
-void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t version,
-                                                    bool hs_clear, bool multi_key)
+/* Offer all SPDM versions that support the opaque data element list (1.1+), so that the highest
+ * version supported by the Responder is negotiated. */
+bool spdm_test_case_key_exchange_rsp_setup_version_11_to_14 (void *test_context)
+{
+    spdm_version_number_t spdm_version[] = {
+        SPDM_MESSAGE_VERSION_11 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_12 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_13 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+        SPDM_MESSAGE_VERSION_14 << SPDM_VERSION_NUMBER_SHIFT_BIT,
+    };
+    return spdm_test_case_key_exchange_rsp_setup_vca_digest (test_context,
+                                                             LIBSPDM_ARRAY_SIZE(
+                                                                 spdm_version), spdm_version,
+                                                             false, false);
+}
+
+/**
+ * Append an opaque element that the Responder is not expected to recognize (registry ID IANA,
+ * vendor-defined) to an opaque data blob and increment the TotalElements field of its general
+ * opaque data table header.
+ *
+ * @param  spdm_context       A pointer to the SPDM context.
+ * @param  data_out           The opaque data blob to extend in place.
+ * @param  data_out_capacity  The size in bytes of the data_out buffer.
+ * @param  data_out_size      On input, the current size of the blob. On output, the new size.
+ *
+ * @retval true   the element was appended.
+ * @retval false  the buffer is too small.
+ **/
+static bool spdm_test_key_exchange_append_unknown_opaque_element (void *spdm_context,
+                                                                  uint8_t *data_out,
+                                                                  size_t data_out_capacity,
+                                                                  size_t *data_out_size)
+{
+    opaque_element_table_header_t *opaque_element_table_header;
+    uint8_t *element_ptr;
+    uint8_t *ptr;
+    size_t element_size;
+    size_t padded_element_size;
+
+    element_size = sizeof(opaque_element_table_header_t) + sizeof(uint32_t) + sizeof(uint16_t) +
+                   sizeof(m_unknown_opaque_element_data);
+    /* Add Padding*/
+    padded_element_size = (element_size + 3) & ~3;
+    if (*data_out_size + padded_element_size > data_out_capacity) {
+        return false;
+    }
+
+    element_ptr = data_out + *data_out_size;
+    libspdm_zero_mem(element_ptr, padded_element_size);
+
+    opaque_element_table_header = (void *)element_ptr;
+    opaque_element_table_header->id = SPDM_REGISTRY_ID_IANA;
+    opaque_element_table_header->vendor_len = sizeof(uint32_t);
+    ptr = (uint8_t *)(opaque_element_table_header + 1);
+    libspdm_write_uint32(ptr, SPDM_TEST_OPAQUE_ELEMENT_VENDOR_ID_IANA_DMTF);
+    ptr += sizeof(uint32_t);
+    libspdm_write_uint16(ptr, (uint16_t)sizeof(m_unknown_opaque_element_data));
+    ptr += sizeof(uint16_t);
+    libspdm_copy_mem(ptr, padded_element_size - (size_t)(ptr - element_ptr),
+                     m_unknown_opaque_element_data, sizeof(m_unknown_opaque_element_data));
+
+    if (libspdm_get_connection_version(spdm_context) >= SPDM_MESSAGE_VERSION_12) {
+        ((spdm_general_opaque_data_table_header_t *)data_out)->total_elements++;
+    } else {
+        ((secured_message_general_opaque_data_table_header_t *)data_out)->total_elements++;
+    }
+
+    *data_out_size += padded_element_size;
+    return true;
+}
+
+/**
+ * Build the OpaqueData field of a KEY_EXCHANGE request.
+ *
+ * If multi_element is false, the opaque data only contains the Secured Messages
+ * SupportedVersion element.
+ *
+ * If multi_element is true, the opaque data contains, in this order:
+ * 1. the Secured Messages SupportedVersion element,
+ * 2. a vendor-defined element that the Responder is not expected to recognize,
+ * 3. the Secured Messages AEADLimit element (only if secured message version 1.3 or later is
+ *    offered).
+ *
+ * @param  spdm_context       A pointer to the SPDM context.
+ * @param  multi_element      Whether to build multiple opaque elements.
+ * @param  data_out           The buffer that receives the opaque data.
+ * @param  data_out_capacity  The size in bytes of the data_out buffer.
+ * @param  data_out_size      On output, the size in bytes of the opaque data.
+ *
+ * @retval true   the opaque data was built.
+ * @retval false  the buffer is too small.
+ **/
+static bool spdm_test_key_exchange_build_req_opaque_data (void *spdm_context,
+                                                          bool multi_element,
+                                                          uint8_t *data_out,
+                                                          size_t data_out_capacity,
+                                                          size_t *data_out_size)
+{
+    size_t size;
+    size_t aead_limit_element_size;
+    spdm_version_number_t local_max_secured_version;
+
+    size = libspdm_get_opaque_data_supported_version_data_size(spdm_context);
+    if (size > data_out_capacity) {
+        return false;
+    }
+    libspdm_build_opaque_data_supported_version_data(spdm_context, &size, data_out);
+
+    if (multi_element) {
+        if (!spdm_test_key_exchange_append_unknown_opaque_element(
+                spdm_context, data_out, data_out_capacity, &size)) {
+            return false;
+        }
+
+        local_max_secured_version = libspdm_local_max_secured_message_version(spdm_context);
+        aead_limit_element_size = libspdm_get_opaque_data_aead_limit_element_size(
+            spdm_context, local_max_secured_version);
+        if (size + aead_limit_element_size > data_out_capacity) {
+            return false;
+        }
+        /* On input the size is the capacity reserved for the whole blob. */
+        size += aead_limit_element_size;
+        libspdm_build_opaque_data_aead_limit_element(
+            spdm_context, local_max_secured_version, &size, data_out);
+    }
+
+    *data_out_size = size;
+    return true;
+}
+
+static void spdm_test_case_key_exchange_rsp_success_common (void *test_context,
+                                                            common_test_case_id case_id,
+                                                            bool hs_clear, bool multi_opaque)
 {
     spdm_test_context_t *spdm_test_context;
     void *spdm_context;
@@ -433,7 +572,10 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
         SPDM_KEY_EXCHANGE_REQUEST_TCB_COMPONENT_MEASUREMENT_HASH,
         SPDM_KEY_EXCHANGE_REQUEST_ALL_MEASUREMENTS_HASH,
     };
-    common_test_case_id case_id;
+    spdm_version_number_t secured_message_version;
+    uint16_t rsp_opaque_length;
+    uint8_t *rsp_opaque_data;
+    uint8_t aead_limit_exponent;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -441,40 +583,6 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    offsetof(spdm_key_exchange_rsp_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
-
-    switch (version) {
-    case SPDM_MESSAGE_VERSION_11:
-        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_11);
-        if (hs_clear) {
-            case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11_HS_CLEAR;
-        } else {
-            case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11;
-        }
-        break;
-    case SPDM_MESSAGE_VERSION_12:
-    case SPDM_MESSAGE_VERSION_13:
-    case SPDM_MESSAGE_VERSION_14:
-        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_12 ||
-                        test_buffer->version == SPDM_MESSAGE_VERSION_13 ||
-                        test_buffer->version == SPDM_MESSAGE_VERSION_14);
-        if (multi_key) {
-            if (hs_clear) {
-                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY;
-            } else {
-                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_MULTI_KEY;
-            }
-        } else {
-            if (hs_clear) {
-                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR;
-            } else {
-                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12;
-            }
-        }
-        break;
-    default:
-        LIBSPDM_ASSERT(false);
-        return;
-    }
 
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
         if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
@@ -576,12 +684,22 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             }
             ptr += exchange_data_req_size;
 
-            opaque_key_exchange_req_size =
-                libspdm_get_opaque_data_supported_version_data_size(spdm_context);
-            *(uint16_t *)ptr = (uint16_t)opaque_key_exchange_req_size;
+            result = spdm_test_key_exchange_build_req_opaque_data(
+                spdm_context, multi_opaque, ptr + sizeof(uint16_t),
+                LIBSPDM_MIN(SPDM_MAX_OPAQUE_DATA_SIZE,
+                            sizeof(spdm_request) - ((size_t)ptr - (size_t)&spdm_request) -
+                            sizeof(uint16_t)),
+                &opaque_key_exchange_req_size);
+            if (!result) {
+                spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                            kem_context);
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
+                    COMMON_TEST_RESULT_NOT_TESTED, "build opaque data failure");
+                return;
+            }
+            libspdm_write_uint16(ptr, (uint16_t)opaque_key_exchange_req_size);
             ptr += sizeof(uint16_t);
-            libspdm_build_opaque_data_supported_version_data(
-                spdm_context, &opaque_key_exchange_req_size, ptr);
             ptr += opaque_key_exchange_req_size;
 
             spdm_request_size = (size_t)ptr - (size_t)&spdm_request;
@@ -700,12 +818,77 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                 return;
             }
 
+            secured_message_version = SECURED_SPDM_VERSION_11 << SPDM_VERSION_NUMBER_SHIFT_BIT;
+            if (multi_opaque) {
+                rsp_opaque_length = libspdm_read_uint16((const uint8_t *)opaque_length_ptr);
+                rsp_opaque_data = (uint8_t *)(opaque_length_ptr + 1);
+
+                /* The Responder's opaque data shall be a well-formed element list. */
+                if ((rsp_opaque_length != 0) &&
+                    (rsp_opaque_length <= SPDM_MAX_OPAQUE_DATA_SIZE) &&
+                    libspdm_process_general_opaque_data_check(spdm_context, rsp_opaque_length,
+                                                              rsp_opaque_data)) {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                } else {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                }
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 7,
+                    test_result, "response opaque_data format - %d", rsp_opaque_length);
+                if (test_result == COMMON_TEST_RESULT_FAIL) {
+                    spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                                kem_context);
+                    return;
+                }
+
+                /* The Responder shall select one of the offered secured message versions. */
+                status = libspdm_process_opaque_data_version_selection_data(
+                    spdm_context, rsp_opaque_length, rsp_opaque_data, &secured_message_version);
+                if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                    test_result = COMMON_TEST_RESULT_FAIL;
+                } else {
+                    test_result = COMMON_TEST_RESULT_PASS;
+                }
+                common_test_record_test_assertion (
+                    SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 8,
+                    test_result, "response opaque_data version_selection - 0x%04x",
+                    secured_message_version);
+                if (test_result == COMMON_TEST_RESULT_FAIL) {
+                    spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                                kem_context);
+                    return;
+                }
+
+                /* For secured message version 1.3+, an AEADLimit element is optional, but shall
+                 * be well-formed if present. */
+                if (libspdm_get_version_from_version_number(secured_message_version) >=
+                    SECURED_SPDM_VERSION_13) {
+                    aead_limit_exponent = 0;
+                    status = libspdm_process_opaque_data_aead_limit(
+                        spdm_context, secured_message_version, rsp_opaque_length,
+                        rsp_opaque_data, &aead_limit_exponent);
+                    if (LIBSPDM_STATUS_IS_ERROR(status)) {
+                        test_result = COMMON_TEST_RESULT_FAIL;
+                    } else {
+                        test_result = COMMON_TEST_RESULT_PASS;
+                    }
+                    common_test_record_test_assertion (
+                        SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 9,
+                        test_result, "response opaque_data aead_limit_exponent - %d",
+                        aead_limit_exponent);
+                    if (test_result == COMMON_TEST_RESULT_FAIL) {
+                        spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
+                                                                    kem_context);
+                        return;
+                    }
+                }
+            }
+
             rsp_session_id = spdm_response->rsp_session_id;
             session_id = libspdm_generate_session_id(req_session_id, rsp_session_id);
             common_test_record_test_message ("test session_id - 0x%08x\n", session_id);
             session_info = libspdm_assign_session_id(spdm_context, session_id,
-                                                     SECURED_SPDM_VERSION_11 <<
-                                                     SPDM_VERSION_NUMBER_SHIFT_BIT,
+                                                     secured_message_version,
                                                      false);
             if (session_info == NULL) {
                 spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
@@ -842,6 +1025,91 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
             libspdm_free_session_id(spdm_context, session_id);
         }
     }
+}
+
+void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t version,
+                                                    bool hs_clear, bool multi_key)
+{
+    spdm_test_context_t *spdm_test_context;
+    spdm_key_exchange_rsp_test_buffer_t *test_buffer;
+    common_test_case_id case_id;
+
+    spdm_test_context = test_context;
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+
+    switch (version) {
+    case SPDM_MESSAGE_VERSION_11:
+        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_11);
+        if (hs_clear) {
+            case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11_HS_CLEAR;
+        } else {
+            case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_11;
+        }
+        break;
+    case SPDM_MESSAGE_VERSION_12:
+    case SPDM_MESSAGE_VERSION_13:
+    case SPDM_MESSAGE_VERSION_14:
+        LIBSPDM_ASSERT (test_buffer->version == SPDM_MESSAGE_VERSION_12 ||
+                        test_buffer->version == SPDM_MESSAGE_VERSION_13 ||
+                        test_buffer->version == SPDM_MESSAGE_VERSION_14);
+        if (multi_key) {
+            if (hs_clear) {
+                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_HS_CLEAR_MULTI_KEY;
+            } else {
+                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_13_MULTI_KEY;
+            }
+        } else {
+            if (hs_clear) {
+                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12_HS_CLEAR;
+            } else {
+                case_id = SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_SUCCESS_12;
+            }
+        }
+        break;
+    default:
+        LIBSPDM_ASSERT(false);
+        return;
+    }
+
+    spdm_test_case_key_exchange_rsp_success_common (test_context, case_id, hs_clear, false);
+}
+
+void spdm_test_case_key_exchange_rsp_multi_opaque_elements (void *test_context)
+{
+    spdm_test_context_t *spdm_test_context;
+    void *spdm_context;
+    libspdm_data_parameter_t parameter;
+    size_t data_size;
+    uint8_t other_params_support;
+    spdm_key_exchange_rsp_test_buffer_t *test_buffer;
+
+    spdm_test_context = test_context;
+    spdm_context = spdm_test_context->spdm_context;
+    test_buffer = (void *)spdm_test_context->test_scratch_buffer;
+
+    /* For SPDM 1.2+, the opaque element list requires OpaqueDataFmt1 to be negotiated. */
+    if (test_buffer->version >= SPDM_MESSAGE_VERSION_12) {
+        other_params_support = 0;
+        data_size = sizeof(other_params_support);
+        libspdm_zero_mem(&parameter, sizeof(parameter));
+        parameter.location = LIBSPDM_DATA_LOCATION_CONNECTION;
+        libspdm_get_data(spdm_context, LIBSPDM_DATA_OTHER_PARAMS_SUPPORT, &parameter,
+                         &other_params_support, &data_size);
+        if ((other_params_support & SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_MASK) !=
+            SPDM_ALGORITHMS_OPAQUE_DATA_FORMAT_1) {
+            common_test_record_test_assertion (
+                SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
+                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_MULTI_OPAQUE_ELEMENTS, 0,
+                COMMON_TEST_RESULT_NOT_TESTED, "OpaqueDataFmt1 not negotiated - 0x%02x",
+                other_params_support);
+            return;
+        }
+    }
+
+    common_test_record_test_message ("test version - 0x%02x\n", test_buffer->version);
+    spdm_test_case_key_exchange_rsp_success_common (
+        test_context, SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_MULTI_OPAQUE_ELEMENTS,
+        false, true);
 }
 
 void spdm_test_case_key_exchange_rsp_success_11 (void *test_context)
@@ -1430,6 +1698,11 @@ common_test_case_t m_spdm_test_group_key_exchange_rsp[] = {
      "spdm_test_case_key_exchange_rsp_success_13_hs_clear_multi_key",
      spdm_test_case_key_exchange_rsp_success_13_hs_clear_multi_key,
      spdm_test_case_key_exchange_rsp_setup_version_13_hs_clear_multi_key,
+     spdm_test_case_common_teardown},
+    {SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_MULTI_OPAQUE_ELEMENTS,
+     "spdm_test_case_key_exchange_rsp_multi_opaque_elements",
+     spdm_test_case_key_exchange_rsp_multi_opaque_elements,
+     spdm_test_case_key_exchange_rsp_setup_version_11_to_14,
      spdm_test_case_common_teardown},
     {COMMON_TEST_ID_END, NULL, NULL},
 };
