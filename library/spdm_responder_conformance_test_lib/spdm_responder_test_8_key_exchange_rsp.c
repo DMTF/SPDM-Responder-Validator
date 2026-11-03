@@ -392,6 +392,43 @@ static void spdm_key_exchange_rsp_free_exchange_context (
     }
 }
 
+/* For a KEY_EXCHANGE that the Responder should reject. The key exchange never completes, so the
+ * KEM or DHE context is freed as soon as ExchangeData is generated. */
+static bool spdm_key_exchange_rsp_generate_exchange_data (
+    spdm_key_exchange_rsp_test_buffer_t *test_buffer, uint8_t *exchange_data,
+    size_t *exchange_data_size)
+{
+    void *context;
+    bool result;
+
+    if (test_buffer->kem_alg != 0) {
+        context = libspdm_secured_message_kem_new(
+            test_buffer->version,
+            test_buffer->kem_alg, true);
+        if (context == NULL) {
+            return false;
+        }
+        *exchange_data_size = test_buffer->kem_encap_key_size;
+        result = libspdm_secured_message_kem_generate_key(
+            test_buffer->kem_alg,
+            context, exchange_data, exchange_data_size);
+        libspdm_secured_message_kem_free(test_buffer->kem_alg, context);
+    } else {
+        context = libspdm_secured_message_dhe_new(
+            test_buffer->version,
+            test_buffer->dhe_named_group, true);
+        if (context == NULL) {
+            return false;
+        }
+        *exchange_data_size = test_buffer->dhe_key_size;
+        result = libspdm_secured_message_dhe_generate_key(
+            test_buffer->dhe_named_group,
+            context, exchange_data, exchange_data_size);
+        libspdm_secured_message_dhe_free(test_buffer->dhe_named_group, context);
+    }
+    return result;
+}
+
 void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t version,
                                                     bool hs_clear, bool multi_key)
 {
@@ -891,9 +928,8 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
     uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint8_t *ptr;
-    size_t dhe_key_size;
+    size_t exchange_data_size;
     size_t opaque_key_exchange_req_size;
-    void *dhe_context;
     uint16_t req_session_id;
     bool result;
     common_test_result_t test_result;
@@ -925,31 +961,17 @@ void spdm_test_case_key_exchange_rsp_version_mismatch (void *test_context)
         spdm_request.req_session_id = req_session_id;
         spdm_request.session_policy = 0;
 
-        dhe_context = libspdm_secured_message_dhe_new(
-            test_buffer->version,
-            test_buffer->dhe_named_group, true);
-        if (dhe_context == NULL) {
-            common_test_record_test_assertion (
-                SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-                SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
-                COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
-            return;
-        }
-        dhe_key_size = test_buffer->dhe_key_size;
         ptr = spdm_request.exchange_data;
-        result = libspdm_secured_message_dhe_generate_key(
-            test_buffer->dhe_named_group,
-            dhe_context, ptr, &dhe_key_size);
-        libspdm_secured_message_dhe_free(
-            test_buffer->dhe_named_group, dhe_context);
+        result = spdm_key_exchange_rsp_generate_exchange_data(test_buffer, ptr,
+                                                              &exchange_data_size);
         if (!result) {
             common_test_record_test_assertion (
                 SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
                 SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_VERSION_MISMATCH, 0,
-                COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
+                COMMON_TEST_RESULT_NOT_TESTED, "generate_exchange_data failure");
             return;
         }
-        ptr += dhe_key_size;
+        ptr += exchange_data_size;
 
         opaque_key_exchange_req_size =
             libspdm_get_opaque_data_supported_version_data_size(spdm_context);
@@ -1047,9 +1069,8 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     size_t spdm_response_size;
     uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     uint8_t *ptr;
-    size_t dhe_key_size;
+    size_t exchange_data_size;
     size_t opaque_key_exchange_req_size;
-    void *dhe_context;
     uint16_t req_session_id;
     bool result;
     common_test_result_t test_result;
@@ -1095,33 +1116,17 @@ void spdm_test_case_key_exchange_rsp_unexpected_request_in_session (void *test_c
     spdm_request.req_session_id = req_session_id;
     spdm_request.session_policy = 0;
 
-    dhe_context = libspdm_secured_message_dhe_new(
-        test_buffer->version,
-        test_buffer->dhe_named_group, true);
-    if (dhe_context == NULL) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
-            0,
-            COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
-        return;
-    }
-    dhe_key_size = test_buffer->dhe_key_size;
     ptr = spdm_request.exchange_data;
-    result = libspdm_secured_message_dhe_generate_key(
-        test_buffer->dhe_named_group,
-        dhe_context, ptr, &dhe_key_size);
-    libspdm_secured_message_dhe_free(
-        test_buffer->dhe_named_group, dhe_context);
+    result = spdm_key_exchange_rsp_generate_exchange_data(test_buffer, ptr, &exchange_data_size);
     if (!result) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_UNEXPECTED_REQUEST_IN_SESSION,
             0,
-            COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
+            COMMON_TEST_RESULT_NOT_TESTED, "generate_exchange_data failure");
         return;
     }
-    ptr += dhe_key_size;
+    ptr += exchange_data_size;
 
     opaque_key_exchange_req_size =
         libspdm_get_opaque_data_supported_version_data_size(spdm_context);
@@ -1223,9 +1228,8 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     uint8_t message[LIBSPDM_MAX_SPDM_MSG_SIZE];
     size_t spdm_response_size;
     uint8_t *ptr;
-    size_t dhe_key_size;
+    size_t exchange_data_size;
     size_t opaque_key_exchange_req_size;
-    void *dhe_context;
     uint16_t req_session_id;
     bool result;
     common_test_result_t test_result;
@@ -1250,31 +1254,16 @@ void spdm_test_case_key_exchange_rsp_invalid_request (void *test_context)
     spdm_request.req_session_id = req_session_id;
     spdm_request.session_policy = 0;
 
-    dhe_context = libspdm_secured_message_dhe_new(
-        test_buffer->version,
-        test_buffer->dhe_named_group, true);
-    if (dhe_context == NULL) {
-        common_test_record_test_assertion (
-            SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
-            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
-            COMMON_TEST_RESULT_NOT_TESTED, "dhe_new failure");
-        return;
-    }
-    dhe_key_size = test_buffer->dhe_key_size;
     ptr = spdm_request.exchange_data;
-    result = libspdm_secured_message_dhe_generate_key(
-        test_buffer->dhe_named_group,
-        dhe_context, ptr, &dhe_key_size);
-    libspdm_secured_message_dhe_free(
-        test_buffer->dhe_named_group, dhe_context);
+    result = spdm_key_exchange_rsp_generate_exchange_data(test_buffer, ptr, &exchange_data_size);
     if (!result) {
         common_test_record_test_assertion (
             SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
             SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_INVALID_REQUEST, 0,
-            COMMON_TEST_RESULT_NOT_TESTED, "dhe_generate_key failure");
+            COMMON_TEST_RESULT_NOT_TESTED, "generate_exchange_data failure");
         return;
     }
-    ptr += dhe_key_size;
+    ptr += exchange_data_size;
 
     opaque_key_exchange_req_size =
         libspdm_get_opaque_data_supported_version_data_size(spdm_context);
