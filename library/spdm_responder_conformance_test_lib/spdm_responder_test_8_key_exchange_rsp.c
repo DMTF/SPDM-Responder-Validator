@@ -40,13 +40,6 @@ typedef struct {
 static uint8_t m_cert_chain_buffer[LIBSPDM_MAX_CERT_CHAIN_SIZE];
 static size_t m_cert_chain_buffer_size;
 
-/* IANA Private Enterprise Number of DMTF, used as the vendor ID of the unknown opaque element. */
-#define SPDM_TEST_OPAQUE_ELEMENT_VENDOR_ID_IANA_DMTF 412
-
-/* Arbitrary payload of the unknown vendor-defined opaque element. Its length is deliberately not a
- * multiple of 4 so that the element requires alignment padding. */
-static const uint8_t m_unknown_opaque_element_data[] = {0x53, 0x50, 0x44, 0x4d, 0x56};
-
 bool spdm_test_case_key_exchange_rsp_setup_vca_digest (void *test_context,
                                                        size_t spdm_version_count,
                                                        spdm_version_number_t *spdm_version,
@@ -453,62 +446,6 @@ bool spdm_test_case_key_exchange_rsp_setup_version_11_to_14 (void *test_context)
 }
 
 /**
- * Append an opaque element that the Responder is not expected to recognize (registry ID IANA,
- * vendor-defined) to an opaque data blob and increment the TotalElements field of its general
- * opaque data table header.
- *
- * @param  spdm_context       A pointer to the SPDM context.
- * @param  data_out           The opaque data blob to extend in place.
- * @param  data_out_capacity  The size in bytes of the data_out buffer.
- * @param  data_out_size      On input, the current size of the blob. On output, the new size.
- *
- * @retval true   the element was appended.
- * @retval false  the buffer is too small.
- **/
-static bool spdm_test_key_exchange_append_unknown_opaque_element (void *spdm_context,
-                                                                  uint8_t *data_out,
-                                                                  size_t data_out_capacity,
-                                                                  size_t *data_out_size)
-{
-    opaque_element_table_header_t *opaque_element_table_header;
-    uint8_t *element_ptr;
-    uint8_t *ptr;
-    size_t element_size;
-    size_t padded_element_size;
-
-    element_size = sizeof(opaque_element_table_header_t) + sizeof(uint32_t) + sizeof(uint16_t) +
-                   sizeof(m_unknown_opaque_element_data);
-    /* Add Padding*/
-    padded_element_size = (element_size + 3) & ~3;
-    if (*data_out_size + padded_element_size > data_out_capacity) {
-        return false;
-    }
-
-    element_ptr = data_out + *data_out_size;
-    libspdm_zero_mem(element_ptr, padded_element_size);
-
-    opaque_element_table_header = (void *)element_ptr;
-    opaque_element_table_header->id = SPDM_REGISTRY_ID_IANA;
-    opaque_element_table_header->vendor_len = sizeof(uint32_t);
-    ptr = (uint8_t *)(opaque_element_table_header + 1);
-    libspdm_write_uint32(ptr, SPDM_TEST_OPAQUE_ELEMENT_VENDOR_ID_IANA_DMTF);
-    ptr += sizeof(uint32_t);
-    libspdm_write_uint16(ptr, (uint16_t)sizeof(m_unknown_opaque_element_data));
-    ptr += sizeof(uint16_t);
-    libspdm_copy_mem(ptr, padded_element_size - (size_t)(ptr - element_ptr),
-                     m_unknown_opaque_element_data, sizeof(m_unknown_opaque_element_data));
-
-    if (libspdm_get_connection_version(spdm_context) >= SPDM_MESSAGE_VERSION_12) {
-        ((spdm_general_opaque_data_table_header_t *)data_out)->total_elements++;
-    } else {
-        ((secured_message_general_opaque_data_table_header_t *)data_out)->total_elements++;
-    }
-
-    *data_out_size += padded_element_size;
-    return true;
-}
-
-/**
  * Build the OpaqueData field of a KEY_EXCHANGE request.
  *
  * If multi_element is false, the opaque data only contains the Secured Messages
@@ -516,9 +453,12 @@ static bool spdm_test_key_exchange_append_unknown_opaque_element (void *spdm_con
  *
  * If multi_element is true, the opaque data contains, in this order:
  * 1. the Secured Messages SupportedVersion element,
- * 2. a vendor-defined element that the Responder is not expected to recognize,
- * 3. the Secured Messages AEADLimit element (only if secured message version 1.3 or later is
+ * 2. the Secured Messages AEADLimit element (only if secured message version 1.3 or later is
  *    offered).
+ *
+ * Note: DSP0274 does not currently require a Responder to skip opaque elements that it
+ * does not recognize. Therefore no unknown or vendor-defined element is sent. Such an element can
+ * be added once a future specification version mandates that unrecognized elements are ignored.
  *
  * @param  spdm_context       A pointer to the SPDM context.
  * @param  multi_element      Whether to build multiple opaque elements.
@@ -546,11 +486,6 @@ static bool spdm_test_key_exchange_build_req_opaque_data (void *spdm_context,
     libspdm_build_opaque_data_supported_version_data(spdm_context, &size, data_out);
 
     if (multi_element) {
-        if (!spdm_test_key_exchange_append_unknown_opaque_element(
-                spdm_context, data_out, data_out_capacity, &size)) {
-            return false;
-        }
-
         local_max_secured_version = libspdm_local_max_secured_message_version(spdm_context);
         aead_limit_element_size = libspdm_get_opaque_data_aead_limit_element_size(
             spdm_context, local_max_secured_version);
@@ -1119,6 +1054,7 @@ void spdm_test_case_key_exchange_rsp_multi_opaque_elements (void *test_context)
     size_t data_size;
     uint8_t other_params_support;
     spdm_key_exchange_rsp_test_buffer_t *test_buffer;
+    spdm_version_number_t local_max_secured_version;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -1141,6 +1077,18 @@ void spdm_test_case_key_exchange_rsp_multi_opaque_elements (void *test_context)
                 other_params_support);
             return;
         }
+    }
+
+    /* The second opaque element (AEADLimit) is only defined for secured message version 1.3+. */
+    local_max_secured_version = libspdm_local_max_secured_message_version(spdm_context);
+    if (libspdm_get_opaque_data_aead_limit_element_size(spdm_context,
+                                                        local_max_secured_version) == 0) {
+        common_test_record_test_assertion (
+            SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP,
+            SPDM_RESPONDER_TEST_CASE_KEY_EXCHANGE_RSP_MULTI_OPAQUE_ELEMENTS, 0,
+            COMMON_TEST_RESULT_NOT_TESTED,
+            "secured message version 1.3+ not offered - 0x%04x", local_max_secured_version);
+        return;
     }
 
     common_test_record_test_message ("test version - 0x%02x\n", test_buffer->version);
