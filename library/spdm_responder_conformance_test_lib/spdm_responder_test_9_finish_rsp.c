@@ -70,6 +70,7 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
     size_t index;
     uint8_t slot_id;
     uint8_t key_ex_slot_mask;
+    uint8_t cert_slot_mask;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -262,6 +263,9 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
     key_ex_slot_mask = spdm_test_filter_valid_slot_mask (
         spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_KEY_EX_USE);
 
+    /* Skip slots in the "Exists with key" state (CertModel=0). They have no certificate chain. */
+    cert_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
+
     test_buffer->slot_count = 0;
     for (index = 0; index < SPDM_MAX_SLOT_COUNT; index++) {
         if ((test_buffer->slot_mask & (1 << index)) != 0) {
@@ -270,7 +274,7 @@ bool spdm_test_case_finish_rsp_setup_vca_digest (void *test_context,
     }
 
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
-        if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+        if ((cert_slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
 
