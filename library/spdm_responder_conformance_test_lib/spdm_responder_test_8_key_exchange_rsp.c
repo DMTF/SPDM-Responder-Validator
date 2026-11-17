@@ -818,7 +818,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
                     dhe_context, exchange_data_ptr, exchange_data_rsp_size,
                     secured_message_context);
             }
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            if (!result) {
                 libspdm_free_session_id(spdm_context, session_id);
                 spdm_key_exchange_rsp_free_exchange_context(test_buffer, dhe_context,
                                                             kem_context);
@@ -832,7 +832,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
 
             result = libspdm_calculate_th1_hash(spdm_context, session_info, true,
                                                 th1_hash_data);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            if (!result) {
                 libspdm_free_session_id(spdm_context, session_id);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
@@ -842,7 +842,7 @@ void spdm_test_case_key_exchange_rsp_success_11_12 (void *test_context, uint8_t 
 
             result = libspdm_generate_session_handshake_key(
                 secured_message_context, th1_hash_data);
-            if (LIBSPDM_STATUS_IS_ERROR(status)) {
+            if (!result) {
                 libspdm_free_session_id(spdm_context, session_id);
                 common_test_record_test_assertion (
                     SPDM_RESPONDER_TEST_GROUP_KEY_EXCHANGE_RSP, case_id, 0,
