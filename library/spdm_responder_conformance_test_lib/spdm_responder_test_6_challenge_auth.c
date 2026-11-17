@@ -896,6 +896,7 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
     spdm_challenge_auth_test_buffer_t *test_buffer;
     size_t index;
     uint8_t slot_id;
+    uint8_t valid_slot_mask;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -903,6 +904,9 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
     LIBSPDM_ASSERT(spdm_test_context->test_scratch_buffer_size ==
                    offsetof(spdm_challenge_auth_test_buffer_t, total_digest_buffer) +
                    test_buffer->hash_size * test_buffer->slot_count);
+
+    /* A provisioned slot without a certificate chain (CertModel=0) is an invalid slot. */
+    valid_slot_mask = spdm_test_filter_valid_slot_mask (spdm_context, test_buffer->slot_mask, 0);
 
     libspdm_zero_mem(&spdm_request, sizeof(spdm_request));
     spdm_request.header.spdm_version = test_buffer->version;
@@ -917,7 +921,7 @@ void spdm_test_case_challenge_auth_invalid_request (void *test_context)
         if (index < SPDM_MAX_SLOT_COUNT * 2) {
             slot_id = (uint8_t)index;
             if ((slot_id < SPDM_MAX_SLOT_COUNT) &&
-                ((test_buffer->slot_mask & (0x1 << slot_id)) != 0)) {
+                ((valid_slot_mask & (0x1 << slot_id)) != 0)) {
                 continue;
             }
             common_test_record_test_message ("test invalid slot - 0x%02x\n", slot_id);
