@@ -62,6 +62,7 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
     spdm_challenge_auth_test_buffer_t *test_buffer;
     size_t index;
     uint8_t slot_id;
+    uint8_t challenge_slot_mask;
 
     spdm_test_context = test_context;
     spdm_context = spdm_test_context->spdm_context;
@@ -244,8 +245,12 @@ bool spdm_test_case_challenge_auth_setup_vca_digest (void *test_context,
         return false;
     }
 
+    /* Skip slots without a certificate chain (CertModel=0) or without challenge key usage. */
+    challenge_slot_mask = spdm_test_filter_valid_slot_mask (
+        spdm_context, test_buffer->slot_mask, SPDM_KEY_USAGE_BIT_MASK_CHALLENGE_USE);
+
     for (slot_id = 0; slot_id < SPDM_MAX_SLOT_COUNT; slot_id++) {
-        if ((test_buffer->slot_mask & (0x1 << slot_id)) == 0) {
+        if ((challenge_slot_mask & (0x1 << slot_id)) == 0) {
             continue;
         }
         m_cert_chain_buffer_size[slot_id] = sizeof(m_cert_chain_buffer[slot_id]);
