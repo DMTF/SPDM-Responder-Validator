@@ -581,7 +581,10 @@ void spdm_test_case_challenge_auth_success_10_12 (void *test_context, uint8_t ve
                 }
 
                 common_test_record_test_assertion (SPDM_RESPONDER_TEST_GROUP_CHALLENGE_AUTH, case_id, 8,
-                test_result, "requester_context - %lx", &spdm_request_13.requester_context);
+                test_result, "requester_context - %02x%02x%02x%02x%02x%02x%02x%02x",
+                requester_context[0], requester_context[1], requester_context[2],
+                requester_context[3], requester_context[4], requester_context[5],
+                requester_context[6], requester_context[7]);
 
                 signature_ptr += SPDM_REQ_CONTEXT_SIZE;
             }
